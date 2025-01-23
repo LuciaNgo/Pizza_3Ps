@@ -8,14 +8,14 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
-class SignUpActivity : AppCompatActivity() {
+class LogInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_sign_up)
+        setContentView(R.layout.activity_log_in)
 
         val backButton: ImageView = findViewById(R.id.back_button)
-        val logInButton : TextView = findViewById(R.id.text_view_2)
+        val signUpButton : TextView = findViewById(R.id.text_view_2)
 
         backButton.setOnClickListener {
             val intent = Intent(this, WelcomeActivity::class.java)
@@ -23,8 +23,8 @@ class SignUpActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        logInButton.setOnClickListener {
-            val intent = Intent(this, LogInActivity::class.java)
+        signUpButton.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
 
             startActivity(intent)
         }

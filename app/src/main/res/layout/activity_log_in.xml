@@ -60,36 +60,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Sign Up"
+        android:text="Log In"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/name_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Name Input -->
-    <EditText
-        android:id="@+id/name_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/white"
-        android:drawableStart="@drawable/person"
-        android:drawablePadding="20dp"
-        android:hint="Name"
-        android:inputType="text"
-        android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingVertical="12dp"
         app:layout_constraintBottom_toTopOf="@+id/phone_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
     <!-- Phone Number Input -->
     <EditText
@@ -104,29 +83,6 @@
         android:drawablePadding="20dp"
         android:hint="Phone Number"
         android:inputType="phone"
-        android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/email_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Email Input -->
-    <EditText
-        android:id="@+id/email_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/white"
-        android:drawableStart="@drawable/mail"
-        android:drawablePadding="12dp"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
         android:maxLines="1"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
@@ -156,7 +112,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/sign_up_button"
+        app:layout_constraintBottom_toTopOf="@+id/log_in_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -173,22 +129,22 @@
 
     <!-- Sign Up Button -->
     <Button
-        android:id="@+id/sign_up_button"
+        android:id="@+id/log_in_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="10dp"
-        android:text="Sign Up"
+        android:text="Log In"
         android:backgroundTint="@android:color/white"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/sign_up_with_gg_button"
+        app:layout_constraintBottom_toTopOf="@+id/log_in_with_gg_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Login Button -->
     <Button
-        android:id="@+id/sign_up_with_gg_button"
+        android:id="@+id/log_in_with_gg_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -210,7 +166,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="96dp"
         android:textAlignment="center"
-        android:text="Already have an account?"
+        android:text="Do not have an account?"
         android:textColor="@android:color/white"
         android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -225,7 +181,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="96dp"
         android:textAlignment="center"
-        android:text="Login"
+        android:text="Sign up"
         android:textColor="@color/orange"
         android:textSize="14dp"
         android:clickable="true"
