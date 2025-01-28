@@ -37,7 +37,7 @@
         android:layout_marginTop="56dp"
         android:background="@drawable/arrow_back"
         android:backgroundTintMode="src_in"
-        android:contentDescription="Go back"
+        android:contentDescription="@string/go_back"
         android:clickable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -54,13 +54,13 @@
         app:srcCompat="@drawable/icon"
         tools:srcCompat="@drawable/icon" />
 
-    <!-- Title Text (Ethical Eater) -->
+    <!-- Title Text (Sign Up) -->
     <TextView
         android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Sign Up"
+        android:text="@string/signup"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -79,7 +79,7 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/person"
         android:drawablePadding="20dp"
-        android:hint="Name"
+        android:hint="@string/name"
         android:inputType="text"
         android:maxLines="1"
         android:textColor="@android:color/white"
@@ -102,7 +102,7 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/person"
         android:drawablePadding="20dp"
-        android:hint="Phone Number"
+        android:hint="@string/phone_number"
         android:inputType="phone"
         android:maxLines="1"
         android:textColor="@android:color/white"
@@ -125,7 +125,7 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/mail"
         android:drawablePadding="12dp"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:textColor="@android:color/white"
@@ -148,7 +148,7 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/lock"
         android:drawablePadding="20dp"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLines="1"
         android:textColor="@android:color/white"
@@ -179,28 +179,72 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="10dp"
-        android:text="Sign Up"
+        android:text="@string/sign_up"
         android:backgroundTint="@android:color/white"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/sign_up_with_gg_button"
+        app:layout_constraintBottom_toTopOf="@+id/or_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/sign_up_with_gg_button"
+    <LinearLayout
+        android:id="@+id/or_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="5dp"
-        android:drawableStart="@drawable/google"
-        android:text="Sign up with Google"
-        android:backgroundTint="@color/orange"
-        android:textColor="@android:color/white"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/social_buttons_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/or"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/social_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/text_view_1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/facebook_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/facebook" />
+
+        <ImageView
+            android:id="@+id/google_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/google" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/text_view_1"
@@ -208,9 +252,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="200dp"
         android:textAlignment="center"
-        android:text="Already have an account?"
+        android:text="@string/already_have_an_account"
         android:textColor="@android:color/white"
         android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -223,9 +267,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="210dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="200dp"
         android:textAlignment="center"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@color/orange"
         android:textSize="14dp"
         android:clickable="true"

@@ -28,7 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Back Button -->
     <ImageView
         android:id="@+id/back_button"
         android:layout_width="32dp"
@@ -37,12 +36,11 @@
         android:layout_marginTop="56dp"
         android:background="@drawable/arrow_back"
         android:backgroundTintMode="src_in"
-        android:contentDescription="Go back"
         android:clickable="true"
+        android:contentDescription="Go back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Icon -->
     <ImageView
         android:id="@+id/icon"
         android:layout_width="48dp"
@@ -54,13 +52,12 @@
         app:srcCompat="@drawable/icon"
         tools:srcCompat="@drawable/icon" />
 
-    <!-- Title Text (Ethical Eater) -->
     <TextView
         android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Log In"
+        android:text="@string/login"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -69,8 +66,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-
-    <!-- Phone Number Input -->
     <EditText
         android:id="@+id/phone_input"
         android:layout_width="0dp"
@@ -81,19 +76,18 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/person"
         android:drawablePadding="20dp"
-        android:hint="Phone Number"
+        android:hint="@string/phone_number"
         android:inputType="phone"
         android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
+        android:paddingVertical="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingVertical="12dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/password_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Password Input -->
     <EditText
         android:id="@+id/password_input"
         android:layout_width="0dp"
@@ -104,14 +98,14 @@
         android:backgroundTint="@color/white"
         android:drawableStart="@drawable/lock"
         android:drawablePadding="20dp"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
+        android:paddingVertical="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingVertical="12dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/log_in_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -126,8 +120,6 @@
         app:layout_constraintEnd_toEndOf="@+id/password_input"
         app:layout_constraintTop_toTopOf="@+id/password_input" />
 
-
-    <!-- Sign Up Button -->
     <Button
         android:id="@+id/log_in_button"
         android:layout_width="0dp"
@@ -135,38 +127,82 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="10dp"
-        android:text="Log In"
         android:backgroundTint="@android:color/white"
+        android:text="@string/log_in"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/log_in_with_gg_button"
+        app:layout_constraintBottom_toTopOf="@+id/or_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/log_in_with_gg_button"
+    <LinearLayout
+        android:id="@+id/or_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="5dp"
-        android:drawableStart="@drawable/google"
-        android:text="Sign up with Google"
-        android:backgroundTint="@color/orange"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_1"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/social_buttons_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/or"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/social_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/dont_have_account_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/facebook_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/facebook" />
+
+        <ImageView
+            android:id="@+id/google_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/google" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/text_view_1"
+        android:id="@+id/dont_have_account_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
-        android:textAlignment="center"
-        android:text="Do not have an account?"
+        android:layout_marginBottom="240dp"
+        android:gravity="center"
+        android:text="@string/dont_have_account"
         android:textColor="@android:color/white"
         android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -174,17 +210,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/text_view_2"
+        android:id="@+id/sign_up_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="210dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="240dp"
+        android:clickable="true"
+        android:text="@string/sign_up"
         android:textAlignment="center"
-        android:text="Sign up"
         android:textColor="@color/orange"
         android:textSize="14dp"
-        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

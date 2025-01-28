@@ -15,7 +15,7 @@ class LogInActivity : AppCompatActivity() {
         setContentView(R.layout.activity_log_in)
 
         val backButton: ImageView = findViewById(R.id.back_button)
-        val signUpButton : TextView = findViewById(R.id.text_view_2)
+        val signUpButton : TextView = findViewById(R.id.sign_up_text)
 
         backButton.setOnClickListener {
             val intent = Intent(this, WelcomeActivity::class.java)
