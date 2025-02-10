@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "45181302476",
+    "firebase_url": "https://pizza3ps-8771c-default-rtdb.firebaseio.com",
+    "project_id": "pizza3ps-8771c",
+    "storage_bucket": "pizza3ps-8771c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45181302476:android:02181dae229284475d7469",
+        "android_client_info": {
+          "package_name": "com.example.pizza3ps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEp73INwbaoNDwePK7mfdgttCidPQZTlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
