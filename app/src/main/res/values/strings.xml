@@ -13,6 +13,7 @@
     <string name="phone_number">Phone number</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
     <string name="sign_up_with_google">Sign up with Google</string>
     <string name="already_have_an_account">Already have an account?</string>
 </resources>

@@ -61,23 +61,23 @@
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/phone_input"
+        app:layout_constraintBottom_toTopOf="@+id/email_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 
     <EditText
-        android:id="@+id/phone_input"
+        android:id="@+id/email_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/white"
-        android:drawableStart="@drawable/person"
+        android:drawableStart="@drawable/mail"
         android:drawablePadding="20dp"
-        android:hint="@string/phone_number"
-        android:inputType="phone"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
         android:maxLines="1"
         android:paddingVertical="12dp"
         android:paddingStart="16dp"
@@ -184,14 +184,16 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/facebook" />
+            android:src="@drawable/facebook"
+            android:clickable="true"/>
 
         <ImageView
             android:id="@+id/google_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/google" />
+            android:src="@drawable/google"
+            android:clickable="true"/>
     </LinearLayout>
 
     <TextView

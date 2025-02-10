@@ -49,7 +49,7 @@ class LogInActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter full information!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
