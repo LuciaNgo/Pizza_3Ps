@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardActivity">
+    android:layout_marginTop="24dp"
+    tools:context=".activity.DashboardActivity">
 
     <!-- ScrollView for the whole screen -->
     <ScrollView
@@ -16,7 +17,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:orientation="vertical">
 
             <!-- Deals Section -->
@@ -44,8 +44,8 @@
                     <!-- Deals items will be added here dynamically -->
                     <ImageView
                         android:id="@+id/event_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="300dp"
+                        android:layout_height="120dp"
                         android:layout_marginEnd="16dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/event_1"
@@ -54,8 +54,8 @@
 
                     <ImageView
                         android:id="@+id/event_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="300dp"
+                        android:layout_height="120dp"
                         android:layout_marginEnd="16dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/event_2"
@@ -64,8 +64,8 @@
 
                     <ImageView
                         android:id="@+id/event_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="300dp"
+                        android:layout_height="120dp"
                         android:layout_marginEnd="16dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/event_3"
@@ -74,6 +74,34 @@
 
                 </LinearLayout>
             </HorizontalScrollView>
+
+            <!-- Best Seller Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <TextView
+                    android:id="@+id/best_seller_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Best seller "
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:drawableEnd="@drawable/firee"
+                    android:layout_alignParentStart="true"/>
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/best_seller_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Categories Section -->
             <TextView
@@ -208,7 +236,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/pizza_section_title"
@@ -230,24 +260,22 @@
                     android:focusable="true"/>
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/pizza_scroll_view"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pizza_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/pizza_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Salads Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/extras_section_title"
@@ -269,24 +297,22 @@
                     android:focusable="true"/>
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/salads_scroll_view"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/salads_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/salads_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Pasta Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/pasta_section_title"
@@ -308,24 +334,22 @@
                     android:focusable="true"/>
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/pasta_scroll_view"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pasta_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/pasta_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Desserts Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/desserts_section_title"
@@ -347,24 +371,22 @@
                     android:focusable="true"/>
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/desserts_scroll_view"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/desserts_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/desserts_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Drinks Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/drinks_section_title"
@@ -386,18 +408,14 @@
                     android:focusable="true"/>
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/drinks_scroll_view"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drinks_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/drinks_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
         </LinearLayout>
     </ScrollView>
 
