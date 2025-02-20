@@ -1,11 +1,18 @@
 package com.example.pizza3ps.adapter
 
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.model.FoodData
 
@@ -30,9 +37,9 @@ class FoodAdapter(private val foodList: List<FoodData>) :
         holder.priceTextView.text = "${food.price} VND"
 
         Glide.with(holder.itemView.context)
-            .load(food.imgPath) // Sử dụng đường dẫn ảnh từ Firebase hoặc Imgur/PostImages
-            .placeholder(R.drawable.placeholder) // Ảnh mặc định nếu load chậm
-            .error(R.drawable.error_image) // Ảnh mặc định nếu lỗi
+            .load(food.imgPath)
+            .placeholder(R.drawable.default_food_image)
+            .error(R.drawable.default_food_image)
             .into(holder.foodImageView)
     }
 

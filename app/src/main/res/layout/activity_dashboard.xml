@@ -19,61 +19,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Deals Section -->
-            <TextView
-                android:id="@+id/deals_title"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Deals"
-                android:padding="16dp"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
-            <HorizontalScrollView
-                android:id="@+id/deals_scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp">
-
-                <LinearLayout
-                    android:id="@+id/deals_container"
+                <TextView
+                    android:id="@+id/event_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="Event"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"/>
+            </RelativeLayout>
 
-                    <!-- Deals items will be added here dynamically -->
-                    <ImageView
-                        android:id="@+id/event_1"
-                        android:layout_width="300dp"
-                        android:layout_height="120dp"
-                        android:layout_marginEnd="16dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/event_1"
-                        android:clickable="true"
-                        android:focusable="true"/>
-
-                    <ImageView
-                        android:id="@+id/event_2"
-                        android:layout_width="300dp"
-                        android:layout_height="120dp"
-                        android:layout_marginEnd="16dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/event_2"
-                        android:clickable="true"
-                        android:focusable="true"/>
-
-                    <ImageView
-                        android:id="@+id/event_3"
-                        android:layout_width="300dp"
-                        android:layout_height="120dp"
-                        android:layout_marginEnd="16dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/event_3"
-                        android:clickable="true"
-                        android:focusable="true"/>
-
-                </LinearLayout>
-            </HorizontalScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/event_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <!-- Best Seller Section -->
             <RelativeLayout
@@ -269,7 +240,7 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Salads Section -->
+            <!-- Chicken Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -278,16 +249,16 @@
                 android:paddingRight="16dp">
 
                 <TextView
-                    android:id="@+id/extras_section_title"
+                    android:id="@+id/chicken_section_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Salads"
+                    android:text="Chicken"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
                 <TextView
-                    android:id="@+id/salads_see_all"
+                    android:id="@+id/chicken_see_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="See all"
@@ -298,7 +269,7 @@
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/salads_recycler_view"
+                android:id="@+id/chicken_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -343,7 +314,7 @@
                 android:paddingBottom="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Desserts Section -->
+            <!-- Appetizer Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -352,16 +323,16 @@
                 android:paddingRight="16dp">
 
                 <TextView
-                    android:id="@+id/desserts_section_title"
+                    android:id="@+id/appetizer_section_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Desserts"
+                    android:text="Appetizer"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
                 <TextView
-                    android:id="@+id/desserts_see_all"
+                    android:id="@+id/appetizer_see_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="See all"
@@ -372,7 +343,7 @@
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/desserts_recycler_view"
+                android:id="@+id/appetizer_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -472,11 +443,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/home_icon"/>
+                android:src="@drawable/home"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Home"/>
+                android:text="Home"
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <!-- Menu Button -->
@@ -489,11 +461,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/menu_icon"/>
+                android:src="@drawable/menu"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Menu"/>
+                android:text="Menu"
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <!-- Customize Button -->
@@ -506,11 +479,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/customize_icon"/>
+                android:src="@drawable/pizza"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Customize"/>
+                android:text="Customize"
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <!-- Account Button -->
@@ -523,11 +497,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/account_icon"/>
+                android:src="@drawable/account"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account"/>
+                android:text="Account"
+                android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
