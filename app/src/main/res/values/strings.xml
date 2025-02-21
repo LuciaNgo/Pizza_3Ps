@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Pizza 3P\'s</string>
+    <string name="welcome_title">Pizza 3Ps</string>
+    <string name="signup">Sign Up</string>
+    <string name="login">Log In</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="welcome_description">Unleash your creativity, enjoy pizza with ultimate flavors!</string>
+    <string name="or">OR</string>
+    <string name="dont_have_account">Don\'t have an account\?</string>
+    <string name="go_back">Go back</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
