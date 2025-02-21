@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/event_image"
-        android:layout_width="360dp"
+        android:layout_width="380dp"
         android:layout_height="150dp"
         android:scaleType="centerCrop" />
 
