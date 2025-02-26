@@ -1,8 +1,10 @@
 package com.example.pizza3ps.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +48,7 @@ class DashboardActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_dashboard)
 
+        val customizeLayout : LinearLayout = findViewById(R.id.customize_layout)
         val scrollView = findViewById<ScrollView>(R.id.scroll_view)
 
         // Lấy các danh mục trên thanh category
@@ -99,6 +102,11 @@ class DashboardActivity : AppCompatActivity() {
 
         fetchEventData()
         fetchFoodData()
+
+        customizeLayout.setOnClickListener {
+            val intent = Intent(this, CustomizePizzaActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun scrollToSection(scrollView: ScrollView, targetView: View) {
@@ -161,10 +169,8 @@ class DashboardActivity : AppCompatActivity() {
                     // Tách danh sách nguyên liệu thành mảng
                     val ingredientList = ingredientString.split(", ").map { it.trim() }
 
-                    // Tạo đối tượng FoodData
                     val foodItem = FoodData(name, formattedPrice, imgPath, ingredientList)
 
-                    // Thêm vào danh sách theo category
                     when (category.lowercase()) {
                         "pizza" -> pizzaList.add(foodItem)
                         "pasta" -> pastaList.add(foodItem)

@@ -7,7 +7,6 @@
     android:layout_marginTop="24dp"
     tools:context=".activity.DashboardActivity">
 
-    <!-- ScrollView for the whole screen -->
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -19,7 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -46,7 +44,6 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Categories Section -->
             <TextView
                 android:id="@+id/categories_title"
                 android:layout_width="match_parent"
@@ -182,7 +179,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Best Seller Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -210,9 +206,6 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-
-
-            <!-- Pizza Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,7 +242,6 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Chicken Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -285,8 +277,6 @@
                 android:paddingBottom="5dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <!-- Pasta Section -->
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -324,7 +314,6 @@
                 android:paddingBottom="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Appetizer Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -361,7 +350,6 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <!-- Drinks Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -462,7 +450,6 @@
             android:paddingTop="8dp"
             android:paddingBottom="4dp">
 
-            <!-- Home Button -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -502,6 +489,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/customize_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -557,9 +545,6 @@
                     android:text="Account"
                     android:textStyle="bold"/>
             </LinearLayout>
-
-            <!-- Các nút khác tương tự -->
-
         </LinearLayout>
     </FrameLayout>
 
