@@ -13,14 +13,14 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.model.IngredientData
 
 class IngredientAdapter(
-    private val ingredientList: List<IngredientData>,
-    private val onIngredientSelected: (Int) -> Unit
-    ): RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
+    private val ingredientList: List<IngredientData>
+) : RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
 
-    private val selectedItems = mutableSetOf<Int>()
+    private val selectedIngredients = mutableSetOf<String>()
 
     class IngredientViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ingredientIcon: ImageView = view.findViewById(R.id.imageView)
+        val frameLayout: FrameLayout = view as FrameLayout
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientViewHolder {
@@ -30,39 +30,27 @@ class IngredientAdapter(
 
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
         val ingredient = ingredientList[position]
+
+        // Load ảnh vào ImageView
         Glide.with(holder.itemView.context)
             .load(ingredient.iconImgPath)
             .into(holder.ingredientIcon)
 
-        val frameLayout = holder.itemView as FrameLayout
-
+        // Cập nhật màu nền dựa vào trạng thái đã chọn
         val backgroundDrawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 30f // Bo góc
-
-            // Đổi màu nền khi chọn
-            if (selectedItems.contains(position)) {
-                setColor(Color.LTGRAY)
-            } else {
-                setColor(Color.TRANSPARENT)
-            }
+            cornerRadius = 30f
+            setColor(if (selectedIngredients.contains(ingredient.name)) Color.LTGRAY else Color.TRANSPARENT)
         }
-
-        // Áp dụng background
-        frameLayout.background = backgroundDrawable
-
-        // Xử lý sự kiện khi người dùng nhấn vào item
-        holder.itemView.setOnClickListener {
-            if (selectedItems.contains(position)) {
-                selectedItems.remove(position) // Bỏ chọn
-                onIngredientSelected(-ingredient.price.toInt()) // Giảm giá tiền
-            } else {
-                selectedItems.add(position) // Chọn
-                onIngredientSelected(ingredient.price.toInt()) // Cộng giá tiền
-            }
-            notifyItemChanged(position)
-        }
+        holder.frameLayout.background = backgroundDrawable
     }
 
     override fun getItemCount(): Int = ingredientList.size
+
+    // Đánh dấu ingredient đã chọn và cập nhật UI
+    fun setSelectedIngredients(selectedList: List<String>) {
+        selectedIngredients.clear()
+        selectedIngredients.addAll(selectedList)
+        notifyDataSetChanged()
+    }
 }

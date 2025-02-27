@@ -7,8 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,6 +22,12 @@ class FoodInfoActivity : AppCompatActivity() {
     private lateinit var recyclerViewAddition: RecyclerView
     private lateinit var recyclerViewSauce: RecyclerView
 
+    private lateinit var meatAdapter: IngredientAdapter
+    private lateinit var seafoodAdapter: IngredientAdapter
+    private lateinit var vegetableAdapter: IngredientAdapter
+    private lateinit var additionAdapter: IngredientAdapter
+    private lateinit var sauceAdapter: IngredientAdapter
+
     private val meatList = mutableListOf<IngredientData>()
     private val seafoodList = mutableListOf<IngredientData>()
     private val vegetableList = mutableListOf<IngredientData>()
@@ -32,6 +36,8 @@ class FoodInfoActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private var totalPrice = 0
+    private lateinit var addToCartButton: Button
+    private lateinit var ingredientList: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +47,11 @@ class FoodInfoActivity : AppCompatActivity() {
         val name = intent.getStringExtra("food_name") ?: ""
         val price = intent.getStringExtra("food_price") ?: ""
         val imgPath = intent.getStringExtra("food_image") ?: ""
-        val ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
+        ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
         Log.d("FoodInfoActivity", "Danh sách nguyên liệu nhận được: $ingredientList")
 
         val pizzaNameTextView: TextView = findViewById(R.id.pizza_name)
-        val addToCartButton: Button = findViewById(R.id.add_to_cart_button)
+        addToCartButton = findViewById(R.id.add_to_cart_button)
         val pizzaImageView: ImageView = findViewById(R.id.pizza_image)
 
         pizzaNameTextView.text = name
@@ -96,29 +102,41 @@ class FoodInfoActivity : AppCompatActivity() {
                         "sauce" -> sauceList.add(ingredient)
                         else -> Log.w("Firestore", "Danh mục không xác định: $category")
                     }
-
-                    Log.d("Firestore", "Tên: $name, Giá: $price, Ảnh icon: $iconImgPath, Ảnh lớp: $layerImgPath, Danh mục: $category")
                 }
 
-                // Cập nhật giao diện
-                recyclerViewMeat.adapter = IngredientAdapter(meatList) { updateTotalPrice(it) }
-                recyclerViewSeafood.adapter = IngredientAdapter(seafoodList) { updateTotalPrice(it) }
-                recyclerViewVegetable.adapter = IngredientAdapter(vegetableList) { updateTotalPrice(it) }
-                recyclerViewAddition.adapter = IngredientAdapter(additionList) { updateTotalPrice(it) }
-                recyclerViewSauce.adapter = IngredientAdapter(sauceList) { updateTotalPrice(it) }
+                // Cập nhật Adapter
+                meatAdapter = IngredientAdapter(meatList)
+                seafoodAdapter = IngredientAdapter(seafoodList)
+                vegetableAdapter = IngredientAdapter(vegetableList)
+                additionAdapter = IngredientAdapter(additionList)
+                sauceAdapter = IngredientAdapter(sauceList)
+
+                recyclerViewMeat.adapter = meatAdapter
+                recyclerViewSeafood.adapter = seafoodAdapter
+                recyclerViewVegetable.adapter = vegetableAdapter
+                recyclerViewAddition.adapter = additionAdapter
+                recyclerViewSauce.adapter = sauceAdapter
+
+                // Chọn sẵn nguyên liệu có trong ingredientList
+                selectPreChosenIngredients()
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
             }
     }
 
-    private fun updateTotalPrice(amount: Int) {
-        totalPrice += amount
-        updatePrice()
+    private fun selectPreChosenIngredients() {
+        val selected = mutableListOf<String>()
+        selected.addAll(ingredientList)
+
+        meatAdapter.setSelectedIngredients(selected)
+        seafoodAdapter.setSelectedIngredients(selected)
+        vegetableAdapter.setSelectedIngredients(selected)
+        additionAdapter.setSelectedIngredients(selected)
+        sauceAdapter.setSelectedIngredients(selected)
     }
 
     private fun updatePrice() {
-        val addToCartButton: Button = findViewById(R.id.add_to_cart_button)
         addToCartButton.text = "Add to cart - $totalPrice VND"
     }
 }
