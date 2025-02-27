@@ -14,8 +14,8 @@ import com.example.pizza3ps.model.IngredientData
 
 class IngredientAdapter(
     private val ingredientList: List<IngredientData>,
-    private val onIngredientSelected: (Int) -> Unit):
-    RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
+    private val onIngredientSelected: (Int) -> Unit
+    ): RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
 
     private val selectedItems = mutableSetOf<Int>()
 

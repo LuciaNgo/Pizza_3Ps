@@ -34,8 +34,6 @@ class FoodAdapter(private val foodList: List<FoodData>) :
         // Load ảnh bằng Glide
         Glide.with(holder.itemView.context)
             .load(food.imgPath)
-            .placeholder(R.drawable.default_food_image)
-            .error(R.drawable.default_food_image)
             .into(holder.foodImageView)
 
         // Thiết lập sự kiện click để mở FoodInfoActivity
@@ -45,6 +43,7 @@ class FoodAdapter(private val foodList: List<FoodData>) :
                 putExtra("food_name", food.name)
                 putExtra("food_price", food.price)
                 putExtra("food_image", food.imgPath)
+                putStringArrayListExtra("ingredientList", ArrayList(food.ingredients))
             }
             context.startActivity(intent)
         }

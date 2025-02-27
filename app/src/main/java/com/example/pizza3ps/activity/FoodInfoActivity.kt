@@ -41,9 +41,8 @@ class FoodInfoActivity : AppCompatActivity() {
         val name = intent.getStringExtra("food_name") ?: ""
         val price = intent.getStringExtra("food_price") ?: ""
         val imgPath = intent.getStringExtra("food_image") ?: ""
-        val selectedIngredients = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
-
-        //val ingredients = intent.getStringArrayExtra("ingredientList")?.toList() ?: listOf()
+        val ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
+        Log.d("FoodInfoActivity", "Danh sách nguyên liệu nhận được: $ingredientList")
 
         val pizzaNameTextView: TextView = findViewById(R.id.pizza_name)
         val addToCartButton: Button = findViewById(R.id.add_to_cart_button)
