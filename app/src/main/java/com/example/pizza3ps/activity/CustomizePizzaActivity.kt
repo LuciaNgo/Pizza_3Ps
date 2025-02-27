@@ -83,11 +83,14 @@ class CustomizePizzaActivity : AppCompatActivity() {
                 }
 
                 // Cập nhật giao diện
+                /*
                 recyclerViewMeat.adapter = IngredientAdapter(meatList)
                 recyclerViewSeafood.adapter = IngredientAdapter(seafoodList)
                 recyclerViewVegetable.adapter = IngredientAdapter(vegetableList)
                 recyclerViewAddition.adapter = IngredientAdapter(additionList)
                 recyclerViewSauce.adapter = IngredientAdapter(sauceList)
+
+                 */
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
