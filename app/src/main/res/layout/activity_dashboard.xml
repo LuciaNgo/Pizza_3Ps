@@ -491,21 +491,25 @@
 
         <!-- Account Button -->
         <LinearLayout
+            android:id="@+id/btnAccount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="8dp"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
+            android:padding="8dp">
+
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/account"/>
+                android:src="@drawable/account" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@id/btnAccount"
                 android:text="Account"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
