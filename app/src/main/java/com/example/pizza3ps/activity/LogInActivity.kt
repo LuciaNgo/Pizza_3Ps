@@ -1,4 +1,4 @@
-package com.example.pizza3ps
+package com.example.pizza3ps.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.pizza3ps.R
 import com.google.firebase.auth.FirebaseAuth
 
 class LogInActivity : AppCompatActivity() {
@@ -49,7 +50,7 @@ class LogInActivity : AppCompatActivity() {
             val password = passwordEditText.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(this, "Please fill all fields!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter full information!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

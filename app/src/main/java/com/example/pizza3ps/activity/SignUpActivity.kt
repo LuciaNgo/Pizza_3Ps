@@ -1,4 +1,4 @@
-package com.example.pizza3ps
+package com.example.pizza3ps.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.pizza3ps.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -19,6 +20,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var phoneEditText: EditText
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var confirmPasswordEditText: EditText
     private lateinit var signUpButton: Button
     private lateinit var logInButton: TextView
     private lateinit var backButton: ImageView
@@ -34,6 +36,7 @@ class SignUpActivity : AppCompatActivity() {
         phoneEditText = findViewById(R.id.phone_input)
         emailEditText = findViewById(R.id.email_input)
         passwordEditText = findViewById(R.id.password_input)
+        confirmPasswordEditText = findViewById(R.id.confirm_password_input)
         signUpButton = findViewById(R.id.sign_up_button)
         backButton = findViewById(R.id.back_button)
         logInButton = findViewById(R.id.text_view_2)
@@ -55,11 +58,18 @@ class SignUpActivity : AppCompatActivity() {
             val phone = phoneEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
+            val confirmPassword = confirmPasswordEditText.text.toString().trim()
 
-            if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Fill all fields!", Toast.LENGTH_SHORT).show()
+            if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(this, "Please enter full information!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            if (password != confirmPassword) {
+                Toast.makeText(this, "Confirmation password does not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
 
             registerUser(name, phone, email, password)
         }

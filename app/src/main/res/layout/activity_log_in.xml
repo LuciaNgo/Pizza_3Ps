@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity">
+    tools:context=".activity.SignUpActivity">
 
     <ImageView
         android:id="@+id/background_image"
@@ -184,14 +184,16 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/facebook" />
+            android:src="@drawable/facebook"
+            android:clickable="true"/>
 
         <ImageView
             android:id="@+id/google_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/google" />
+            android:src="@drawable/google"
+            android:clickable="true"/>
     </LinearLayout>
 
     <TextView
