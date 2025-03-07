@@ -51,4 +51,5 @@ class FoodAdapter(private val foodList: List<FoodData>) :
     }
 
     override fun getItemCount() = foodList.size
+
 }

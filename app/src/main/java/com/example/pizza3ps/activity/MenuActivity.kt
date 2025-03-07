@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -44,7 +45,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var appetizerFoodAdapter: FoodAdapter
     private lateinit var drinksFoodAdapter: FoodAdapter
 
-    private lateinit var searchBar : SearchView
+    private lateinit var searchBar: SearchView
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -54,8 +55,8 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 
         val customizeLayout: LinearLayout = findViewById(R.id.customize_layout)
-        val homeLayout : LinearLayout = findViewById(R.id.home_layout)
-        val menuLayout : LinearLayout = findViewById(R.id.menu_layout)
+        val homeLayout: LinearLayout = findViewById(R.id.home_layout)
+        val menuLayout: LinearLayout = findViewById(R.id.menu_layout)
 
         val scrollView = findViewById<ScrollView>(R.id.menu_scroll_view)
 
@@ -87,6 +88,7 @@ class MenuActivity : AppCompatActivity() {
         drinksRecyclerView = findViewById(R.id.drinks_view)
 
         searchBar = findViewById(R.id.menu_search_bar)
+        searchBar.clearFocus()
 
         pizzaRecyclerView.layoutManager = GridLayoutManager(this, 2)
         chickenRecyclerView.layoutManager = GridLayoutManager(this, 2)
@@ -124,65 +126,62 @@ class MenuActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-    //        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-    //            override fun onQueryTextSubmit(query: String?): Boolean {
-    //                query?.let { performFilteredSearch(it) }
-    //                return true
-    //            }
-    //
-    //            override fun onQueryTextChange(newText: String?): Boolean {
-    //                performFilteredSearch(newText ?: "")
-    //                return true
-    //            }
-    //        })
+        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+
+        })
+
+    }
+
+    private fun filterList(text: String?) {
+        if (text.isNullOrEmpty()) {
+            Log.w("FilteredList", "Search text is null or empty")
+            return  // Exit early if text is empty
+        }
+
+        val filteredPizza = pizzaList.filter { it.name.lowercase().contains(text.lowercase()) }
+        val filteredChicken = chickenList.filter { it.name.lowercase().contains(text.lowercase()) }
+        val filteredPasta = pastaList.filter { it.name.lowercase().contains(text.lowercase()) }
+        val filteredAppetizer =
+            appetizerList.filter { it.name.lowercase().contains(text.lowercase()) }
+        val filteredDrinks = drinksList.filter { it.name.lowercase().contains(text.lowercase()) }
+
+        // Set adapter only if there are items
+        pizzaRecyclerView.adapter =
+            if (filteredPizza.isNotEmpty()) FoodAdapter(filteredPizza) else null
+        chickenRecyclerView.adapter =
+            if (filteredChicken.isNotEmpty()) FoodAdapter(filteredChicken) else null
+        pastaRecyclerView.adapter =
+            if (filteredPasta.isNotEmpty()) FoodAdapter(filteredPasta) else null
+        appetizerRecyclerView.adapter =
+            if (filteredAppetizer.isNotEmpty()) FoodAdapter(filteredAppetizer) else null
+        drinksRecyclerView.adapter =
+            if (filteredDrinks.isNotEmpty()) FoodAdapter(filteredDrinks) else null
+
+        // ✅ Hide section titles if empty
+        findViewById<TextView>(R.id.pizza_section_title).visibility =
+            if (filteredPizza.isEmpty()) View.GONE else View.VISIBLE
+        findViewById<TextView>(R.id.chicken_section_title).visibility =
+            if (filteredChicken.isEmpty()) View.GONE else View.VISIBLE
+        findViewById<TextView>(R.id.pasta_section_title).visibility =
+            if (filteredPasta.isEmpty()) View.GONE else View.VISIBLE
+        findViewById<TextView>(R.id.appetizer_section_title).visibility =
+            if (filteredAppetizer.isEmpty()) View.GONE else View.VISIBLE
+        findViewById<TextView>(R.id.drinks_section_title).visibility =
+            if (filteredDrinks.isEmpty()) View.GONE else View.VISIBLE
     }
 
 
     private fun getAllFoodItems(): List<FoodData> {
         return pizzaList + chickenList + pastaList + appetizerList + drinksList
     }
-
-//    private fun performSearch(query: String) {
-//        if (query.isEmpty()) {
-//            // ✅ If search bar is cleared, restore original lists
-//            pizzaFoodAdapter.updateData(pizzaList.toMutableList())
-//            chickenFoodAdapter.updateData(chickenList.toMutableList())
-//            pastaFoodAdapter.updateData(pastaList.toMutableList())
-//            appetizerFoodAdapter.updateData(appetizerList.toMutableList())
-//            drinksFoodAdapter.updateData(drinksList.toMutableList())
-//            return
-//        }
-//
-//        val filteredList = getAllFoodItems().filter {
-//            it.name.contains(query, ignoreCase = true)
-//        }
-//
-//        if (filteredList.isEmpty()) {
-//            Log.d("SearchView", "No items match the query: $query")
-//        } else {
-//            Log.d("SearchView", "Filtered items: ${filteredList.map { it.name }}")
-//        }
-//
-//        pizzaFoodAdapter.updateData(filteredList)
-//        chickenFoodAdapter.updateData(filteredList)
-//        pastaFoodAdapter.updateData(filteredList)
-//        appetizerFoodAdapter.updateData(filteredList)
-//        drinksFoodAdapter.updateData(filteredList)
-//
-//    }
-
-//    private fun performFilteredSearch(query: String) {
-//        if (query.isEmpty()) {
-//            // ✅ Reset lists when search is cleared
-//            pizzaFoodAdapter.updateData(pizzaList)
-//            chickenFoodAdapter.updateData(chickenList)
-//            pastaFoodAdapter.updateData(pastaList)
-//            appetizerFoodAdapter.updateData(appetizerList)
-//            drinksFoodAdapter.updateData(drinksList)
-//            return
-//        }
-//    }
 
 
     private fun scrollToSection(scrollView: ScrollView, targetView: View) {
@@ -196,7 +195,6 @@ class MenuActivity : AppCompatActivity() {
             scrollView.smoothScrollTo(0, scrollY)
         }
     }
-
 
 
     private fun fetchEventData() {
@@ -276,23 +274,5 @@ class MenuActivity : AppCompatActivity() {
             }
     }
 
-
-
-
-//    fun fetchFirestoreSuggestions() {
-//        val db = FirebaseFirestore.getInstance()
-//        db.collection("FoodItems") // Assume you have a "FoodItems" collection
-//            .get()
-//            .addOnSuccessListener { documents ->
-//                val suggestions = documents.map { it.getString("name") ?: "" }
-//                val adapter = ArrayAdapter(this, R.layout.suggestion_item, suggestions)
-//                searchAutoComplete.setAdapter(adapter)
-//            }
-//            .addOnFailureListener {
-//                Log.e("Firestore", "Error fetching suggestions", it)
-//            }
-//    }
-
 }
-
 
