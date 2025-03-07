@@ -1,3 +1,4 @@
+
 package com.example.pizza3ps.adapter
 
 import android.content.Intent
@@ -51,4 +52,3 @@ class FoodAdapter(private val foodList: List<FoodData>) :
 
     override fun getItemCount() = foodList.size
 }
-

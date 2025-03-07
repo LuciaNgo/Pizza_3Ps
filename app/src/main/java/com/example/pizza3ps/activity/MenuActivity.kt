@@ -1,18 +1,19 @@
 package com.example.pizza3ps.activity
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.EventAdapter
@@ -22,8 +23,7 @@ import com.example.pizza3ps.model.FoodData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
-class DashboardActivity : AppCompatActivity() {
-    private lateinit var eventRecyclerView: RecyclerView
+class MenuActivity : AppCompatActivity() {
     private lateinit var pizzaRecyclerView: RecyclerView
     private lateinit var chickenRecyclerView: RecyclerView
     private lateinit var pastaRecyclerView: RecyclerView
@@ -44,16 +44,20 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var appetizerFoodAdapter: FoodAdapter
     private lateinit var drinksFoodAdapter: FoodAdapter
 
+    private lateinit var searchBar : SearchView
+
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_dashboard)
+        setContentView(R.layout.activity_menu)
 
-        val customizeLayout : LinearLayout = findViewById(R.id.customize_layout)
+        val customizeLayout: LinearLayout = findViewById(R.id.customize_layout)
+        val homeLayout : LinearLayout = findViewById(R.id.home_layout)
         val menuLayout : LinearLayout = findViewById(R.id.menu_layout)
-        val scrollView = findViewById<ScrollView>(R.id.scroll_view)
+
+        val scrollView = findViewById<ScrollView>(R.id.menu_scroll_view)
 
         // Lấy các danh mục trên thanh category
         val pizzaCategory = findViewById<LinearLayout>(R.id.pizza_category)
@@ -76,20 +80,19 @@ class DashboardActivity : AppCompatActivity() {
         appetizerCategory.setOnClickListener { scrollToSection(scrollView, appetizerSection) }
         drinksCategory.setOnClickListener { scrollToSection(scrollView, drinksSection) }
 
-        eventRecyclerView = findViewById(R.id.event_recycler_view)
-        pizzaRecyclerView = findViewById(R.id.pizza_recycler_view)
-        chickenRecyclerView = findViewById(R.id.chicken_recycler_view)
-        pastaRecyclerView = findViewById(R.id.pasta_recycler_view)
-        appetizerRecyclerView = findViewById(R.id.appetizer_recycler_view)
-        drinksRecyclerView = findViewById(R.id.drinks_recycler_view)
+        pizzaRecyclerView = findViewById(R.id.pizza_view)
+        chickenRecyclerView = findViewById(R.id.chicken_view)
+        pastaRecyclerView = findViewById(R.id.pasta_view)
+        appetizerRecyclerView = findViewById(R.id.appetizer_view)
+        drinksRecyclerView = findViewById(R.id.drinks_view)
 
-        eventRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        pizzaRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        chickenRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        pastaRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        appetizerRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        drinksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        searchBar = findViewById(R.id.menu_search_bar)
 
+        pizzaRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        chickenRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        pastaRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        appetizerRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        drinksRecyclerView.layoutManager = GridLayoutManager(this, 2)
 
         eventAdapter = EventAdapter(eventList)
         pizzaFoodAdapter = FoodAdapter(pizzaList)
@@ -98,14 +101,12 @@ class DashboardActivity : AppCompatActivity() {
         appetizerFoodAdapter = FoodAdapter(appetizerList)
         drinksFoodAdapter = FoodAdapter(drinksList)
 
-        eventRecyclerView.adapter = eventAdapter
         pizzaRecyclerView.adapter = pizzaFoodAdapter
         chickenRecyclerView.adapter = chickenFoodAdapter
         pastaRecyclerView.adapter = pastaFoodAdapter
         appetizerRecyclerView.adapter = appetizerFoodAdapter
         drinksRecyclerView.adapter = drinksFoodAdapter
 
-        fetchEventData()
         fetchFoodData()
 
         customizeLayout.setOnClickListener {
@@ -117,7 +118,72 @@ class DashboardActivity : AppCompatActivity() {
             val intent = Intent(this, MenuActivity::class.java)
             startActivity(intent)
         }
+
+        homeLayout.setOnClickListener {
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+        }
+
+    //        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+    //            override fun onQueryTextSubmit(query: String?): Boolean {
+    //                query?.let { performFilteredSearch(it) }
+    //                return true
+    //            }
+    //
+    //            override fun onQueryTextChange(newText: String?): Boolean {
+    //                performFilteredSearch(newText ?: "")
+    //                return true
+    //            }
+    //        })
+
     }
+
+
+    private fun getAllFoodItems(): List<FoodData> {
+        return pizzaList + chickenList + pastaList + appetizerList + drinksList
+    }
+
+//    private fun performSearch(query: String) {
+//        if (query.isEmpty()) {
+//            // ✅ If search bar is cleared, restore original lists
+//            pizzaFoodAdapter.updateData(pizzaList.toMutableList())
+//            chickenFoodAdapter.updateData(chickenList.toMutableList())
+//            pastaFoodAdapter.updateData(pastaList.toMutableList())
+//            appetizerFoodAdapter.updateData(appetizerList.toMutableList())
+//            drinksFoodAdapter.updateData(drinksList.toMutableList())
+//            return
+//        }
+//
+//        val filteredList = getAllFoodItems().filter {
+//            it.name.contains(query, ignoreCase = true)
+//        }
+//
+//        if (filteredList.isEmpty()) {
+//            Log.d("SearchView", "No items match the query: $query")
+//        } else {
+//            Log.d("SearchView", "Filtered items: ${filteredList.map { it.name }}")
+//        }
+//
+//        pizzaFoodAdapter.updateData(filteredList)
+//        chickenFoodAdapter.updateData(filteredList)
+//        pastaFoodAdapter.updateData(filteredList)
+//        appetizerFoodAdapter.updateData(filteredList)
+//        drinksFoodAdapter.updateData(filteredList)
+//
+//    }
+
+//    private fun performFilteredSearch(query: String) {
+//        if (query.isEmpty()) {
+//            // ✅ Reset lists when search is cleared
+//            pizzaFoodAdapter.updateData(pizzaList)
+//            chickenFoodAdapter.updateData(chickenList)
+//            pastaFoodAdapter.updateData(pastaList)
+//            appetizerFoodAdapter.updateData(appetizerList)
+//            drinksFoodAdapter.updateData(drinksList)
+//            return
+//        }
+//    }
+
 
     private fun scrollToSection(scrollView: ScrollView, targetView: View) {
         scrollView.post {
@@ -130,6 +196,8 @@ class DashboardActivity : AppCompatActivity() {
             scrollView.smoothScrollTo(0, scrollY)
         }
     }
+
+
 
     private fun fetchEventData() {
         db.collection("Event")
@@ -190,7 +258,10 @@ class DashboardActivity : AppCompatActivity() {
                         else -> Log.w("Firestore", "Danh mục không xác định: $category")
                     }
 
-                    Log.d("Firestore", "Tên: $name, Giá: $formattedPrice, Hình ảnh: $imgPath, Nguyên liệu: $ingredientList, Danh mục: $category")
+                    Log.d(
+                        "Firestore",
+                        "Tên: $name, Giá: $formattedPrice, Hình ảnh: $imgPath, Nguyên liệu: $ingredientList, Danh mục: $category"
+                    )
                 }
 
                 // Cập nhật giao diện
@@ -205,4 +276,23 @@ class DashboardActivity : AppCompatActivity() {
             }
     }
 
+
+
+
+//    fun fetchFirestoreSuggestions() {
+//        val db = FirebaseFirestore.getInstance()
+//        db.collection("FoodItems") // Assume you have a "FoodItems" collection
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                val suggestions = documents.map { it.getString("name") ?: "" }
+//                val adapter = ArrayAdapter(this, R.layout.suggestion_item, suggestions)
+//                searchAutoComplete.setAdapter(adapter)
+//            }
+//            .addOnFailureListener {
+//                Log.e("Firestore", "Error fetching suggestions", it)
+//            }
+//    }
+
 }
+
+
