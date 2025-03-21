@@ -20,6 +20,7 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.model.IngredientData
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.DecimalFormat
 
 class FoodInfoActivity : AppCompatActivity() {
     private lateinit var recyclerViewMeat: RecyclerView
@@ -282,6 +283,7 @@ class FoodInfoActivity : AppCompatActivity() {
 
     private fun updatePrice() {
         totalPrice = basePrice * quantity
-        addToCartButton.text = "Add to cart - $totalPrice VND"
+        val formattedPrice = DecimalFormat("#,###").format(totalPrice)
+        addToCartButton.text = "Add to cart - $formattedPrice VND"
     }
 }
