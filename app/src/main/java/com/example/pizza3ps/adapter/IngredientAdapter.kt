@@ -41,7 +41,7 @@ class IngredientAdapter(
         val isSelected = selectedIngredients.contains(ingredient.name)
         val backgroundDrawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 30f
+            cornerRadius = 35f
             setColor(if (isSelected) Color.LTGRAY else Color.TRANSPARENT)
         }
         holder.frameLayout.background = backgroundDrawable

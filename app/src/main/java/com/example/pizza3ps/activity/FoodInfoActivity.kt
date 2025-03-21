@@ -159,6 +159,8 @@ class FoodInfoActivity : AppCompatActivity() {
         // Crust base ingredient
         crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                crustChickenCheckBox.isChecked = false
+                crustSausageCheckBox.isChecked = false
                 basePrice += 40000
             } else {
                 basePrice -= 40000
@@ -168,6 +170,8 @@ class FoodInfoActivity : AppCompatActivity() {
 
         crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                crustCheeseCheckBox.isChecked = false
+                crustSausageCheckBox.isChecked = false
                 basePrice += 40000
             } else {
                 basePrice -= 40000
@@ -177,13 +181,14 @@ class FoodInfoActivity : AppCompatActivity() {
 
         crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                crustCheeseCheckBox.isChecked = false
+                crustChickenCheckBox.isChecked = false
                 basePrice += 30000
             } else {
                 basePrice -= 30000
             }
             updatePrice()
         }
-
 
         updatePrice()
         Glide.with(this).load(imgPath).into(pizzaImageView)
