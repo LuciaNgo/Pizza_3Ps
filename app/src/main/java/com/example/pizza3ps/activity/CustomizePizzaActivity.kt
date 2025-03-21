@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.model.IngredientData
@@ -55,6 +57,9 @@ class CustomizePizzaActivity : AppCompatActivity() {
     private var basePrice = 50000
     private var totalPrice = basePrice
 
+    private lateinit var layerContainer: FrameLayout
+    private val ingredientImageViews = mutableMapOf<String, ImageView>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -73,6 +78,7 @@ class CustomizePizzaActivity : AppCompatActivity() {
         crustCheeseCheckBox = findViewById(R.id.crust_cheese)
         crustChickenCheckBox = findViewById(R.id.crust_chicken)
         crustSausageCheckBox = findViewById(R.id.crust_sausage)
+        layerContainer = findViewById(R.id.layerContainer)
 
         sizeSRadioButton.isChecked = true
         crustThinButton.isChecked = true
@@ -176,12 +182,12 @@ class CustomizePizzaActivity : AppCompatActivity() {
             updatePrice()
         }
 
-
         updatePrice()
         //Glide.with(this).load(imgPath).into(pizzaImageView)
 
         setupRecyclerViews()
         fetchIngredientData()
+
     }
 
     private fun setupRecyclerViews() {
@@ -247,6 +253,22 @@ class CustomizePizzaActivity : AppCompatActivity() {
     private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {
         basePrice += if (isSelected) ingredient.price.toInt() else -ingredient.price.toInt()
         updatePrice()
+
+        if (isSelected) {
+            basePrice += ingredient.price.toInt()
+            updatePrice()
+            val imageView = ImageView(this)
+            Glide.with(this)
+                .load(ingredient.layerImgPath)
+                .into(imageView)
+            layerContainer.addView(imageView)
+            ingredientImageViews[ingredient.name] = imageView
+        } else {
+            basePrice -= ingredient.price.toInt()
+            updatePrice()
+            ingredientImageViews[ingredient.name]?.let { layerContainer.removeView(it) }
+            ingredientImageViews.remove(ingredient.name)
+        }
     }
 
     private fun updatePrice() {
