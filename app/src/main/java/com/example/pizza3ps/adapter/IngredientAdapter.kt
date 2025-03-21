@@ -13,7 +13,8 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.model.IngredientData
 
 class IngredientAdapter(
-    private val ingredientList: List<IngredientData>
+    private val ingredientList: List<IngredientData>,
+    private val onIngredientSelected: (IngredientData, Boolean) -> Unit // Callback để cập nhật giá
 ) : RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
 
     private val selectedIngredients = mutableSetOf<String>()
@@ -37,17 +38,29 @@ class IngredientAdapter(
             .into(holder.ingredientIcon)
 
         // Cập nhật màu nền dựa vào trạng thái đã chọn
+        val isSelected = selectedIngredients.contains(ingredient.name)
         val backgroundDrawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadius = 30f
-            setColor(if (selectedIngredients.contains(ingredient.name)) Color.LTGRAY else Color.TRANSPARENT)
+            setColor(if (isSelected) Color.LTGRAY else Color.TRANSPARENT)
         }
         holder.frameLayout.background = backgroundDrawable
+
+        // Xử lý khi click vào nguyên liệu
+        holder.itemView.setOnClickListener {
+            val newlySelected = !isSelected
+            if (newlySelected) {
+                selectedIngredients.add(ingredient.name)
+            } else {
+                selectedIngredients.remove(ingredient.name)
+            }
+            notifyItemChanged(position)
+            onIngredientSelected(ingredient, newlySelected) // Gọi callback để cập nhật giá
+        }
     }
 
     override fun getItemCount(): Int = ingredientList.size
 
-    // Đánh dấu ingredient đã chọn và cập nhật UI
     fun setSelectedIngredients(selectedList: List<String>) {
         selectedIngredients.clear()
         selectedIngredients.addAll(selectedList)

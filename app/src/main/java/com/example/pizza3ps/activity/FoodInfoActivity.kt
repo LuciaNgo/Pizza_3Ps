@@ -1,12 +1,18 @@
 package com.example.pizza3ps.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -34,10 +40,26 @@ class FoodInfoActivity : AppCompatActivity() {
     private val additionList = mutableListOf<IngredientData>()
     private val sauceList = mutableListOf<IngredientData>()
 
-    private val db = FirebaseFirestore.getInstance()
-    private var totalPrice = 0
     private lateinit var addToCartButton: Button
+    private lateinit var pizzaNameTextView: TextView
+    private lateinit var pizzaImageView: ImageView
+    private lateinit var quantityTextView: TextView
+    private lateinit var minusCardView: CardView
+    private lateinit var plusCardView: CardView
+    private lateinit var sizeSRadioButton: RadioButton
+    private lateinit var sizeMRadioButton: RadioButton
+    private lateinit var sizeLRadioButton: RadioButton
+    private lateinit var crustThinButton: RadioButton
+    private lateinit var crustThickButton: RadioButton
+    private lateinit var crustCheeseCheckBox: CheckBox
+    private lateinit var crustChickenCheckBox: CheckBox
+    private lateinit var crustSausageCheckBox: CheckBox
+
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var ingredientList: List<String>
+    private var quantity = 1
+    private var basePrice = 50000
+    private var totalPrice = basePrice
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,15 +72,127 @@ class FoodInfoActivity : AppCompatActivity() {
         ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
         Log.d("FoodInfoActivity", "Danh sách nguyên liệu nhận được: $ingredientList")
 
-        val pizzaNameTextView: TextView = findViewById(R.id.pizza_name)
         addToCartButton = findViewById(R.id.add_to_cart_button)
-        val pizzaImageView: ImageView = findViewById(R.id.pizza_image)
+        pizzaNameTextView = findViewById(R.id.pizza_name)
+        pizzaImageView = findViewById(R.id.pizza_image)
+        quantityTextView = findViewById(R.id.quantity_text)
+        minusCardView = findViewById(R.id.minus)
+        plusCardView = findViewById(R.id.plus)
+        sizeSRadioButton = findViewById(R.id.size_s)
+        sizeMRadioButton = findViewById(R.id.size_m)
+        sizeLRadioButton = findViewById(R.id.size_l)
+        crustThinButton = findViewById(R.id.crust_thin)
+        crustThickButton = findViewById(R.id.crust_thick)
+        crustCheeseCheckBox = findViewById(R.id.crust_cheese)
+        crustChickenCheckBox = findViewById(R.id.crust_chicken)
+        crustSausageCheckBox = findViewById(R.id.crust_sausage)
 
         pizzaNameTextView.text = name
-        totalPrice = price.toIntOrNull() ?: 0
+        sizeSRadioButton.isChecked = true
+        crustThinButton.isChecked = true
+        quantityTextView.text = quantity.toString()
+
+        // Plus
+        plusCardView.setOnClickListener {
+            quantity++
+            quantityTextView.text = quantity.toString()
+            updatePrice()
+        }
+
+        // Minus
+        minusCardView.setOnClickListener {
+            if (quantity > 1) {
+                quantity--
+                quantityTextView.text = quantity.toString()
+                updatePrice()
+            }
+        }
+
+        // Size
+        sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 40000
+            } else {
+                basePrice -= 40000
+            }
+            updatePrice()
+        }
+
+        sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 70000
+            } else {
+                basePrice -= 70000
+            }
+            updatePrice()
+        }
+
+        sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 90000
+            } else {
+                basePrice -= 90000
+            }
+            updatePrice()
+        }
+
+        // Crust thickness
+        crustThinButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 10000
+            } else {
+                basePrice -= 10000
+            }
+            updatePrice()
+        }
+
+        crustThickButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 20000
+            }
+            else {
+                basePrice -= 20000
+            }
+            updatePrice()
+        }
+
+        // Crust base ingredient
+        crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 40000
+            } else {
+                basePrice -= 40000
+            }
+            updatePrice()
+        }
+
+        crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 40000
+            } else {
+                basePrice -= 40000
+            }
+            updatePrice()
+        }
+
+        crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 30000
+            } else {
+                basePrice -= 30000
+            }
+            updatePrice()
+        }
+
+
         updatePrice()
         Glide.with(this).load(imgPath).into(pizzaImageView)
 
+        setupRecyclerViews()
+        fetchIngredientData()
+    }
+
+    private fun setupRecyclerViews() {
         recyclerViewMeat = findViewById(R.id.meat_recycler_view)
         recyclerViewSeafood = findViewById(R.id.seafood_recycler_view)
         recyclerViewVegetable = findViewById(R.id.vegetable_recycler_view)
@@ -70,15 +204,12 @@ class FoodInfoActivity : AppCompatActivity() {
         recyclerViewVegetable.layoutManager = GridLayoutManager(this, 5)
         recyclerViewAddition.layoutManager = GridLayoutManager(this, 5)
         recyclerViewSauce.layoutManager = GridLayoutManager(this, 5)
-
-        fetchIngredientData()
     }
 
     private fun fetchIngredientData() {
         db.collection("Ingredient")
             .get()
             .addOnSuccessListener { documents ->
-                // Xóa danh sách cũ trước khi thêm dữ liệu mới
                 meatList.clear()
                 seafoodList.clear()
                 vegetableList.clear()
@@ -100,43 +231,52 @@ class FoodInfoActivity : AppCompatActivity() {
                         "vegetable" -> vegetableList.add(ingredient)
                         "addition" -> additionList.add(ingredient)
                         "sauce" -> sauceList.add(ingredient)
-                        else -> Log.w("Firestore", "Danh mục không xác định: $category")
                     }
                 }
 
-                // Cập nhật Adapter
-                meatAdapter = IngredientAdapter(meatList)
-                seafoodAdapter = IngredientAdapter(seafoodList)
-                vegetableAdapter = IngredientAdapter(vegetableList)
-                additionAdapter = IngredientAdapter(additionList)
-                sauceAdapter = IngredientAdapter(sauceList)
-
-                recyclerViewMeat.adapter = meatAdapter
-                recyclerViewSeafood.adapter = seafoodAdapter
-                recyclerViewVegetable.adapter = vegetableAdapter
-                recyclerViewAddition.adapter = additionAdapter
-                recyclerViewSauce.adapter = sauceAdapter
-
-                // Chọn sẵn nguyên liệu có trong ingredientList
+                setupAdapters()
                 selectPreChosenIngredients()
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
             }
     }
 
     private fun selectPreChosenIngredients() {
-        val selected = mutableListOf<String>()
-        selected.addAll(ingredientList)
+        meatAdapter.setSelectedIngredients(ingredientList)
+        seafoodAdapter.setSelectedIngredients(ingredientList)
+        vegetableAdapter.setSelectedIngredients(ingredientList)
+        additionAdapter.setSelectedIngredients(ingredientList)
+        sauceAdapter.setSelectedIngredients(ingredientList)
 
-        meatAdapter.setSelectedIngredients(selected)
-        seafoodAdapter.setSelectedIngredients(selected)
-        vegetableAdapter.setSelectedIngredients(selected)
-        additionAdapter.setSelectedIngredients(selected)
-        sauceAdapter.setSelectedIngredients(selected)
+        // Cập nhật tổng giá tiền khi load dữ liệu
+        for (ingredient in meatList + seafoodList + vegetableList + additionList + sauceList) {
+            if (ingredientList.contains(ingredient.name)) {
+                basePrice += ingredient.price.toInt()
+            }
+        }
+        updatePrice()
+    }
+
+
+    private fun setupAdapters() {
+        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
+        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
+        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
+        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
+        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+
+        recyclerViewMeat.adapter = meatAdapter
+        recyclerViewSeafood.adapter = seafoodAdapter
+        recyclerViewVegetable.adapter = vegetableAdapter
+        recyclerViewAddition.adapter = additionAdapter
+        recyclerViewSauce.adapter = sauceAdapter
+    }
+
+    private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {
+        basePrice += if (isSelected) ingredient.price.toInt() else -ingredient.price.toInt()
+        updatePrice()
     }
 
     private fun updatePrice() {
+        totalPrice = basePrice * quantity
         addToCartButton.text = "Add to cart - $totalPrice VND"
     }
 }
