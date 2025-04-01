@@ -4,12 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,6 +49,7 @@ class DashboardActivity : AppCompatActivity() {
 
         val customizeLayout : LinearLayout = findViewById(R.id.customize_layout)
         val menuLayout : LinearLayout = findViewById(R.id.menu_layout)
+        val btnAccount : LinearLayout = findViewById(R.id.btnAccount)
         val scrollView = findViewById<ScrollView>(R.id.scroll_view)
 
         // Lấy các danh mục trên thanh category
@@ -90,7 +87,6 @@ class DashboardActivity : AppCompatActivity() {
         appetizerRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         drinksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-
         eventAdapter = EventAdapter(eventList)
         pizzaFoodAdapter = FoodAdapter(pizzaList)
         chickenFoodAdapter = FoodAdapter(chickenList)
@@ -115,6 +111,11 @@ class DashboardActivity : AppCompatActivity() {
 
         menuLayout.setOnClickListener {
             val intent = Intent(this, MenuActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnAccount.setOnClickListener {
+            val intent = Intent(this, AccountActivity::class.java)
             startActivity(intent)
         }
     }
@@ -179,8 +180,10 @@ class DashboardActivity : AppCompatActivity() {
                     // Tách danh sách nguyên liệu thành mảng
                     val ingredientList = ingredientString.split(", ").map { it.trim() }
 
+                    // Tạo đối tượng FoodData
                     val foodItem = FoodData(name, formattedPrice, imgPath, ingredientList)
 
+                    // Thêm vào danh sách theo category
                     when (category.lowercase()) {
                         "pizza" -> pizzaList.add(foodItem)
                         "pasta" -> pastaList.add(foodItem)
