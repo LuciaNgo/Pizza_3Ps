@@ -5,4 +5,5 @@
     <color name="overlay_gray">#80000000</color>
     <color name="orange">#FFF6650A</color>
     <color name="white_orange">#FFF4EE</color>
+    <color name="gray">#FFb8b8b8</color>
 </resources>

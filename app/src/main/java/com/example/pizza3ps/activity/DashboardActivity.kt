@@ -3,9 +3,9 @@ package com.example.pizza3ps.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
+import android.view.View
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,6 +55,29 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val customizeLayout : LinearLayout = findViewById(R.id.customize_layout)
+        val scrollView = findViewById<ScrollView>(R.id.scroll_view)
+
+        // Lấy các danh mục trên thanh category
+        val pizzaCategory = findViewById<LinearLayout>(R.id.pizza_category)
+        val chickenCategory = findViewById<LinearLayout>(R.id.chicken_category)
+        val pastaCategory = findViewById<LinearLayout>(R.id.pasta_category)
+        val appetizerCategory = findViewById<LinearLayout>(R.id.appetizer_category)
+        val drinksCategory = findViewById<LinearLayout>(R.id.drinks_category)
+
+        // Lấy các tiêu đề section tương ứng
+        val pizzaSection = findViewById<View>(R.id.pizza_section_title)
+        val chickenSection = findViewById<View>(R.id.chicken_section_title)
+        val pastaSection = findViewById<View>(R.id.pasta_section_title)
+        val appetizerSection = findViewById<View>(R.id.appetizer_section_title)
+        val drinksSection = findViewById<View>(R.id.drinks_section_title)
+
+        // Thiết lập sự kiện click để cuộn đến phần tương ứng
+        pizzaCategory.setOnClickListener { scrollToSection(scrollView, pizzaSection) }
+        chickenCategory.setOnClickListener { scrollToSection(scrollView, chickenSection) }
+        pastaCategory.setOnClickListener { scrollToSection(scrollView, pastaSection) }
+        appetizerCategory.setOnClickListener { scrollToSection(scrollView, appetizerSection) }
+        drinksCategory.setOnClickListener { scrollToSection(scrollView, drinksSection) }
 
         eventRecyclerView = findViewById(R.id.event_recycler_view)
         pizzaRecyclerView = findViewById(R.id.pizza_recycler_view)
@@ -86,6 +109,23 @@ class DashboardActivity : AppCompatActivity() {
 
         fetchEventData()
         fetchFoodData()
+
+        customizeLayout.setOnClickListener {
+            val intent = Intent(this, CustomizePizzaActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun scrollToSection(scrollView: ScrollView, targetView: View) {
+        scrollView.post {
+            val location = IntArray(2)
+            targetView.getLocationOnScreen(location)
+
+            // Lấy vị trí Y của targetView so với ScrollView
+            val scrollY = location[1] - scrollView.top - 50
+
+            scrollView.smoothScrollTo(0, scrollY)
+        }
     }
 
     private fun fetchEventData() {
