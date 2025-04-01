@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pizza3ps.R
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CustomerServiceActivity : AppCompatActivity() {
@@ -55,7 +56,7 @@ class CustomerServiceActivity : AppCompatActivity() {
                 Log.d("Firestore", "Lỗi khi đọc document: ", exception)
             }
 
-        phone.setOnClickListener {
+        findViewById<MaterialButton>(R.id.btnMakeCall).setOnClickListener {
             val phoneNumber = phone.text.toString()
             Log.d("phoneNumber", "$phoneNumber")
             val callIntent = Intent(Intent.ACTION_CALL).apply {

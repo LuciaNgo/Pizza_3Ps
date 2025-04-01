@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:background="#00FFFFFF"
             android:src="@drawable/ic_headphones"
-            android:tint="#FF9800"
+            app:tint="@color/orange"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

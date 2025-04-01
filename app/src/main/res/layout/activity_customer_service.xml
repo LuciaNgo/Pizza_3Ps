@@ -5,36 +5,26 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.CustomerServiceActivity">
+    tools:context=".activity.CustomerServiceActivity"
+    android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/customerServiceMail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/customerServiceMailIcon"-->
-<!--            android:layout_width="40dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:tint="@color/orange"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            tools:srcCompat="@drawable/ic_mail" />-->
         <ImageView
             android:id="@+id/customerServiceMailIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/ic_headphones"
-            android:tint="#FF9800"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@android:color/transparent"
+            app:tint="@color/orange"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_mail" />
 
         <TextView
             android:id="@+id/customerServiceMailValue"
@@ -43,6 +33,7 @@
             android:layout_marginStart="30dp"
             android:background="@android:color/transparent"
             android:text="TextView"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/customerServiceMailIcon"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,23 +41,22 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/customerServicePhone"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customerServiceMail">
+        app:layout_constraintTop_toBottomOf="@+id/customerServiceMail"
+        android:layout_marginTop="20dp">
 
         <ImageView
             android:id="@+id/customerServicePhoneIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@android:color/transparent"
-            android:tint="@color/orange"
+            app:tint="@color/orange"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_phone" />
+            android:src="@drawable/ic_phone" />
 
         <TextView
             android:id="@+id/customerServicePhoneValue"
@@ -75,9 +65,22 @@
             android:layout_marginStart="30dp"
             android:background="@android:color/transparent"
             android:text="TextView"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/customerServicePhoneIcon"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMakeCall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/orange"
+            android:text="@string/make_a_call"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </com.google.android.material.button.MaterialButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
