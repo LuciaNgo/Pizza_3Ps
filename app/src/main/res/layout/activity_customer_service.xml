@@ -5,82 +5,137 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.CustomerServiceActivity"
-    android:padding="20dp">
+    tools:context=".activity.CustomerServiceActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/customerServiceMail"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_customerServiceMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
+        app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="@color/white_orange"
+        app:cardElevation="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/customerServiceMailIcon"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            app:tint="@color/orange"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_mail" />
-
-        <TextView
-            android:id="@+id/customerServiceMailValue"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/customerServiceMail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
             android:background="@android:color/transparent"
-            android:text="TextView"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/customerServiceMailIcon"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/customerServicePhone"
+            <ImageView
+                android:id="@+id/customerServiceMailIcon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_mail"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/orange" />
+
+            <TextView
+                android:id="@+id/customerServiceMailValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:background="@android:color/transparent"
+                android:text="TextView"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/customerServiceMailIcon"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_customerServicePhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="@color/white_orange"
+        app:cardElevation="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customerServiceMail"
-        android:layout_marginTop="20dp">
+        app:layout_constraintTop_toBottomOf="@+id/cardView_customerServiceMail">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/customerServicePhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-        <ImageView
-            android:id="@+id/customerServicePhoneIcon"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:background="@android:color/transparent"
-            app:tint="@color/orange"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_phone" />
+            app:layout_constraintTop_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/customerServicePhoneValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:background="@android:color/transparent"
-            android:text="TextView"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/customerServicePhoneIcon"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/customerServicePhoneIcon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_phone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/orange" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMakeCall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/orange"
-            android:text="@string/make_a_call"
-            android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            <TextView
+                android:id="@+id/customerServicePhoneValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:background="@android:color/transparent"
+                android:text="TextView"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/customerServicePhoneIcon"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.button.MaterialButton>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMakeCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/orange"
+                android:text="@string/make_a_call"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/customerServicePhoneValue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/customerServicePhoneValue">
+
+            </com.google.android.material.button.MaterialButton>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:alpha="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView_customerServicePhone"
+        app:srcCompat="@drawable/round_pizza" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
