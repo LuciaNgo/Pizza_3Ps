@@ -43,6 +43,7 @@ class FoodAdapter(private val foodList: List<FoodData>) :
             val intent = Intent(context, FoodInfoActivity::class.java).apply {
                 putExtra("food_name", food.name)
                 putExtra("food_price", food.price)
+                putExtra("food_category", food.category)
                 putExtra("food_image", food.imgPath)
                 putStringArrayListExtra("ingredientList", ArrayList(food.ingredients))
             }

@@ -58,7 +58,7 @@ class LogInActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, DashboardActivity::class.java))
+                        startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     } else {
                         Toast.makeText(this, "Error: Incorrect password or email", Toast.LENGTH_SHORT).show()

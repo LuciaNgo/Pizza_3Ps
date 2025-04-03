@@ -1,13 +1,13 @@
-package com.example.pizza3ps.activity
+package com.example.pizza3ps.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
@@ -18,7 +18,7 @@ import com.example.pizza3ps.model.FoodData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
-class DashboardActivity : AppCompatActivity() {
+class DashboardFragment : Fragment() {
     private lateinit var eventRecyclerView: RecyclerView
     private lateinit var pizzaRecyclerView: RecyclerView
     private lateinit var chickenRecyclerView: RecyclerView
@@ -42,50 +42,45 @@ class DashboardActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_dashboard)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
-        val customizeLayout : LinearLayout = findViewById(R.id.customize_layout)
-        val menuLayout : LinearLayout = findViewById(R.id.menu_layout)
-        val btnAccount : LinearLayout = findViewById(R.id.btnAccount)
-        val scrollView = findViewById<ScrollView>(R.id.scroll_view)
+        val scrollView = view.findViewById<ScrollView>(R.id.scroll_view)
 
-        // Lấy các danh mục trên thanh category
-        val pizzaCategory = findViewById<LinearLayout>(R.id.pizza_category)
-        val chickenCategory = findViewById<LinearLayout>(R.id.chicken_category)
-        val pastaCategory = findViewById<LinearLayout>(R.id.pasta_category)
-        val appetizerCategory = findViewById<LinearLayout>(R.id.appetizer_category)
-        val drinksCategory = findViewById<LinearLayout>(R.id.drinks_category)
+        val pizzaCategory = view.findViewById<LinearLayout>(R.id.pizza_category)
+        val chickenCategory = view.findViewById<LinearLayout>(R.id.chicken_category)
+        val pastaCategory = view.findViewById<LinearLayout>(R.id.pasta_category)
+        val appetizerCategory = view.findViewById<LinearLayout>(R.id.appetizer_category)
+        val drinksCategory = view.findViewById<LinearLayout>(R.id.drinks_category)
 
-        // Lấy các tiêu đề section tương ứng
-        val pizzaSection = findViewById<View>(R.id.pizza_section_title)
-        val chickenSection = findViewById<View>(R.id.chicken_section_title)
-        val pastaSection = findViewById<View>(R.id.pasta_section_title)
-        val appetizerSection = findViewById<View>(R.id.appetizer_section_title)
-        val drinksSection = findViewById<View>(R.id.drinks_section_title)
+        val pizzaSection = view.findViewById<View>(R.id.pizza_section_title)
+        val chickenSection = view.findViewById<View>(R.id.chicken_section_title)
+        val pastaSection = view.findViewById<View>(R.id.pasta_section_title)
+        val appetizerSection = view.findViewById<View>(R.id.appetizer_section_title)
+        val drinksSection = view.findViewById<View>(R.id.drinks_section_title)
 
-        // Thiết lập sự kiện click để cuộn đến phần tương ứng
         pizzaCategory.setOnClickListener { scrollToSection(scrollView, pizzaSection) }
         chickenCategory.setOnClickListener { scrollToSection(scrollView, chickenSection) }
         pastaCategory.setOnClickListener { scrollToSection(scrollView, pastaSection) }
         appetizerCategory.setOnClickListener { scrollToSection(scrollView, appetizerSection) }
         drinksCategory.setOnClickListener { scrollToSection(scrollView, drinksSection) }
 
-        eventRecyclerView = findViewById(R.id.event_recycler_view)
-        pizzaRecyclerView = findViewById(R.id.pizza_recycler_view)
-        chickenRecyclerView = findViewById(R.id.chicken_recycler_view)
-        pastaRecyclerView = findViewById(R.id.pasta_recycler_view)
-        appetizerRecyclerView = findViewById(R.id.appetizer_recycler_view)
-        drinksRecyclerView = findViewById(R.id.drinks_recycler_view)
+        eventRecyclerView = view.findViewById(R.id.event_recycler_view)
+        pizzaRecyclerView = view.findViewById(R.id.pizza_recycler_view)
+        chickenRecyclerView = view.findViewById(R.id.chicken_recycler_view)
+        pastaRecyclerView = view.findViewById(R.id.pasta_recycler_view)
+        appetizerRecyclerView = view.findViewById(R.id.appetizer_recycler_view)
+        drinksRecyclerView = view.findViewById(R.id.drinks_recycler_view)
 
-        eventRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        pizzaRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        chickenRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        pastaRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        appetizerRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        drinksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        eventRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        pizzaRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        chickenRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        pastaRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        appetizerRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         eventAdapter = EventAdapter(eventList)
         pizzaFoodAdapter = FoodAdapter(pizzaList)
@@ -104,30 +99,14 @@ class DashboardActivity : AppCompatActivity() {
         fetchEventData()
         fetchFoodData()
 
-        customizeLayout.setOnClickListener {
-            val intent = Intent(this, CustomizePizzaActivity::class.java)
-            startActivity(intent)
-        }
-
-        menuLayout.setOnClickListener {
-            val intent = Intent(this, MenuActivity::class.java)
-            startActivity(intent)
-        }
-
-        btnAccount.setOnClickListener {
-            val intent = Intent(this, AccountActivity::class.java)
-            startActivity(intent)
-        }
+        return view
     }
 
     private fun scrollToSection(scrollView: ScrollView, targetView: View) {
         scrollView.post {
             val location = IntArray(2)
             targetView.getLocationOnScreen(location)
-
-            // Lấy vị trí Y của targetView so với ScrollView
             val scrollY = location[1] - scrollView.top - 50
-
             scrollView.smoothScrollTo(0, scrollY)
         }
     }
@@ -137,19 +116,11 @@ class DashboardActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
                 eventList.clear()
-
                 for (document in documents) {
                     val name = document.getString("name") ?: ""
                     val imgPath = document.getString("imgPath") ?: ""
-
-                    // Tạo đối tượng EventData
-                    val eventItem = EventData(name, imgPath)
-                    eventList.add(eventItem)
-
-                    Log.d("Firestore", "Tên: $name, Hình ảnh: $imgPath")
+                    eventList.add(EventData(name, imgPath))
                 }
-
-                // Cập nhật giao diện
                 eventAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
@@ -169,34 +140,23 @@ class DashboardActivity : AppCompatActivity() {
 
                 for (document in documents) {
                     val name = document.getString("name") ?: ""
-                    val priceString = document.getString("price") ?: "0"
+                    val price = document.getString("price")?.toIntOrNull() ?: 0
+                    val formattedPrice = DecimalFormat("#,###").format(price)
                     val imgPath = document.getString("imgPath") ?: ""
                     val ingredientString = document.getString("ingredient") ?: ""
                     val category = document.getString("category") ?: ""
-
-                    val price = priceString.toIntOrNull() ?: 0
-                    val formattedPrice = DecimalFormat("#,###").format(price)
-
-                    // Tách danh sách nguyên liệu thành mảng
                     val ingredientList = ingredientString.split(", ").map { it.trim() }
+                    val foodItem = FoodData(name, formattedPrice, category, imgPath, ingredientList)
 
-                    // Tạo đối tượng FoodData
-                    val foodItem = FoodData(name, formattedPrice, imgPath, ingredientList)
-
-                    // Thêm vào danh sách theo category
                     when (category.lowercase()) {
                         "pizza" -> pizzaList.add(foodItem)
                         "pasta" -> pastaList.add(foodItem)
                         "chicken" -> chickenList.add(foodItem)
                         "appetizer" -> appetizerList.add(foodItem)
                         "drinks" -> drinksList.add(foodItem)
-                        else -> Log.w("Firestore", "Danh mục không xác định: $category")
                     }
-
-                    Log.d("Firestore", "Tên: $name, Giá: $formattedPrice, Hình ảnh: $imgPath, Nguyên liệu: $ingredientList, Danh mục: $category")
                 }
 
-                // Cập nhật giao diện
                 pizzaFoodAdapter.notifyDataSetChanged()
                 chickenFoodAdapter.notifyDataSetChanged()
                 pastaFoodAdapter.notifyDataSetChanged()
@@ -207,5 +167,4 @@ class DashboardActivity : AppCompatActivity() {
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
             }
     }
-
 }

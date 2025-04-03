@@ -35,7 +35,7 @@
             android:name=".activity.AccountActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.DashboardActivity"
+            android:name=".activity.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
