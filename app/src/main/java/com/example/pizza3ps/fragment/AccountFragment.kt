@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController // Thêm dòng này để sử dụng NavController
+import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
 
 class AccountFragment : Fragment() {
