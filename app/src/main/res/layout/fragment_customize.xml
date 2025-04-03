@@ -335,7 +335,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="150dp"/>
+                android:layout_height="136dp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -356,7 +356,7 @@
     <View
         android:id="@+id/space"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="68dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
