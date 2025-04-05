@@ -11,7 +11,7 @@ class FoodDatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "FoodDatabase.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val TABLE_NAME = "Food"
         const val COLUMN_ID = "_id"
@@ -51,7 +51,7 @@ class FoodDatabaseHelper(context: Context) :
             put(COLUMN_INGREDIENTS, food.ingredients.joinToString(","))
         }
         db.insert(TABLE_NAME, null, values)
-        db.close()
+        //db.close()
     }
 
     fun getAllFood(): List<FoodData> {
