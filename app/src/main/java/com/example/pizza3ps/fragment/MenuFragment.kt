@@ -14,6 +14,7 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.FoodAdapter
 import com.example.pizza3ps.database.FoodDatabaseHelper
 import com.example.pizza3ps.model.FoodData
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MenuFragment : Fragment() {
     private lateinit var pizzaCategory: LinearLayout
@@ -27,12 +28,16 @@ class MenuFragment : Fragment() {
     private lateinit var foodAdapter: FoodAdapter
 
     private lateinit var searchBar: SearchView
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_menu, container, false)
+
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.VISIBLE
 
         pizzaCategory = view.findViewById(R.id.pizza_category)
         chickenCategory = view.findViewById(R.id.chicken_category)

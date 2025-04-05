@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="overlay_gray">#80000000</color>
     <color name="orange">#FFF6650A</color>
+    <color name="light_orange">#FFFDD2A9</color>
     <color name="white_orange">#FFF4EE</color>
     <color name="gray">#FFb8b8b8</color>
     <color name="purple_200">#FFBB86FC</color>

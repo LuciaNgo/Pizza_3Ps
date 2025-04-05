@@ -10,15 +10,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AccountFragment : Fragment() {
     private lateinit var btnCustomerService: ConstraintLayout
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
+
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.GONE
 
         // Lấy tham chiếu đến nút Customer Service
         btnCustomerService = view.findViewById(R.id.btnCustomerService)
