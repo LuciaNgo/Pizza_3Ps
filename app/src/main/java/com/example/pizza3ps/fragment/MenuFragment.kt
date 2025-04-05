@@ -83,6 +83,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} pizzas")
             foodAdapter.updateData(newList)
+            foodRecyclerView.scrollToPosition(0)
         }
 
         chickenCategory.setOnClickListener {
@@ -91,6 +92,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} chickens")
             foodAdapter.updateData(newList)
+            foodRecyclerView.scrollToPosition(0)
         }
 
         pastaCategory.setOnClickListener {
@@ -99,6 +101,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} pastas")
             foodAdapter.updateData(newList)
+            foodRecyclerView.scrollToPosition(0)
         }
 
         appetizerCategory.setOnClickListener {
@@ -107,6 +110,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} appetizers")
             foodAdapter.updateData(newList)
+            foodRecyclerView.scrollToPosition(0)
         }
 
         drinksCategory.setOnClickListener {
@@ -115,6 +119,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} drinks")
             foodAdapter.updateData(newList)
+            foodRecyclerView.scrollToPosition(0)
         }
     }
 }
