@@ -117,6 +117,7 @@ class FoodInfoActivity : AppCompatActivity() {
             crustTypeTextView.visibility = TextView.GONE
             sauceTextView.visibility = TextView.GONE
             meatTextView.visibility = TextView.GONE
+            seafoodTextView.visibility = TextView.GONE
             vegetableTextView.visibility = TextView.GONE
             additionTextView.visibility = TextView.GONE
             sizeSRadioButton.visibility = Button.GONE

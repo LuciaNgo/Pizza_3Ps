@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.EventAdapter
 import com.example.pizza3ps.adapter.FoodAdapter
+import com.example.pizza3ps.database.FoodDatabaseHelper
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
 import com.google.firebase.firestore.FirebaseFirestore
@@ -83,11 +84,11 @@ class DashboardFragment : Fragment() {
         drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         eventAdapter = EventAdapter(eventList)
-        pizzaFoodAdapter = FoodAdapter(pizzaList)
-        chickenFoodAdapter = FoodAdapter(chickenList)
-        pastaFoodAdapter = FoodAdapter(pastaList)
-        appetizerFoodAdapter = FoodAdapter(appetizerList)
-        drinksFoodAdapter = FoodAdapter(drinksList)
+        pizzaFoodAdapter = FoodAdapter(pizzaList, FoodAdapter.LayoutType.DASHBOARD)
+        chickenFoodAdapter = FoodAdapter(chickenList, FoodAdapter.LayoutType.DASHBOARD)
+        pastaFoodAdapter = FoodAdapter(pastaList, FoodAdapter.LayoutType.DASHBOARD)
+        appetizerFoodAdapter = FoodAdapter(appetizerList, FoodAdapter.LayoutType.DASHBOARD)
+        drinksFoodAdapter = FoodAdapter(drinksList, FoodAdapter.LayoutType.DASHBOARD)
 
         eventRecyclerView.adapter = eventAdapter
         pizzaRecyclerView.adapter = pizzaFoodAdapter
@@ -138,6 +139,8 @@ class DashboardFragment : Fragment() {
                 appetizerList.clear()
                 drinksList.clear()
 
+                val dbHelper = FoodDatabaseHelper(requireContext())
+
                 for (document in documents) {
                     val name = document.getString("name") ?: ""
                     val price = document.getString("price")?.toIntOrNull() ?: 0
@@ -155,6 +158,9 @@ class DashboardFragment : Fragment() {
                         "appetizer" -> appetizerList.add(foodItem)
                         "drinks" -> drinksList.add(foodItem)
                     }
+
+                    // Lưu vào cơ sở dữ liệu cục bộ
+                    dbHelper.addFood(foodItem)
                 }
 
                 pizzaFoodAdapter.notifyDataSetChanged()
