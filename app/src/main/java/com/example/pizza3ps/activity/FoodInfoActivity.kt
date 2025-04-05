@@ -41,6 +41,14 @@ class FoodInfoActivity : AppCompatActivity() {
     private val additionList = mutableListOf<IngredientData>()
     private val sauceList = mutableListOf<IngredientData>()
 
+    private lateinit var sizeTextView: TextView
+    private lateinit var crustThicknessTextView: TextView
+    private lateinit var crustTypeTextView: TextView
+    private lateinit var sauceTextView: TextView
+    private lateinit var meatTextView: TextView
+    private lateinit var seafoodTextView: TextView
+    private lateinit var vegetableTextView: TextView
+    private lateinit var additionTextView: TextView
     private lateinit var addToCartButton: Button
     private lateinit var pizzaNameTextView: TextView
     private lateinit var pizzaImageView: ImageView
@@ -68,11 +76,20 @@ class FoodInfoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_food_info)
 
         val name = intent.getStringExtra("food_name") ?: ""
-        val price = intent.getStringExtra("food_price") ?: ""
+        val price = intent.getStringExtra("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
+        val category = intent.getStringExtra("food_category") ?: ""
         val imgPath = intent.getStringExtra("food_image") ?: ""
         ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
         Log.d("FoodInfoActivity", "Danh sách nguyên liệu nhận được: $ingredientList")
 
+        sizeTextView = findViewById(R.id.size_textview)
+        crustThicknessTextView = findViewById(R.id.crust_thickness_textview)
+        crustTypeTextView = findViewById(R.id.crust_base_ingredient_textview)
+        sauceTextView = findViewById(R.id.sauce_textview)
+        meatTextView = findViewById(R.id.meat_textview)
+        seafoodTextView = findViewById(R.id.seafood_textview)
+        vegetableTextView = findViewById(R.id.vegetable_textview)
+        additionTextView = findViewById(R.id.addition_textview)
         addToCartButton = findViewById(R.id.add_to_cart_button)
         pizzaNameTextView = findViewById(R.id.pizza_name)
         pizzaImageView = findViewById(R.id.pizza_image)
@@ -93,6 +110,35 @@ class FoodInfoActivity : AppCompatActivity() {
         crustThinButton.isChecked = true
         quantityTextView.text = quantity.toString()
 
+        // Kiểm tra nếu category không phải pizza thì ẩn các thành phần liên quan
+        if (category.lowercase() != "pizza") {
+            sizeTextView.visibility = TextView.GONE
+            crustThicknessTextView.visibility = TextView.GONE
+            crustTypeTextView.visibility = TextView.GONE
+            sauceTextView.visibility = TextView.GONE
+            meatTextView.visibility = TextView.GONE
+            seafoodTextView.visibility = TextView.GONE
+            vegetableTextView.visibility = TextView.GONE
+            additionTextView.visibility = TextView.GONE
+            sizeSRadioButton.visibility = Button.GONE
+            sizeMRadioButton.visibility = Button.GONE
+            sizeLRadioButton.visibility = Button.GONE
+            crustThinButton.visibility = Button.GONE
+            crustThickButton.visibility = Button.GONE
+            crustCheeseCheckBox.visibility = Button.GONE
+            crustChickenCheckBox.visibility = Button.GONE
+            crustSausageCheckBox.visibility = Button.GONE
+            /*
+            recyclerViewMeat.visibility = Button.GONE
+            recyclerViewSeafood.visibility = Button.GONE
+            recyclerViewVegetable.visibility = Button.GONE
+            recyclerViewAddition.visibility = Button.GONE
+            recyclerViewSauce.visibility = Button.GONE
+            */
+        }
+
+        Glide.with(this).load(imgPath).into(pizzaImageView)
+
         // Plus
         plusCardView.setOnClickListener {
             quantity++
@@ -109,93 +155,80 @@ class FoodInfoActivity : AppCompatActivity() {
             }
         }
 
-        // Size
-        sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                basePrice += 40000
-            } else {
-                basePrice -= 40000
+        if (category == "pizza") {
+            // Size
+            sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    basePrice += 40000
+                } else {
+                    basePrice -= 40000
+                }
+                updatePrice()
             }
-            updatePrice()
+
+            sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    basePrice += 70000
+                } else {
+                    basePrice -= 70000
+                }
+                updatePrice()
+            }
+
+            sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    basePrice += 90000
+                } else {
+                    basePrice -= 90000
+                }
+                updatePrice()
+            }
+
+            crustThinButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) basePrice += 10000 else basePrice -= 10000
+                updatePrice()
+            }
+
+            crustThickButton.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) basePrice += 20000 else basePrice -= 20000
+                updatePrice()
+            }
+
+            crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    crustChickenCheckBox.isChecked = false
+                    crustSausageCheckBox.isChecked = false
+                    basePrice += 40000
+                } else basePrice -= 40000
+                updatePrice()
+            }
+
+            crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    crustCheeseCheckBox.isChecked = false
+                    crustSausageCheckBox.isChecked = false
+                    basePrice += 40000
+                } else basePrice -= 40000
+                updatePrice()
+            }
+
+            crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    crustCheeseCheckBox.isChecked = false
+                    crustChickenCheckBox.isChecked = false
+                    basePrice += 30000
+                } else basePrice -= 30000
+                updatePrice()
+            }
+
+            setupRecyclerViews()
+            fetchIngredientData()
         }
 
-        sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                basePrice += 70000
-            } else {
-                basePrice -= 70000
-            }
-            updatePrice()
+        if (category != "pizza") {
+            basePrice = price.toInt()
         }
-
-        sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                basePrice += 90000
-            } else {
-                basePrice -= 90000
-            }
-            updatePrice()
-        }
-
-        // Crust thickness
-        crustThinButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                basePrice += 10000
-            } else {
-                basePrice -= 10000
-            }
-            updatePrice()
-        }
-
-        crustThickButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                basePrice += 20000
-            }
-            else {
-                basePrice -= 20000
-            }
-            updatePrice()
-        }
-
-        // Crust base ingredient
-        crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                crustChickenCheckBox.isChecked = false
-                crustSausageCheckBox.isChecked = false
-                basePrice += 40000
-            } else {
-                basePrice -= 40000
-            }
-            updatePrice()
-        }
-
-        crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                crustCheeseCheckBox.isChecked = false
-                crustSausageCheckBox.isChecked = false
-                basePrice += 40000
-            } else {
-                basePrice -= 40000
-            }
-            updatePrice()
-        }
-
-        crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                crustCheeseCheckBox.isChecked = false
-                crustChickenCheckBox.isChecked = false
-                basePrice += 30000
-            } else {
-                basePrice -= 30000
-            }
-            updatePrice()
-        }
-
         updatePrice()
-        Glide.with(this).load(imgPath).into(pizzaImageView)
-
-        setupRecyclerViews()
-        fetchIngredientData()
     }
 
     private fun setupRecyclerViews() {

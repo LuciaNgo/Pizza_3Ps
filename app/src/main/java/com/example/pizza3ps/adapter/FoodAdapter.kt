@@ -13,8 +13,15 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.FoodInfoActivity
 import com.example.pizza3ps.model.FoodData
 
-class FoodAdapter(private val foodList: List<FoodData>) :
-    RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
+class FoodAdapter(
+    private var foodList: List<FoodData>,
+    private val layoutType: LayoutType
+) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
+
+    enum class LayoutType {
+        DASHBOARD,
+        MENU
+    }
 
     class FoodViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTextView: TextView = view.findViewById(R.id.food_name)
@@ -23,7 +30,11 @@ class FoodAdapter(private val foodList: List<FoodData>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.food_item, parent, false)
+        val layoutId = when (layoutType) {
+            LayoutType.DASHBOARD -> R.layout.food_item
+            LayoutType.MENU -> R.layout.menu_food_item
+        }
+        val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
         return FoodViewHolder(view)
     }
 
@@ -43,12 +54,19 @@ class FoodAdapter(private val foodList: List<FoodData>) :
             val intent = Intent(context, FoodInfoActivity::class.java).apply {
                 putExtra("food_name", food.name)
                 putExtra("food_price", food.price)
+                putExtra("food_category", food.category)
                 putExtra("food_image", food.imgPath)
                 putStringArrayListExtra("ingredientList", ArrayList(food.ingredients))
             }
             context.startActivity(intent)
         }
     }
+
+    fun updateData(newList: List<FoodData>) {
+        foodList = newList
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount() = foodList.size
 

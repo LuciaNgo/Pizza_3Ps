@@ -20,32 +20,24 @@
         android:theme="@style/Theme.Pizza3Ps"
         tools:targetApi="31">
         <activity
-            android:name=".activity.MenuActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.CustomizePizzaActivity"
             android:exported="false" />
         <activity
             android:name=".activity.FoodInfoActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.CustomerServiceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.AccountActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.DashboardActivity"
+            android:name=".activity.MainActivity"
             android:exported="true" >
+        </activity>
+
+        <activity android:name=".activity.WelcomeActivity" android:exported="true"/>
+        <activity android:name=".activity.SignUpActivity" android:exported="true"/>
+        <activity android:name=".activity.LogInActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.WelcomeActivity" android:exported="true"/>
-        <activity android:name=".activity.SignUpActivity" android:exported="true"/>
-        <activity android:name=".activity.LogInActivity" android:exported="true"/>
 
     </application>
 

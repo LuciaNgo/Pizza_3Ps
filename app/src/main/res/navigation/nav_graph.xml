@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_dashboard">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.pizza3ps.fragment.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_menu"
+        android:name="com.example.pizza3ps.fragment.MenuFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu" />
+
+    <fragment
+        android:id="@+id/navigation_customize"
+        android:name="com.example.pizza3ps.fragment.CustomizeFragment"
+        android:label="Customize"
+        tools:layout="@layout/fragment_customize" />
+
+    <fragment
+        android:id="@+id/navigation_activity"
+        android:name="com.example.pizza3ps.fragment.ActivityFragment"
+        android:label="Activity"
+        tools:layout="@layout/fragment_activity" />
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.example.pizza3ps.fragment.AccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_accountFragment_to_customerServiceFragment"
+            app:destination="@id/customerServiceFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerServiceFragment"
+        android:name="com.example.pizza3ps.fragment.CustomerServiceFragment"
+        android:label="Customer Service"
+        tools:layout="@layout/fragment_customer_service" />
+</navigation>
