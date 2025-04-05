@@ -11,7 +11,7 @@ class UserDatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "FoodDatabase.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
 
         const val TABLE_NAME = "User"
         const val COLUMN_ID = "_id"
@@ -54,24 +54,10 @@ class UserDatabaseHelper(context: Context) :
 
         db.insert(TABLE_NAME, null, values)
 
-//        if (userExists(user.email)) {
-//            // Update user
-//            db.update(TABLE_NAME, values, "$COLUMN_EMAIL = ?", arrayOf(user.email))
-//        } else {
-//            // Insert new
-//            db.insert(TABLE_NAME, null, values)
-//        }
-
         db.close()
     }
 
-//    fun userExists(email: String): Boolean {
-//        val db = readableDatabase
-//        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $COLUMN_EMAIL = ?", arrayOf(email))
-//        val exists = cursor.count > 0
-//        cursor.close()
-//        return exists
-//    }
+//
 
 
     fun getUser(): UserData? {

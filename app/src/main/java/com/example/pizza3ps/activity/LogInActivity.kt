@@ -2,6 +2,7 @@ package com.example.pizza3ps.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -54,6 +55,9 @@ class LogInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            Log.d("Email", email)
+
+            Log.d("Email_pass", password)
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {

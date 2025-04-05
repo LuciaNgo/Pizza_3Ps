@@ -1,6 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -47,28 +48,19 @@ class PersonalInfoFragment : Fragment() {
         }
 
         editBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_personalInfoFragment_to_editInfoFragment)
+            Log.d("Edit", "Begin sending")
+            val action = PersonalInfoFragmentDirections
+                .actionPersonalInfoFragmentToEditInfoFragment(
+                    name = user?.name ?: "",
+                    email = user?.email ?: "",
+                    phone = user?.phone ?: "",
+                    address = user?.address ?: "",
+                    points = user?.points ?: 0
+                )
 
+            findNavController().navigate(action)
+            Log.d("Edit_done", "Done sending")
         }
         return view
     }
-//    companion object {
-//        /**
-//         * Use this factory method to create a new instance of
-//         * this fragment using the provided parameters.
-//         *
-//         * @param param1 Parameter 1.
-//         * @param param2 Parameter 2.
-//         * @return A new instance of fragment PersonalInfoFragment.
-//         */
-//        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(param1: String, param2: String) =
-//            PersonalInfoFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-//            }
-//    }
 }

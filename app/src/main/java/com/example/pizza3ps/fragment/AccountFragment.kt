@@ -1,5 +1,6 @@
 package com.example.pizza3ps.fragment
 
+import android.content.Context
 import com.example.pizza3ps.model.UserData
 import android.os.Bundle
 import android.util.Log
@@ -50,11 +51,19 @@ class AccountFragment : Fragment() {
         userNameView = view.findViewById(R.id.userName)
         showInfoBtn = view.findViewById(R.id.informationBtn)
 
+        val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        val cachedName = sharedPref.getString("username", "Guest")
+        userNameView.text = cachedName
+
 
         Log.d("FETCH", "fetchUserData() called")
 
 
-        fetchUserData()
+        if (cachedName == "Guest") {
+            fetchUserData()
+        } else {
+            userNameView.text = cachedName
+        }
 
         showInfoBtn.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_account_to_personalInfoFragment)
@@ -87,6 +96,10 @@ class AccountFragment : Fragment() {
 
                     // Display name in UI
                     userNameView.text = name
+
+                    // After getting the name from Firebase or SQLite
+                    val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+                    sharedPref.edit().putString("username", name).apply()
 
                     // Save to SQLite
                     val user = UserData(name, email, phone, address, points)
