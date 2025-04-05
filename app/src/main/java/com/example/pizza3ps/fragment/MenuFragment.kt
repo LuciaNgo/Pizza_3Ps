@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.FoodAdapter
-import com.example.pizza3ps.database.FoodDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.FoodData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -57,12 +57,11 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val dbHelper = FoodDatabaseHelper(requireContext())
 
         // Load food data category = pizza trong database
-        val foodDatabaseHelper = FoodDatabaseHelper(requireContext())
+        val dbHelper = DatabaseHelper(requireContext())
         foodList.clear()
-        foodList.addAll(foodDatabaseHelper.getFoodByCategory("pizza"))
+        foodList.addAll(dbHelper.getFoodByCategory("pizza"))
         foodAdapter.notifyDataSetChanged()
 
         searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -78,9 +77,7 @@ class MenuFragment : Fragment() {
 
                 return true
             }
-
         })
-
 
         pizzaCategory.setOnClickListener {
             val newList = dbHelper.getFoodByCategory("pizza")

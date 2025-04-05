@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.EventAdapter
 import com.example.pizza3ps.adapter.FoodAdapter
-import com.example.pizza3ps.database.FoodDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -144,7 +144,7 @@ class DashboardFragment : Fragment() {
                 appetizerList.clear()
                 drinksList.clear()
 
-                val dbHelper = FoodDatabaseHelper(requireContext())
+                val dbHelper = DatabaseHelper(requireContext())
 
                 // Xóa dữ liệu cũ trong cơ sở dữ liệu cục bộ
                 dbHelper.deleteAllFood()
@@ -166,8 +166,6 @@ class DashboardFragment : Fragment() {
                         "appetizer" -> appetizerList.add(foodItem)
                         "drinks" -> drinksList.add(foodItem)
                     }
-
-
 
                     // Lưu vào cơ sở dữ liệu cục bộ
                     dbHelper.addFood(foodItem)

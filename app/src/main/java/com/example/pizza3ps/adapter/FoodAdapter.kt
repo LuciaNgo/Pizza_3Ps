@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.FoodInfoActivity
 import com.example.pizza3ps.model.FoodData
+import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.CartData
 
 class FoodAdapter(
     private var foodList: List<FoodData>,
@@ -27,6 +30,7 @@ class FoodAdapter(
         val nameTextView: TextView = view.findViewById(R.id.food_name)
         val priceTextView: TextView = view.findViewById(R.id.food_price)
         val foodImageView: ImageView = view.findViewById(R.id.food_image)
+        val addToCartButton: Button = view.findViewById(R.id.add_to_cart_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {

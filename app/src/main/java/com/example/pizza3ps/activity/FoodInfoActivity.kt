@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
+import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
@@ -49,7 +51,6 @@ class FoodInfoActivity : AppCompatActivity() {
     private lateinit var seafoodTextView: TextView
     private lateinit var vegetableTextView: TextView
     private lateinit var additionTextView: TextView
-    private lateinit var addToCartButton: Button
     private lateinit var pizzaNameTextView: TextView
     private lateinit var pizzaImageView: ImageView
     private lateinit var quantityTextView: TextView
@@ -64,6 +65,8 @@ class FoodInfoActivity : AppCompatActivity() {
     private lateinit var crustChickenCheckBox: CheckBox
     private lateinit var crustSausageCheckBox: CheckBox
 
+    private lateinit var addToCartButton: Button
+
     private val db = FirebaseFirestore.getInstance()
     private lateinit var ingredientList: List<String>
     private var quantity = 1
@@ -76,7 +79,7 @@ class FoodInfoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_food_info)
 
         val name = intent.getStringExtra("food_name") ?: ""
-        val price = intent.getStringExtra("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
+        val price = intent.getStringExtra("food_price")?.replace(",", "")?.toIntOrNull() ?: 0
         val category = intent.getStringExtra("food_category") ?: ""
         val imgPath = intent.getStringExtra("food_image") ?: ""
         ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
@@ -90,7 +93,6 @@ class FoodInfoActivity : AppCompatActivity() {
         seafoodTextView = findViewById(R.id.seafood_textview)
         vegetableTextView = findViewById(R.id.vegetable_textview)
         additionTextView = findViewById(R.id.addition_textview)
-        addToCartButton = findViewById(R.id.add_to_cart_button)
         pizzaNameTextView = findViewById(R.id.pizza_name)
         pizzaImageView = findViewById(R.id.pizza_image)
         quantityTextView = findViewById(R.id.quantity_text)
@@ -104,6 +106,7 @@ class FoodInfoActivity : AppCompatActivity() {
         crustCheeseCheckBox = findViewById(R.id.crust_cheese)
         crustChickenCheckBox = findViewById(R.id.crust_chicken)
         crustSausageCheckBox = findViewById(R.id.crust_sausage)
+        addToCartButton = findViewById(R.id.add_to_cart_button)
 
         pizzaNameTextView.text = name
         sizeSRadioButton.isChecked = true
@@ -229,6 +232,16 @@ class FoodInfoActivity : AppCompatActivity() {
             basePrice = price.toInt()
         }
         updatePrice()
+
+        // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
+        addToCartButton.setOnClickListener {
+            // Chuyển ingredients sang dạng lưu trong DB
+
+
+            val dbHelper = DatabaseHelper(this)
+
+            // Gọi hàm thêm vào giỏ
+        }
     }
 
     private fun setupRecyclerViews() {

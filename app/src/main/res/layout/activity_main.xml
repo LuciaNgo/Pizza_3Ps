@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="24dp"
     tools:context=".activity.MainActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -35,16 +35,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_graph" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+    <com.andremion.counterfab.CounterFab
         android:id="@+id/cart_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="16dp"
         android:src="@drawable/shopping_bag"
-        app:rippleColor="@color/light_orange"
         app:backgroundTint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/nav_view"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:counterTextColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,20 +8,19 @@
 
     <ImageView
         android:id="@+id/background_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
+        android:background="@drawable/welcome_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/welcome_background"
-        tools:srcCompat="@drawable/welcome_background" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/background_shadow"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/overlay_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +34,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="56dp"
         android:background="@drawable/arrow_back"
-        android:backgroundTintMode="src_in"
         android:clickable="true"
         android:contentDescription="Go back"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,12 +43,11 @@
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:background="@drawable/icon"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/title_text"
+        app:layout_constraintBottom_toTopOf="@id/title_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icon"
-        tools:srcCompat="@drawable/icon" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/title_text"
@@ -58,17 +55,17 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="@string/login"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/email_input"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/email_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <EditText
         android:id="@+id/email_input"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -82,15 +79,15 @@
         android:paddingVertical="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/password_input"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/password_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/password_input"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -104,9 +101,9 @@
         android:paddingVertical="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/log_in_button"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/log_in_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -115,35 +112,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/hidden"
-        app:layout_constraintBottom_toBottomOf="@+id/password_input"
-        app:layout_constraintEnd_toEndOf="@+id/password_input"
-        app:layout_constraintTop_toTopOf="@+id/password_input" />
+        android:background="@drawable/hidden"
+        app:layout_constraintBottom_toBottomOf="@id/password_input"
+        app:layout_constraintEnd_toEndOf="@id/password_input"
+        app:layout_constraintTop_toTopOf="@id/password_input" />
 
     <Button
         android:id="@+id/log_in_button"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="@android:color/white"
+        android:backgroundTint="@color/white"
         android:text="@string/log_in"
-        android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/or_layout"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/or_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/or_layout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/social_buttons_layout"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/social_buttons_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -151,7 +149,7 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="@android:color/white" />
+            android:background="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -159,14 +157,15 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/or"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"
             android:textSize="18sp" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="@android:color/white" />
+            android:background="@color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -175,7 +174,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/dont_have_account_text"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/dont_have_account_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -184,7 +184,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/facebook"
+            android:background="@drawable/facebook"
             android:clickable="true"/>
 
         <ImageView
@@ -192,20 +192,20 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/google"
+            android:background="@drawable/google"
             android:clickable="true"/>
     </LinearLayout>
 
     <TextView
         android:id="@+id/dont_have_account_text"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="240dp"
         android:gravity="center"
         android:text="@string/dont_have_account"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
+        android:background="@android:color/transparent"
         android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -213,7 +213,7 @@
 
     <TextView
         android:id="@+id/sign_up_text"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="210dp"
         android:layout_marginEnd="32dp"
@@ -222,6 +222,8 @@
         android:text="@string/sign_up"
         android:textAlignment="center"
         android:textColor="@color/orange"
+        android:textStyle="bold"
+        android:background="@android:color/transparent"
         android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
