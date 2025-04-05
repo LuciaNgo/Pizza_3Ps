@@ -141,6 +141,9 @@ class DashboardFragment : Fragment() {
 
                 val dbHelper = FoodDatabaseHelper(requireContext())
 
+                // Xóa dữ liệu cũ trong cơ sở dữ liệu cục bộ
+                dbHelper.deleteAllFood()
+
                 for (document in documents) {
                     val name = document.getString("name") ?: ""
                     val price = document.getString("price")?.toIntOrNull() ?: 0
@@ -158,6 +161,8 @@ class DashboardFragment : Fragment() {
                         "appetizer" -> appetizerList.add(foodItem)
                         "drinks" -> drinksList.add(foodItem)
                     }
+
+
 
                     // Lưu vào cơ sở dữ liệu cục bộ
                     dbHelper.addFood(foodItem)

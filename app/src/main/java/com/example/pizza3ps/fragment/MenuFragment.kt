@@ -1,6 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,6 +52,7 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val dbHelper = FoodDatabaseHelper(requireContext())
 
         // Load food data category = pizza trong database
         val foodDatabaseHelper = FoodDatabaseHelper(requireContext())
@@ -60,52 +62,59 @@ class MenuFragment : Fragment() {
 
         searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val filteredList = foodList.filter { food ->
-                    food.name.contains(query ?: "", ignoreCase = true)
-                }
-                foodAdapter = FoodAdapter(filteredList, FoodAdapter.LayoutType.MENU)
-                foodRecyclerView.adapter = foodAdapter
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 val filteredList = foodList.filter { food ->
                     food.name.contains(newText ?: "", ignoreCase = true)
                 }
-                foodAdapter = FoodAdapter(filteredList, FoodAdapter.LayoutType.MENU)
-                foodRecyclerView.adapter = foodAdapter
+                foodAdapter.updateData(filteredList)
+
                 return true
             }
+
         })
 
+
         pizzaCategory.setOnClickListener {
+            val newList = dbHelper.getFoodByCategory("pizza")
             foodList.clear()
-            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pizza"))
-            foodAdapter.notifyDataSetChanged()
+            foodList.addAll(newList)
+            Log.d("MenuFragment", "Loaded ${newList.size} pizzas")
+            foodAdapter.updateData(newList)
         }
 
         chickenCategory.setOnClickListener {
+            val newList = dbHelper.getFoodByCategory("chicken")
             foodList.clear()
-            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("chicken"))
-            foodAdapter.notifyDataSetChanged()
+            foodList.addAll(newList)
+            Log.d("MenuFragment", "Loaded ${newList.size} chickens")
+            foodAdapter.updateData(newList)
         }
 
         pastaCategory.setOnClickListener {
+            val newList = dbHelper.getFoodByCategory("pasta")
             foodList.clear()
-            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pasta"))
-            foodAdapter.notifyDataSetChanged()
+            foodList.addAll(newList)
+            Log.d("MenuFragment", "Loaded ${newList.size} pastas")
+            foodAdapter.updateData(newList)
         }
 
         appetizerCategory.setOnClickListener {
+            val newList = dbHelper.getFoodByCategory("appetizer")
             foodList.clear()
-            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("appetizer"))
-            foodAdapter.notifyDataSetChanged()
+            foodList.addAll(newList)
+            Log.d("MenuFragment", "Loaded ${newList.size} appetizers")
+            foodAdapter.updateData(newList)
         }
 
         drinksCategory.setOnClickListener {
+            val newList = dbHelper.getFoodByCategory("drinks")
             foodList.clear()
-            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("drinks"))
-            foodAdapter.notifyDataSetChanged()
+            foodList.addAll(newList)
+            Log.d("MenuFragment", "Loaded ${newList.size} drinks")
+            foodAdapter.updateData(newList)
         }
     }
 }

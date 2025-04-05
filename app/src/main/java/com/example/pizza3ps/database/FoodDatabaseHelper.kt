@@ -115,4 +115,10 @@ class FoodDatabaseHelper(context: Context) :
         db.close()
         return foodList
     }
+
+    fun deleteAllFood() {
+        val db = writableDatabase
+        db.delete("Food", null, null)
+        db.close()
+    }
 }
