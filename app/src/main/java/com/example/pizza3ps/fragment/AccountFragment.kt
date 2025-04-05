@@ -14,22 +14,27 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
-import com.example.pizza3ps.database.UserDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AccountFragment : Fragment() {
     private lateinit var btnCustomerService: ConstraintLayout
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userNameView: TextView
     private lateinit var showInfoBtn : MaterialButton
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
+
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.GONE
 
         // Lấy tham chiếu đến nút Customer Service
         btnCustomerService = view.findViewById(R.id.btnCustomerService)
@@ -66,12 +71,13 @@ class AccountFragment : Fragment() {
 
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("userID", userId.toString())
         if (userId == null) {
             Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
             return
         }
 //        val userId = "10"
-        val dbHelper = UserDatabaseHelper(requireContext())
+        val dbHelper = DatabaseHelper(requireContext())
 
         db.collection("Users").document(userId)
             .get()
@@ -99,5 +105,4 @@ class AccountFragment : Fragment() {
                 //Toast.makeText(context, "Failed to load user data", Toast.LENGTH_SHORT).show()
             }
     }
-
 }

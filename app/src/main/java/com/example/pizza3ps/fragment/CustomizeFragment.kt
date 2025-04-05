@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.adapter.IngredientAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -61,6 +62,7 @@ class CustomizeFragment : Fragment() {
     private var totalPrice = basePrice
 
     private lateinit var layerContainer: FrameLayout
+    private lateinit var fab: FloatingActionButton
     private val ingredientImageViews = mutableMapOf<String, ImageView>()
 
     override fun onCreateView(
@@ -68,6 +70,9 @@ class CustomizeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_customize, container, false)
+
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.GONE
 
         addToCartButton = view.findViewById(R.id.add_to_cart_button)
         pizzaImageView = view.findViewById(R.id.pizza_image)

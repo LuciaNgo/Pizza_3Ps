@@ -35,7 +35,6 @@ class LogInActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             val intent = Intent(this, WelcomeActivity::class.java)
-
             startActivity(intent)
         }
 

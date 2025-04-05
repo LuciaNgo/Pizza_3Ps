@@ -70,7 +70,6 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
             registerUser(name, phone, email, password)
         }
     }
@@ -79,25 +78,26 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val userId = task.result?.user?.uid
+
                     val db = FirebaseFirestore.getInstance()
                     val metadataRef = db.collection("metadata").document("user_counter")
 
                     metadataRef.get().addOnSuccessListener { document ->
-                        val currentId = document.getLong("current_id") ?: 0
-                        val newId = currentId + 1
-
                         // Cập nhật ID mới vào metadata
-                        metadataRef.set(mapOf("current_id" to newId), SetOptions.merge())
+                        metadataRef.set(mapOf("current_id" to userId), SetOptions.merge())
 
                         // Tạo user map
                         val userMap = hashMapOf(
                             "name" to name,
                             "phone" to phone,
-                            "email" to email
+                            "email" to email,
+                            "address" to "",
+                            "points" to 0
                         )
 
                         // Lưu thông tin user vào Firestore
-                        db.collection("Users").document(newId.toString()).set(userMap)
+                        db.collection("Users").document(userId.toString()).set(userMap)
                             .addOnSuccessListener {
                                 Toast.makeText(this, "Sign up successful!", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this, LogInActivity::class.java))

@@ -14,7 +14,7 @@ import com.example.pizza3ps.activity.FoodInfoActivity
 import com.example.pizza3ps.model.FoodData
 
 class FoodAdapter(
-    private val foodList: List<FoodData>,
+    private var foodList: List<FoodData>,
     private val layoutType: LayoutType
 ) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
 
@@ -61,6 +61,12 @@ class FoodAdapter(
             context.startActivity(intent)
         }
     }
+
+    fun updateData(newList: List<FoodData>) {
+        foodList = newList
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount() = foodList.size
 

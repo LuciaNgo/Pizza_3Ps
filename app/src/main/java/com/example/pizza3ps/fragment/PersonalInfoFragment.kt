@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
-import com.example.pizza3ps.database.UserDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,7 +31,7 @@ class PersonalInfoFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_personal_info, container, false)
-        val user = UserDatabaseHelper(requireContext()).getUser()
+        val user = DatabaseHelper(requireContext()).getUser()
 
         view.findViewById<TextView>(R.id.nameHolder).text = "${user?.name}"
         view.findViewById<TextView>(R.id.emailHolder).text = "${user?.email}"
