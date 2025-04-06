@@ -11,7 +11,7 @@ class FoodDatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "FoodDatabase.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 3
 
         const val TABLE_NAME = "Food"
         const val COLUMN_ID = "_id"

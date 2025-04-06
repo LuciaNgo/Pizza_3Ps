@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.FoodInfoActivity
 import com.example.pizza3ps.model.FoodData
@@ -47,6 +48,8 @@ class FoodAdapter(
         Glide.with(holder.itemView.context)
             .load(food.imgPath)
             .into(holder.foodImageView)
+//            .placeholder(R.drawable.placeholder_image)
+//            .transition(DrawableTransitionOptions.withCrossFade()) // Hiệu ứng mờ dần
 
         // Thiết lập sự kiện click để mở FoodInfoActivity
         holder.itemView.setOnClickListener {
