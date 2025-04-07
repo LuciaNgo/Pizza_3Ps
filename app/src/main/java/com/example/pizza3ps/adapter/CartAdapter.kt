@@ -44,25 +44,30 @@ class CartAdapter(private val cartItems: List<CartData>) :
         if (item.size == "") {
             holder.size.visibility = View.GONE
         } else {
+            holder.size.visibility = View.VISIBLE
             holder.size.text = "Size: ${item.size}"
         }
 
         if (item.crust == "") {
             holder.crust.visibility = View.GONE
         } else {
+            holder.crust.visibility = View.VISIBLE
             holder.crust.text = "Crust: ${item.crust}"
         }
 
         if (item.crustBase == "") {
             holder.crustBase.visibility = View.GONE
         } else {
+            holder.crustBase.visibility = View.VISIBLE
             holder.crustBase.text = "Crust Base: ${item.crustBase}"
         }
 
-        if (!item.ingredients.isNullOrEmpty()) {
-            holder.ingredients.visibility = View.GONE
-        } else {
+        if (item.category == "pizza") {
+            holder.ingredients.visibility = View.VISIBLE
             holder.ingredients.text = "Ingredients: ${item.ingredients?.joinToString(", ")}"
+        }
+        else {
+            holder.ingredients.visibility = View.GONE
         }
 
         val price = item.price * item.quantity

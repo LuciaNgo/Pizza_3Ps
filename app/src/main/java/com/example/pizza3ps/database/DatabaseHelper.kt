@@ -93,7 +93,7 @@ class DatabaseHelper(context: Context) :
         val db = writableDatabase
 
         // Kiểm tra xem món đã có trong giỏ chưa
-        val ingredientsStr = cartItem.ingredients?.sorted()?.joinToString(",")
+        val ingredientsStr = cartItem.ingredients.sorted().joinToString(",")
         val query = """
             SELECT * FROM Cart
             WHERE name = ?
@@ -121,7 +121,7 @@ class DatabaseHelper(context: Context) :
             // Nếu đã có item này trong cart, tăng số lượng lên 1
             cursor.moveToFirst()
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
-            val newQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY)) + 1
+            val newQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY)) + cartItem.quantity
 
             val values = ContentValues().apply {
                 put(COLUMN_QUANTITY, newQuantity)
@@ -138,10 +138,12 @@ class DatabaseHelper(context: Context) :
                 put(COLUMN_SIZE, cartItem.size)
                 put(COLUMN_CRUST, cartItem.crust)
                 put(COLUMN_CRUST_BASE, cartItem.crustBase)
-                put(COLUMN_QUANTITY, 1)
+                put(COLUMN_QUANTITY, cartItem.quantity)
             }
             db.insert("Cart", null, values)
         }
+        cursor.close()
+        db.close()
     }
 
     fun addEvent(event: EventData) {

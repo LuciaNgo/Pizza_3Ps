@@ -32,6 +32,10 @@ class EventAdapter(private val eventList: List<EventData>) :
             .placeholder(R.drawable.placeholder_image)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.eventImageView)
+
+        holder.itemView.setOnClickListener {
+
+        }
     }
 
     override fun getItemCount() = eventList.size
