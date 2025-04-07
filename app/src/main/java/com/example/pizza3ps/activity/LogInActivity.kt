@@ -13,17 +13,23 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pizza3ps.R
-import com.example.pizza3ps.model.UserData
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.FacebookSdk
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Arrays
+
 
 class LogInActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
@@ -35,9 +41,12 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var logInButton: Button
     private lateinit var signUpButton: TextView
     private lateinit var backButton: ImageView
+    private lateinit var facebookButton: ImageView
     private lateinit var googleButton: ImageView
+    private var callbackManager: CallbackManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        FacebookSdk.sdkInitialize(getApplicationContext())
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_log_in)
@@ -45,7 +54,7 @@ class LogInActivity : AppCompatActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             // User đã đăng nhập trước đó, tự động vào màn hình chính
-            goToHomeScreen()
+            goToDashboard()
         }
 
         auth = FirebaseAuth.getInstance()
@@ -55,6 +64,7 @@ class LogInActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.password_input)
         backButton = findViewById(R.id.back_button)
         signUpButton = findViewById(R.id.sign_up_text)
+        facebookButton = findViewById(R.id.facebook_button)
         googleButton = findViewById(R.id.google_button)
 
 
@@ -81,11 +91,32 @@ class LogInActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        goToHomeScreen()
+                        goToDashboard()
                     } else {
                         Toast.makeText(this, "Error: Incorrect password or email", Toast.LENGTH_SHORT).show()
                     }
                 }
+        }
+
+        callbackManager = CallbackManager.Factory.create()
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    handleFacebookAccessToken(result.accessToken)
+                }
+
+                override fun onCancel() {
+                    Toast.makeText(this@LogInActivity, "Facebook login canceled", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError(exception: FacebookException) {
+                    Toast.makeText(this@LogInActivity, "Facebook login error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        facebookButton.setOnClickListener {
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         }
 
         setupOneTapSignIn()
@@ -123,6 +154,9 @@ class LogInActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        callbackManager?.onActivityResult(requestCode, resultCode, data)
+
         when (requestCode) {
             REQ_ONE_TAP -> {
                 try {
@@ -147,6 +181,12 @@ class LogInActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleFacebookAccessToken(token: com.facebook.AccessToken) {
+        val credential = com.google.firebase.auth.FacebookAuthProvider.getCredential(token.token)
+        signInWithCredential(credential)
+    }
+
+
     fun signInWithCredential(firebaseCredential: AuthCredential){
         auth.signInWithCredential(firebaseCredential)
             .addOnCompleteListener(this) { task ->
@@ -163,7 +203,7 @@ class LogInActivity : AppCompatActivity() {
                             Log.d("OneTap", "Checking user profile in Firestore")
 
                             if (document.exists()) {
-                                goToHomeScreen()
+                                goToDashboard()
                             } else {
                                 // Chưa có profile → chuyển qua màn hình tạo profile
                                 startActivity(Intent(this, AddProfileActivity::class.java))
@@ -171,10 +211,7 @@ class LogInActivity : AppCompatActivity() {
                             }
                         }
                 } else {
-//                    If sign in fails, display a message to the user.
-//                    Toast.makeText(this, "\nsignInWithCredential:failure", Toast.LENGTH_SHORT).show()
                     Toast.makeText(this, "\n${task.exception.toString()}", Toast.LENGTH_SHORT).show()
-//                    updateUI(null)
                 }
             }
     }
@@ -198,12 +235,9 @@ class LogInActivity : AppCompatActivity() {
         )
     }
 
-
-    private fun goToHomeScreen() {
+    private fun goToDashboard() {
         Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
-
-
 }
