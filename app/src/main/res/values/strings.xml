@@ -41,6 +41,7 @@
 
 <!--    food info-->
     <string name="pizza_name">Pizza name</string>
+    <string name="original_price">Original price</string>
 
 <!--    account-->
     <string name="greeting">Have a good day,</string>

@@ -18,6 +18,7 @@ import com.example.pizza3ps.adapter.FoodAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
+import com.example.pizza3ps.tool.LanguageHelper
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
@@ -47,11 +48,15 @@ class DashboardFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var fab: CounterFab
 
+    private lateinit var localizedContext: Context
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
+//        val localizedInflater = inflater.cloneInContext(localizedContext)
+//        val view = localizedInflater.inflate(R.layout.fragment_dashboard, container, false)
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.VISIBLE
@@ -188,4 +193,11 @@ class DashboardFragment : Fragment() {
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
             }
     }
+
+//    override fun onAttach(context: Context) {
+//        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        localizedContext = LanguageHelper.setLocale(context, langCode)
+//        super.onAttach(localizedContext)
+//    }
 }
