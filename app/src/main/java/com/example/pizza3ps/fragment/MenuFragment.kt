@@ -24,8 +24,8 @@ class MenuFragment : Fragment() {
     private lateinit var drinksCategory: LinearLayout
 
     private lateinit var foodRecyclerView: RecyclerView
-    private val foodList = mutableListOf<FoodData>()
     private lateinit var foodAdapter: FoodAdapter
+    private val foodList = mutableListOf<FoodData>()
 
     private lateinit var searchBar: SearchView
     private lateinit var fab: FloatingActionButton

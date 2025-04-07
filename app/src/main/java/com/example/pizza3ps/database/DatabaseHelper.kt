@@ -12,7 +12,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val COLUMN_ID = "_id"
         const val COLUMN_NAME = "name"
@@ -90,7 +90,7 @@ class DatabaseHelper(context: Context) :
             AND ingredients = ?
             AND size = ?
             AND crust = ?
-            AND crustBase = ?
+            AND crust_base = ?
         """.trimIndent()
 
         val cursor = db.rawQuery(
@@ -144,28 +144,7 @@ class DatabaseHelper(context: Context) :
         return count
     }
 
-    fun getAllFood(): List<FoodData> {
-        val foodList = mutableListOf<FoodData>()
-        val db = readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM Food", null)
-
-        if (cursor.moveToFirst()) {
-            do {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
-                val price = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRICE))
-                val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
-                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMG_PATH))
-                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS)).split(",").map { it.trim() }
-
-                foodList.add(FoodData(name, price, category, imgPath, ingredients))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        db.close()
-        return foodList
-    }
-
-    fun getAllFoodInCart(): List<CartData> {
+    fun getAllCartItems(): List<CartData> {
         val cartList = mutableListOf<CartData>()
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Cart", null)
@@ -210,30 +189,14 @@ class DatabaseHelper(context: Context) :
         return foodList
     }
 
-    fun searchFoodByName(name: String): List<FoodData> {
-        val foodList = mutableListOf<FoodData>()
-        val db = readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM Food WHERE $COLUMN_NAME LIKE ?", arrayOf("%$name%"))
-
-        if (cursor.moveToFirst()) {
-            do {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
-                val price = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRICE))
-                val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
-                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMG_PATH))
-                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS)).split(",").map { it.trim() }
-
-                foodList.add(FoodData(name, price, category, imgPath, ingredients))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        db.close()
-        return foodList
-    }
-
     fun deleteAllFood() {
         val db = writableDatabase
-        db.delete("Food", null, null)
+        // Kểm tra có bảng Food không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Food'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM Food")
+        }
+        cursor.close()
         db.close()
     }
 }

@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.model.IngredientData
 
@@ -35,6 +36,7 @@ class IngredientAdapter(
         // Load ảnh vào ImageView
         Glide.with(holder.itemView.context)
             .load(ingredient.iconImgPath)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.ingredientIcon)
 
         // Cập nhật màu nền dựa vào trạng thái đã chọn
@@ -60,6 +62,11 @@ class IngredientAdapter(
     }
 
     override fun getItemCount(): Int = ingredientList.size
+
+    // Hàm để lấy danh sách nguyên liệu đã chọn
+    fun getSelectedIngredients(): List<String> {
+        return selectedIngredients.toList()
+    }
 
     fun setSelectedIngredients(selectedList: List<String>) {
         selectedIngredients.clear()

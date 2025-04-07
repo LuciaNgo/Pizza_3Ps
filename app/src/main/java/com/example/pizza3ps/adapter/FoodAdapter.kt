@@ -2,19 +2,20 @@
 package com.example.pizza3ps.adapter
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
-import com.example.pizza3ps.activity.FoodInfoActivity
+import com.example.pizza3ps.activity.FoodInfoBottomSheet
 import com.example.pizza3ps.model.FoodData
-import com.example.pizza3ps.database.DatabaseHelper
-import com.example.pizza3ps.model.CartData
 
 class FoodAdapter(
     private var foodList: List<FoodData>,
@@ -50,20 +51,29 @@ class FoodAdapter(
         // Load ảnh bằng Glide
         Glide.with(holder.itemView.context)
             .load(food.imgPath)
+            .placeholder(R.drawable.placeholder_image)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.foodImageView)
 
-        // Thiết lập sự kiện click để mở FoodInfoActivity
+        // Thiết lập sự kiện click để mở FoodInfoBottomSheet
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            val intent = Intent(context, FoodInfoActivity::class.java).apply {
-                putExtra("food_name", food.name)
-                putExtra("food_price", food.price)
-                putExtra("food_category", food.category)
-                putExtra("food_image", food.imgPath)
-                putStringArrayListExtra("ingredientList", ArrayList(food.ingredients))
+
+            // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
+            val foodInfoBottomSheet = FoodInfoBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putString("food_name", food.name)
+                    putString("food_price", food.price)
+                    putString("food_category", food.category)
+                    putString("food_image", food.imgPath)
+                    putStringArrayList("ingredientList", ArrayList(food.ingredients))
+                }
             }
-            context.startActivity(intent)
+
+            // Hiển thị BottomSheet
+            foodInfoBottomSheet.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
+
     }
 
     fun updateData(newList: List<FoodData>) {

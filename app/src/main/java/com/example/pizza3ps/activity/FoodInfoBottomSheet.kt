@@ -1,8 +1,11 @@
 package com.example.pizza3ps.activity
 
-import android.graphics.Color
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -12,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,10 +23,13 @@ import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
-class FoodInfoActivity : AppCompatActivity() {
+class FoodInfoBottomSheet : BottomSheetDialogFragment() {
     private lateinit var recyclerViewMeat: RecyclerView
     private lateinit var recyclerViewSeafood: RecyclerView
     private lateinit var recyclerViewVegetable: RecyclerView
@@ -43,6 +48,7 @@ class FoodInfoActivity : AppCompatActivity() {
     private val additionList = mutableListOf<IngredientData>()
     private val sauceList = mutableListOf<IngredientData>()
 
+    private lateinit var foodOriginalPriceTextView: TextView
     private lateinit var sizeTextView: TextView
     private lateinit var crustThicknessTextView: TextView
     private lateinit var crustTypeTextView: TextView
@@ -69,46 +75,77 @@ class FoodInfoActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var ingredientList: List<String>
-    private var quantity = 1
     private var basePrice = 50000
     private var totalPrice = basePrice
+    private var selectedSize : String = "S"
+    private var selectedCrust : String = "Thin"
+    private var selectedCrustBase : String = ""
+    private var selectedIngredients: List<String> = listOf()
+    private var quantity = 1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_food_info)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        dialog.setOnShowListener {
+            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val behavior = BottomSheetBehavior.from(bottomSheet!!)
 
-        val name = intent.getStringExtra("food_name") ?: ""
-        val price = intent.getStringExtra("food_price")?.replace(",", "")?.toIntOrNull() ?: 0
-        val category = intent.getStringExtra("food_category") ?: ""
-        val imgPath = intent.getStringExtra("food_image") ?: ""
-        ingredientList = intent.getStringArrayListExtra("ingredientList") ?: arrayListOf()
-        Log.d("FoodInfoActivity", "Danh sách nguyên liệu nhận được: $ingredientList")
+            // Set the state to expanded
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-        sizeTextView = findViewById(R.id.size_textview)
-        crustThicknessTextView = findViewById(R.id.crust_thickness_textview)
-        crustTypeTextView = findViewById(R.id.crust_base_ingredient_textview)
-        sauceTextView = findViewById(R.id.sauce_textview)
-        meatTextView = findViewById(R.id.meat_textview)
-        seafoodTextView = findViewById(R.id.seafood_textview)
-        vegetableTextView = findViewById(R.id.vegetable_textview)
-        additionTextView = findViewById(R.id.addition_textview)
-        pizzaNameTextView = findViewById(R.id.pizza_name)
-        pizzaImageView = findViewById(R.id.pizza_image)
-        quantityTextView = findViewById(R.id.quantity_text)
-        minusCardView = findViewById(R.id.minus)
-        plusCardView = findViewById(R.id.plus)
-        sizeSRadioButton = findViewById(R.id.size_s)
-        sizeMRadioButton = findViewById(R.id.size_m)
-        sizeLRadioButton = findViewById(R.id.size_l)
-        crustThinButton = findViewById(R.id.crust_thin)
-        crustThickButton = findViewById(R.id.crust_thick)
-        crustCheeseCheckBox = findViewById(R.id.crust_cheese)
-        crustChickenCheckBox = findViewById(R.id.crust_chicken)
-        crustSausageCheckBox = findViewById(R.id.crust_sausage)
-        addToCartButton = findViewById(R.id.add_to_cart_button)
+            // Disable dragging
+            behavior.isDraggable = false
+
+            // Adjust height to match parent
+            bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        return dialog
+    }
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.bottom_sheet_food_info, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Lấy dữ liệu từ Intent
+        val name = arguments?.getString("food_name") ?: ""
+        val price = arguments?.getString("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
+        val category = arguments?.getString("food_category") ?: ""
+        val imgPath = arguments?.getString("food_image") ?: ""
+        ingredientList = arguments?.getStringArrayList("ingredientList") ?: arrayListOf()
+
+        foodOriginalPriceTextView = view.findViewById(R.id.original_price)
+        sizeTextView = view.findViewById(R.id.size_textview)
+        crustThicknessTextView = view.findViewById(R.id.crust_thickness_textview)
+        crustTypeTextView = view.findViewById(R.id.crust_base_ingredient_textview)
+        sauceTextView = view.findViewById(R.id.sauce_textview)
+        meatTextView = view.findViewById(R.id.meat_textview)
+        seafoodTextView = view.findViewById(R.id.seafood_textview)
+        vegetableTextView = view.findViewById(R.id.vegetable_textview)
+        additionTextView = view.findViewById(R.id.addition_textview)
+        pizzaNameTextView = view.findViewById(R.id.pizza_name)
+        pizzaImageView = view.findViewById(R.id.pizza_image)
+        quantityTextView = view.findViewById(R.id.quantity_text)
+        minusCardView = view.findViewById(R.id.minus)
+        plusCardView = view.findViewById(R.id.plus)
+        sizeSRadioButton = view.findViewById(R.id.size_s)
+        sizeMRadioButton = view.findViewById(R.id.size_m)
+        sizeLRadioButton = view.findViewById(R.id.size_l)
+        crustThinButton = view.findViewById(R.id.crust_thin)
+        crustThickButton = view.findViewById(R.id.crust_thick)
+        crustCheeseCheckBox = view.findViewById(R.id.crust_cheese)
+        crustChickenCheckBox = view.findViewById(R.id.crust_chicken)
+        crustSausageCheckBox = view.findViewById(R.id.crust_sausage)
+        addToCartButton = view.findViewById(R.id.add_to_cart_button)
 
         pizzaNameTextView.text = name
+        val formattedPrice = DecimalFormat("#,###").format(price)
+        foodOriginalPriceTextView.text = "$formattedPrice VND"
         sizeSRadioButton.isChecked = true
         crustThinButton.isChecked = true
         quantityTextView.text = quantity.toString()
@@ -167,6 +204,7 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice -= 40000
                 }
                 updatePrice()
+                selectedSize = "S"
             }
 
             sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
@@ -176,6 +214,7 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice -= 70000
                 }
                 updatePrice()
+                selectedSize = "M"
             }
 
             sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
@@ -185,16 +224,19 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice -= 90000
                 }
                 updatePrice()
+                selectedSize = "L"
             }
 
             crustThinButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) basePrice += 10000 else basePrice -= 10000
                 updatePrice()
+                selectedCrust = "Thin"
             }
 
             crustThickButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) basePrice += 20000 else basePrice -= 20000
                 updatePrice()
+                selectedCrust = "Thick"
             }
 
             crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -204,6 +246,7 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice += 40000
                 } else basePrice -= 40000
                 updatePrice()
+                selectedCrustBase = "Cheese"
             }
 
             crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -213,6 +256,7 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice += 40000
                 } else basePrice -= 40000
                 updatePrice()
+                selectedCrustBase = "Chicken"
             }
 
             crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -222,9 +266,10 @@ class FoodInfoActivity : AppCompatActivity() {
                     basePrice += 30000
                 } else basePrice -= 30000
                 updatePrice()
+                selectedCrustBase = "Sausage"
             }
 
-            setupRecyclerViews()
+            setupRecyclerViews(view)
             fetchIngredientData()
         }
 
@@ -235,27 +280,48 @@ class FoodInfoActivity : AppCompatActivity() {
 
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
-            // Chuyển ingredients sang dạng lưu trong DB
+            val selectedIngredients = (meatAdapter.getSelectedIngredients() +
+                    seafoodAdapter.getSelectedIngredients() +
+                    vegetableAdapter.getSelectedIngredients() +
+                    additionAdapter.getSelectedIngredients() +
+                    sauceAdapter.getSelectedIngredients()).distinct()
 
-
-            val dbHelper = DatabaseHelper(this)
-
-            // Gọi hàm thêm vào giỏ
+            val dbHelper = DatabaseHelper(requireContext())
+            val cartData = CartData(
+                name = name,
+                price = totalPrice,
+                category = category,
+                imgPath = imgPath,
+                ingredients = selectedIngredients,
+                size = selectedSize,
+                crust = selectedCrust,
+                crustBase = selectedCrustBase,
+                quantity = quantity
+            )
+            dbHelper.addFoodToCart(cartData)
+            Toast.makeText(requireContext(), "Added to cart", Toast.LENGTH_SHORT).show()
+            Log.d("FoodInfoActivity", "Added to cart: $cartData")
         }
+        /*
+        view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
+            dismiss() // đóng bottom sheet
+        }
+
+         */
     }
 
-    private fun setupRecyclerViews() {
-        recyclerViewMeat = findViewById(R.id.meat_recycler_view)
-        recyclerViewSeafood = findViewById(R.id.seafood_recycler_view)
-        recyclerViewVegetable = findViewById(R.id.vegetable_recycler_view)
-        recyclerViewAddition = findViewById(R.id.addition_recycler_view)
-        recyclerViewSauce = findViewById(R.id.sauce_recycler_view)
+    private fun setupRecyclerViews(view: View) {
+        recyclerViewMeat = view.findViewById(R.id.meat_recycler_view)
+        recyclerViewSeafood = view.findViewById(R.id.seafood_recycler_view)
+        recyclerViewVegetable = view.findViewById(R.id.vegetable_recycler_view)
+        recyclerViewAddition = view.findViewById(R.id.addition_recycler_view)
+        recyclerViewSauce = view.findViewById(R.id.sauce_recycler_view)
 
-        recyclerViewMeat.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewSeafood.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewVegetable.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewAddition.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewSauce.layoutManager = GridLayoutManager(this, 5)
+        recyclerViewMeat.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewSeafood.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewVegetable.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewAddition.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewSauce.layoutManager = GridLayoutManager(requireContext(), 5)
     }
 
     private fun fetchIngredientData() {

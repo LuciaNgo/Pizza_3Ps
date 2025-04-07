@@ -44,6 +44,7 @@
         android:src="@drawable/shopping_bag"
         app:backgroundTint="@color/white"
         app:counterTextColor="@color/black"
+        app:badgeBackgroundColor="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/nav_view"/>
 
