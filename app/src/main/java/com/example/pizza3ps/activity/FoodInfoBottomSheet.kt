@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
@@ -100,7 +101,6 @@ class FoodInfoBottomSheet : BottomSheetDialogFragment() {
         }
         return dialog
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -280,34 +280,49 @@ class FoodInfoBottomSheet : BottomSheetDialogFragment() {
 
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
-            val selectedIngredients = (meatAdapter.getSelectedIngredients() +
-                    seafoodAdapter.getSelectedIngredients() +
-                    vegetableAdapter.getSelectedIngredients() +
-                    additionAdapter.getSelectedIngredients() +
-                    sauceAdapter.getSelectedIngredients()).distinct()
-
             val dbHelper = DatabaseHelper(requireContext())
-            val cartData = CartData(
-                name = name,
-                price = totalPrice,
-                category = category,
-                imgPath = imgPath,
-                ingredients = selectedIngredients,
-                size = selectedSize,
-                crust = selectedCrust,
-                crustBase = selectedCrustBase,
-                quantity = quantity
-            )
-            dbHelper.addFoodToCart(cartData)
-            Toast.makeText(requireContext(), "Added to cart", Toast.LENGTH_SHORT).show()
-            Log.d("FoodInfoActivity", "Added to cart: $cartData")
-        }
-        /*
-        view.findViewById<Button>(R.id.confirm_button).setOnClickListener {
-            dismiss() // đóng bottom sheet
-        }
 
-         */
+            if (category == "pizza") {
+                selectedIngredients = (meatAdapter.getSelectedIngredients() +
+                        seafoodAdapter.getSelectedIngredients() +
+                        vegetableAdapter.getSelectedIngredients() +
+                        additionAdapter.getSelectedIngredients() +
+                        sauceAdapter.getSelectedIngredients()).distinct()
+
+                val cartData = CartData(
+                    name = name,
+                    price = basePrice,
+                    category = category,
+                    imgPath = imgPath,
+                    ingredients = selectedIngredients,
+                    size = selectedSize,
+                    crust = selectedCrust,
+                    crustBase = selectedCrustBase,
+                    quantity = quantity
+                )
+                dbHelper.addFoodToCart(cartData)
+            } else {
+                val cartData = CartData(
+                    name = name,
+                    price = basePrice,
+                    category = category,
+                    imgPath = imgPath,
+                    ingredients = null,
+                    size = "",
+                    crust = "",
+                    crustBase = "",
+                    quantity = quantity
+                )
+                dbHelper.addFoodToCart(cartData)
+            }
+
+            // Cập nhật lại số lượng món ăn trong giỏ hàng
+            val cartFab : CounterFab = requireActivity().findViewById(R.id.cart_fab)
+            val cartItemCount = dbHelper.getCartItemCount()
+            cartFab.count = cartItemCount
+
+            dismiss()
+        }
     }
 
     private fun setupRecyclerViews(view: View) {

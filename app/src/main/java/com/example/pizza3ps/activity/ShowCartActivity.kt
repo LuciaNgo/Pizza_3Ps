@@ -22,6 +22,7 @@ class ShowCartActivity : AppCompatActivity() {
 
         // Lấy danh sách giỏ hàng từ cart
         val dbHelper = DatabaseHelper(this)
+        //dbHelper.deleteAllCart()
         cartList = dbHelper.getAllCartItems()
 
         cartRecyclerView = findViewById(R.id.cart_recyclerView)

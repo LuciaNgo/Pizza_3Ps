@@ -15,7 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var cartFab: CounterFab
+    lateinit var cartFab: CounterFab
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private val db = FirebaseFirestore.getInstance()

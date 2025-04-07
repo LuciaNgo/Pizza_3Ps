@@ -9,12 +9,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AccountFragment : Fragment() {
     private lateinit var btnCustomerService: ConstraintLayout
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.FoodInfoBottomSheet
 import com.example.pizza3ps.model.CartData
+import java.text.DecimalFormat
 
 class CartAdapter(private val cartItems: List<CartData>) :
     RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
@@ -40,11 +41,34 @@ class CartAdapter(private val cartItems: List<CartData>) :
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val item = cartItems[position]
         holder.name.text = item.name
-        holder.size.text = "Size: ${item.size}"
-        holder.crust.text = "Crust: ${item.crust}"
-        holder.crustBase.text = "Base: ${item.crustBase}"
-        holder.ingredients.text = "Toppings: ${item.ingredients.joinToString(", ")}"
-        holder.price.text = "${item.price * item.quantity}đ"
+
+        if (item.size == "") {
+            holder.size.visibility = View.GONE
+        } else {
+            holder.size.text = "Size: ${item.size}"
+        }
+
+        if (item.crust == "") {
+            holder.crust.visibility = View.GONE
+        } else {
+            holder.crust.text = "Crust: ${item.crust}"
+        }
+
+        if (item.crustBase == "") {
+            holder.crustBase.visibility = View.GONE
+        } else {
+            holder.crustBase.text = "Crust Base: ${item.crustBase}"
+        }
+
+        if (!item.ingredients.isNullOrEmpty()) {
+            holder.ingredients.visibility = View.GONE
+        } else {
+            holder.ingredients.text = "Ingredients: ${item.ingredients?.joinToString(", ")}"
+        }
+
+        val price = item.price * item.quantity
+        val formattedPrice = DecimalFormat("#,###").format(price)
+        holder.price.text = "$formattedPrice VND"
         holder.quantity.text = item.quantity.toString()
 
         // Load ảnh bằng Glide

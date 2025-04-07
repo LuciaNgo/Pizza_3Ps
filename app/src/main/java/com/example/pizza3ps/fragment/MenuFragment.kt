@@ -10,11 +10,11 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.FoodAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.FoodData
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MenuFragment : Fragment() {
     private lateinit var pizzaCategory: LinearLayout
@@ -28,7 +28,7 @@ class MenuFragment : Fragment() {
     private val foodList = mutableListOf<FoodData>()
 
     private lateinit var searchBar: SearchView
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

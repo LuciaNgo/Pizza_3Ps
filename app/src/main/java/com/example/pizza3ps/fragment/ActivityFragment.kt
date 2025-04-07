@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -19,7 +20,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ActivityFragment : Fragment() {
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

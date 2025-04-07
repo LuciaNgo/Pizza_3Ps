@@ -74,6 +74,24 @@ class FoodAdapter(
             foodInfoBottomSheet.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
 
+        holder.addToCartButton.setOnClickListener {
+            val context = holder.itemView.context
+
+            // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
+            val foodInfoBottomSheet = FoodInfoBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putString("food_name", food.name)
+                    putString("food_price", food.price)
+                    putString("food_category", food.category)
+                    putString("food_image", food.imgPath)
+                    putStringArrayList("ingredientList", ArrayList(food.ingredients))
+                }
+            }
+
+            // Hiển thị BottomSheet
+            foodInfoBottomSheet.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+        }
+
     }
 
     fun updateData(newList: List<FoodData>) {

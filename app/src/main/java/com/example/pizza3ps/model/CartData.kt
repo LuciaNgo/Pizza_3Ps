@@ -5,7 +5,7 @@ data class CartData(
     val price: Int = 0,
     val category: String = "",
     val imgPath: String = "",
-    val ingredients: List<String>,
+    val ingredients: List<String>? = null,
     val size: String = "",
     val crust: String = "",
     val crustBase: String = "",

@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CustomerServiceFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

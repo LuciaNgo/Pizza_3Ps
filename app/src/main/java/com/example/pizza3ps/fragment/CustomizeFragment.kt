@@ -18,6 +18,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.adapter.IngredientAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
@@ -62,7 +63,7 @@ class CustomizeFragment : Fragment() {
     private var totalPrice = basePrice
 
     private lateinit var layerContainer: FrameLayout
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
     private val ingredientImageViews = mutableMapOf<String, ImageView>()
 
     override fun onCreateView(

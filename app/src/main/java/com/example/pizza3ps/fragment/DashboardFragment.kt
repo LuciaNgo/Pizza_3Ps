@@ -10,6 +10,7 @@ import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.EventAdapter
 import com.example.pizza3ps.adapter.FoodAdapter
@@ -43,7 +44,7 @@ class DashboardFragment : Fragment() {
     private lateinit var drinksFoodAdapter: FoodAdapter
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var fab: FloatingActionButton
+    private lateinit var fab: CounterFab
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

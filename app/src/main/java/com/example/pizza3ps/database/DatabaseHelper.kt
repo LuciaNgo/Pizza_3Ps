@@ -81,7 +81,7 @@ class DatabaseHelper(context: Context) :
         val db = writableDatabase
 
         // Kiểm tra xem món đã có trong giỏ chưa
-        val ingredientsStr = cartItem.ingredients.sorted().joinToString(",")
+        val ingredientsStr = cartItem.ingredients?.sorted()?.joinToString(",")
         val query = """
             SELECT * FROM Cart
             WHERE name = ?
@@ -195,6 +195,17 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Food'", null)
         if (cursor.count > 0) {
             db.execSQL("DELETE FROM Food")
+        }
+        cursor.close()
+        db.close()
+    }
+
+    fun deleteAllCart() {
+        val db = writableDatabase
+        // Kểm tra có bảng Cart không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Cart'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM Cart")
         }
         cursor.close()
         db.close()
