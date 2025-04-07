@@ -57,9 +57,9 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val dbHelper = DatabaseHelper(requireContext())
 
         // Load food data category = pizza trong database
-        val dbHelper = DatabaseHelper(requireContext())
         foodList.clear()
         foodList.addAll(dbHelper.getFoodByCategory("pizza"))
         foodAdapter.notifyDataSetChanged()

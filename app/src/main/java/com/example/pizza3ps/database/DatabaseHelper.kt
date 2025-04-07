@@ -7,13 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
+import com.example.pizza3ps.model.UserData
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
 
         const val COLUMN_ID = "_id"
         const val COLUMN_NAME = "name"
@@ -25,6 +26,11 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_CRUST = "crust"
         const val COLUMN_CRUST_BASE = "crust_base"
         const val COLUMN_QUANTITY = "quantity"
+
+        const val COLUMN_EMAIL = "email"
+        const val COLUMN_PHONE = "phone"
+        const val COLUMN_ADDRESS = "address"
+        const val COLUMN_POINTS = "points"
         const val COLUMN_DESCRIPTION = "description"
     }
 
@@ -41,17 +47,17 @@ class DatabaseHelper(context: Context) :
         """.trimIndent()
 
         val createCartTable = """
-        CREATE TABLE IF NOT EXISTS Cart (
-            $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            $COLUMN_NAME TEXT,
-            $COLUMN_PRICE REAL,
-            $COLUMN_CATEGORY TEXT,
-            $COLUMN_IMG_PATH TEXT,
-            $COLUMN_INGREDIENTS TEXT,
-            $COLUMN_SIZE TEXT,
-            $COLUMN_CRUST TEXT,
-            $COLUMN_CRUST_BASE TEXT,
-            $COLUMN_QUANTITY INTEGER
+            CREATE TABLE IF NOT EXISTS Cart (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_NAME TEXT,
+                $COLUMN_PRICE REAL,
+                $COLUMN_CATEGORY TEXT,
+                $COLUMN_IMG_PATH TEXT,
+                $COLUMN_INGREDIENTS TEXT,
+                $COLUMN_SIZE TEXT,
+                $COLUMN_CRUST TEXT,
+                $COLUMN_CRUST_BASE TEXT,
+                $COLUMN_QUANTITY INTEGER
             );
         """.trimIndent()
 
@@ -64,15 +70,28 @@ class DatabaseHelper(context: Context) :
             )
         """.trimIndent()
 
+        val createUserTable = """
+            CREATE TABLE IF NOT EXISTS User (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_NAME TEXT,
+                $COLUMN_EMAIL TEXT UNIQUE,
+                $COLUMN_PHONE TEXT,
+                $COLUMN_ADDRESS TEXT,
+                $COLUMN_POINTS INTEGER
+            );
+        """.trimIndent()
+
         db.execSQL(createFoodTable)
         db.execSQL(createCartTable)
         db.execSQL(createEventTable)
+        db.execSQL(createUserTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS Food")
         db.execSQL("DROP TABLE IF EXISTS Cart")
         db.execSQL("DROP TABLE IF EXISTS Event")
+        db.execSQL("DROP TABLE IF EXISTS User")
         onCreate(db)
     }
 
@@ -89,6 +108,25 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+    fun getFoodByCategory(category: String): List<FoodData> {
+        val foodList = mutableListOf<FoodData>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Food WHERE $COLUMN_CATEGORY = ?", arrayOf(category))
+        if (cursor.moveToFirst()) {
+            do {
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
+                val price = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRICE))
+                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMG_PATH))
+                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS)).split(",").map { it.trim() }
+                foodList.add(FoodData(name, price, category, imgPath, ingredients))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return foodList
+    }
+
+    // ===== CART TABLE =====
     fun addFoodToCart(cartItem: CartData) {
         val db = writableDatabase
 
@@ -142,16 +180,7 @@ class DatabaseHelper(context: Context) :
             }
             db.insert("Cart", null, values)
         }
-    }
-
-    fun addEvent(event: EventData) {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_NAME, event.name)
-            put(COLUMN_IMG_PATH, event.imgPath)
-            put(COLUMN_DESCRIPTION, event.description)
-        }
-        db.insert("Event", null, values)
+        cursor.close()
         db.close()
     }
 
@@ -192,27 +221,6 @@ class DatabaseHelper(context: Context) :
         return cartList
     }
 
-    fun getFoodByCategory(category: String): List<FoodData> {
-        val foodList = mutableListOf<FoodData>()
-        val db = readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM Food WHERE $COLUMN_CATEGORY = ?", arrayOf(category))
-
-        if (cursor.moveToFirst()) {
-            do {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
-                val price = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRICE))
-                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMG_PATH))
-                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS)).split(",").map { it.trim() }
-
-                foodList.add(FoodData(name, price, category, imgPath, ingredients))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        db.close()
-        return foodList
-    }
-
-
     fun deleteAllFood() {
         val db = writableDatabase
         // Kểm tra có bảng Food không
@@ -233,5 +241,39 @@ class DatabaseHelper(context: Context) :
         }
         cursor.close()
         db.close()
+    }
+
+    // ===== USER TABLE =====
+    fun addUser(user: UserData) {
+        val db = writableDatabase
+        db.delete("User", null, null) // Optional: keep latest only
+        val values = ContentValues().apply {
+            put(COLUMN_NAME, user.name)
+            put(COLUMN_EMAIL, user.email)
+            put(COLUMN_PHONE, user.phone)
+            put(COLUMN_ADDRESS, user.address)
+            put(COLUMN_POINTS, user.points)
+        }
+        db.insert("User", null, values)
+        db.close()
+    }
+
+    fun getUser(): UserData? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM User LIMIT 1", null)
+        var user: UserData? = null
+
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME))
+            val email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE))
+            val address = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ADDRESS))
+            val points = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_POINTS))
+
+            user = UserData(name, email, phone, address, points)
+        }
+        cursor.close()
+        db.close()
+        return user
     }
 }
