@@ -85,7 +85,7 @@ class AccountFragment : Fragment() {
             Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
             return
         }
-//        val userId = "10"
+
         val dbHelper = DatabaseHelper(requireContext())
 
         db.collection("Users").document(userId)

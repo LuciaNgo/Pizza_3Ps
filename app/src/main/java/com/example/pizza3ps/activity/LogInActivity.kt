@@ -13,14 +13,17 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pizza3ps.R
+import com.example.pizza3ps.model.UserData
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LogInActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
@@ -149,14 +152,28 @@ class LogInActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
 //                    Toast.makeText(this, "\nsignInWithCredential:success", Toast.LENGTH_SHORT).show()
-                    goToHomeScreen()
                     val user = auth.currentUser
-//                    updateUI(user)
+                    val userId = user?.uid.toString()
+
+                    val db = FirebaseFirestore.getInstance()
+                    val userRef = db.collection("Users").document(userId)
+
+                    userRef.get()
+                        .addOnSuccessListener { document ->
+                            Log.d("OneTap", "Checking user profile in Firestore")
+
+                            if (document.exists()) {
+                                goToHomeScreen()
+                            } else {
+                                // Chưa có profile → chuyển qua màn hình tạo profile
+                                startActivity(Intent(this, AddProfileActivity::class.java))
+                                finish()
+                            }
+                        }
                 } else {
-//                     If sign in fails, display a message to the user.
+//                    If sign in fails, display a message to the user.
 //                    Toast.makeText(this, "\nsignInWithCredential:failure", Toast.LENGTH_SHORT).show()
                     Toast.makeText(this, "\n${task.exception.toString()}", Toast.LENGTH_SHORT).show()
-
 //                    updateUI(null)
                 }
             }
@@ -180,6 +197,7 @@ class LogInActivity : AppCompatActivity() {
             "email" to prefs.getString("email", null),
         )
     }
+
 
     private fun goToHomeScreen() {
         Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
