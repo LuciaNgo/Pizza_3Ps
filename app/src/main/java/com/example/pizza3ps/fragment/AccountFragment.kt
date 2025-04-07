@@ -1,5 +1,6 @@
 package com.example.pizza3ps.fragment
 
+import android.content.Intent
 import android.content.Context
 import com.example.pizza3ps.model.UserData
 import android.os.Bundle
@@ -14,17 +15,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
-import com.example.pizza3ps.database.UserDatabaseHelper
+import com.example.pizza3ps.activity.LogInActivity
+import com.example.pizza3ps.database.DatabaseHelper
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
     private lateinit var btnCustomerService: ConstraintLayout
+    private lateinit var fab: CounterFab
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userNameView: TextView
     private lateinit var showInfoBtn : MaterialButton
+    private lateinit var btnLogOut: MaterialButton
     private lateinit var switchLanBtn : MaterialButton
 
     override fun onCreateView(
@@ -33,6 +38,9 @@ class AccountFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.GONE
+
         // Lấy tham chiếu đến nút Customer Service
         btnCustomerService = view.findViewById(R.id.btnCustomerService)
 
@@ -40,6 +48,12 @@ class AccountFragment : Fragment() {
         btnCustomerService.setOnClickListener {
             // Dùng NavController để điều hướng tới CustomerServiceFragment
             findNavController().navigate(R.id.action_accountFragment_to_customerServiceFragment)
+        }
+
+        btnLogOut = view.findViewById(R.id.logOutBtn)
+
+        btnLogOut.setOnClickListener {
+            signOut()
         }
 
         // Cập nhật padding cho view khi có thay đổi từ system bars (mặc định dùng EdgeToEdge)
@@ -81,12 +95,13 @@ class AccountFragment : Fragment() {
 
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("userID", userId.toString())
         if (userId == null) {
             Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
             return
         }
-//        val userId = "10"
-        val dbHelper = UserDatabaseHelper(requireContext())
+
+        val dbHelper = DatabaseHelper(requireContext())
 
         db.collection("Users").document(userId)
             .get()
@@ -119,4 +134,10 @@ class AccountFragment : Fragment() {
             }
     }
 
+    private fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        val intent = Intent(context, LogInActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
 }

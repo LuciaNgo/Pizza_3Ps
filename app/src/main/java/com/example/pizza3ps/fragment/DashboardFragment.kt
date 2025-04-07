@@ -11,12 +11,14 @@ import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.EventAdapter
 import com.example.pizza3ps.adapter.FoodAdapter
-import com.example.pizza3ps.database.FoodDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -43,12 +45,16 @@ class DashboardFragment : Fragment() {
     private lateinit var drinksFoodAdapter: FoodAdapter
 
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var fab: CounterFab
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
+
+        fab = requireActivity().findViewById(R.id.cart_fab)
+        fab.visibility = View.VISIBLE
 
         val scrollView = view.findViewById<ScrollView>(R.id.scroll_view)
 
@@ -143,8 +149,11 @@ class DashboardFragment : Fragment() {
                 appetizerList.clear()
                 drinksList.clear()
 
-                val dbHelper = FoodDatabaseHelper(requireContext())
-                dbHelper.clearAllFood()
+                val dbHelper = DatabaseHelper(requireContext())
+//                dbHelper.clearAllFood()
+
+                // Xóa dữ liệu cũ trong cơ sở dữ liệu cục bộ
+                dbHelper.deleteAllFood()
 
                 for (document in documents) {
                     val nameMap = document.get("name") as? Map<*, *>

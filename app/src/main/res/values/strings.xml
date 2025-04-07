@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Pizza 3P\'s</string>
+    <string name="google_web_client_id" translatable="false">45181302476-hgcrnmprqhodpv6g8ngdr2ce5qhod2ma.apps.googleusercontent.com</string>
     <string name="welcome_title">Pizza 3Ps</string>
     <string name="signup">Sign Up</string>
+    <string name="create_profile">Create New Profile</string>
     <string name="login">Log In</string>
     <string name="log_in">Log in</string>
     <string name="sign_up">Sign up</string>
@@ -10,6 +12,7 @@
     <string name="dont_have_account">Don\'t have an account\?</string>
     <string name="go_back">Go back</string>
     <string name="name">Name</string>
+    <string name="save_create_profile">Create Profile</string>
     <string name="phone_number">Phone number</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

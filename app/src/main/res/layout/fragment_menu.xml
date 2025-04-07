@@ -11,7 +11,6 @@
         android:id="@+id/search_bar_container"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="18dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +29,7 @@
         android:id="@+id/category_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -157,31 +156,18 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/menu_scroll_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/food_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="80dp"
+        android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_bar"
-        app:layout_constraintBottom_toTopOf="@id/empty_view">
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/food_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:scrollbars="none" />
-    </ScrollView>
-
-    <View
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

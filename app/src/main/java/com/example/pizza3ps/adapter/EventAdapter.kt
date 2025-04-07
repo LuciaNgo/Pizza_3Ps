@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.model.EventData
 
@@ -28,8 +29,8 @@ class EventAdapter(private val eventList: List<EventData>) :
 
         Glide.with(holder.itemView.context)
             .load(event.imgPath)
-            .placeholder(R.drawable.default_event_image)
-            .error(R.drawable.default_event_image)
+            .placeholder(R.drawable.placeholder_image)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.eventImageView)
     }
 

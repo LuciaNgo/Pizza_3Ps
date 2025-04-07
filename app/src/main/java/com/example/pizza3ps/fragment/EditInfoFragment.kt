@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
-import com.example.pizza3ps.database.UserDatabaseHelper
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -92,7 +92,7 @@ class EditInfoFragment : Fragment() {
             .update(updatedData as Map<String, Any>)
             .addOnSuccessListener {
                 // 4. Also update local SQLite
-                val dbHelper = UserDatabaseHelper(requireContext())
+                val dbHelper = DatabaseHelper(requireContext())
                 val user = UserData(updatedName, updatedEmail, updatedPhone, updatedAddress, updatedPoints.toInt())
                 dbHelper.addUser(user)
 

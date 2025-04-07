@@ -2,71 +2,65 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.SignUpActivity">
+    tools:context=".activity.AddProfileActivity">
 
     <ImageView
         android:id="@+id/background_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/welcome_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/welcome_background"
+        tools:srcCompat="@drawable/welcome_background" />
 
     <ImageView
         android:id="@+id/background_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@color/overlay_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Icon -->
     <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/arrow_back"
-        android:backgroundTintMode="src_in"
-        android:contentDescription="@string/go_back"
-        android:clickable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/profile_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/icon"
-        app:layout_constraintBottom_toTopOf="@id/title_text"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/profile_title_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/icon"
+        tools:srcCompat="@drawable/icon" />
 
+    <!-- Title Text (Sign Up) -->
     <TextView
-        android:id="@+id/title_text"
+        android:id="@+id/profile_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="@string/signup"
-        android:textColor="@color/white"
-        android:background="@android:color/transparent"
+        android:text="@string/create_profile"
+        android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/name_input"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/profile_name_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Name Input -->
     <EditText
-        android:id="@+id/name_input"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_name_input"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -77,18 +71,19 @@
         android:hint="@string/name"
         android:inputType="text"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@id/phone_input"
+        app:layout_constraintBottom_toTopOf="@id/profile_phone_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Phone Number Input -->
     <EditText
-        android:id="@+id/phone_input"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_phone_input"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -99,18 +94,19 @@
         android:hint="@string/phone_number"
         android:inputType="phone"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@id/email_input"
+        app:layout_constraintBottom_toTopOf="@id/profile_email_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Email Input -->
     <EditText
-        android:id="@+id/email_input"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_email_input"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -121,18 +117,19 @@
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:paddingVertical="12dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@id/password_input"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/profile_password_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Password Input -->
     <EditText
-        android:id="@+id/password_input"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_password_input"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -143,28 +140,30 @@
         android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@id/confirm_password_input"
+        app:layout_constraintBottom_toTopOf="@id/profile_confirm_password_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/password_toggle_icon"
+        android:id="@+id/profile_password_toggle_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/hidden"
-        app:layout_constraintBottom_toBottomOf="@id/password_input"
-        app:layout_constraintEnd_toEndOf="@id/password_input"
-        app:layout_constraintTop_toTopOf="@id/password_input" />
+        android:src="@drawable/hidden"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@id/profile_password_input"
+        app:layout_constraintEnd_toEndOf="@id/profile_password_input"
+        app:layout_constraintTop_toTopOf="@id/profile_password_input" />
 
+    <!-- Confirm password Input -->
     <EditText
-        android:id="@+id/confirm_password_input"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_confirm_password_input"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -175,69 +174,37 @@
         android:hint="@string/confirm_password"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingVertical="12dp"
-        app:layout_constraintBottom_toTopOf="@id/sign_up_button"
+        app:layout_constraintBottom_toTopOf="@id/profile_create_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/confirm_password_toggle_icon"
+        android:id="@+id/profile_confirm_password_toggle_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/hidden"
-        app:layout_constraintBottom_toBottomOf="@id/confirm_password_input"
-        app:layout_constraintEnd_toEndOf="@id/confirm_password_input"
-        app:layout_constraintTop_toTopOf="@id/confirm_password_input" />
+        android:src="@drawable/hidden"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@id/profile_confirm_password_input"
+        app:layout_constraintEnd_toEndOf="@id/profile_confirm_password_input"
+        app:layout_constraintTop_toTopOf="@id/profile_confirm_password_input" />
 
+    <!-- Sign Up Button -->
     <Button
-        android:id="@+id/sign_up_button"
-        android:layout_width="match_parent"
+        android:id="@+id/profile_create_button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/sign_up"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@id/text_view_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <TextView
-        android:id="@+id/text_view_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="200dp"
-        android:textAlignment="center"
-        android:text="@string/already_have_an_account"
-        android:textColor="@color/white"
-        android:background="@android:color/transparent"
-        android:textSize="14dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/text_view_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="210dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="200dp"
-        android:textAlignment="center"
-        android:text="@string/login"
-        android:textStyle="bold"
-        android:textColor="@color/orange"
-        android:background="@android:color/transparent"
-        android:textSize="14dp"
-        android:clickable="true"
+        android:backgroundTint="@android:color/white"
+        android:text="@string/save_create_profile"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

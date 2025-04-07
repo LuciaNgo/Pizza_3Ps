@@ -48,10 +48,6 @@ class LanguageFragment : Fragment() {
             requireActivity().finish()
             startActivity(intent)
         }
-
         return view
     }
-
-
-
 }
