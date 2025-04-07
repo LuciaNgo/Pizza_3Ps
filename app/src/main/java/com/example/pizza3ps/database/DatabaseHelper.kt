@@ -104,7 +104,7 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_INGREDIENTS, food.ingredients.joinToString(","))
         }
         db.insert("Food", null, values)
-        db.close()
+//        db.close()
     }
 
     fun getFoodByCategory(category: String): List<FoodData> {
@@ -121,7 +121,7 @@ class DatabaseHelper(context: Context) :
             } while (cursor.moveToNext())
         }
         cursor.close()
-        db.close()
+//        db.close()
         return foodList
     }
 
@@ -175,12 +175,12 @@ class DatabaseHelper(context: Context) :
                 put(COLUMN_SIZE, cartItem.size)
                 put(COLUMN_CRUST, cartItem.crust)
                 put(COLUMN_CRUST_BASE, cartItem.crustBase)
-                put(COLUMN_QUANTITY, 1)
+                put(COLUMN_QUANTITY, cartItem.quantity)
             }
             db.insert("Cart", null, values)
         }
         cursor.close()
-        db.close()
+//        db.close()
     }
 
     fun getCartItemCount(): Int {
@@ -191,7 +191,7 @@ class DatabaseHelper(context: Context) :
             count = cursor.getInt(0)
         }
         cursor.close()
-        db.close()
+//        db.close()
         return count
     }
 
@@ -216,7 +216,7 @@ class DatabaseHelper(context: Context) :
             } while (cursor.moveToNext())
         }
         cursor.close()
-        db.close()
+//        db.close()
         return cartList
     }
 
@@ -228,7 +228,7 @@ class DatabaseHelper(context: Context) :
             db.execSQL("DELETE FROM Food")
         }
         cursor.close()
-        db.close()
+//        db.close()
     }
 
     fun deleteAllCart() {
@@ -239,7 +239,7 @@ class DatabaseHelper(context: Context) :
             db.execSQL("DELETE FROM Cart")
         }
         cursor.close()
-        db.close()
+//        db.close()
     }
 
     // ===== USER TABLE =====
@@ -254,7 +254,7 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_POINTS, user.points)
         }
         db.insert("User", null, values)
-        db.close()
+//        db.close()
     }
 
     fun getUser(): UserData? {
@@ -272,7 +272,7 @@ class DatabaseHelper(context: Context) :
             user = UserData(name, email, phone, address, points)
         }
         cursor.close()
-        db.close()
+//        db.close()
         return user
     }
 }

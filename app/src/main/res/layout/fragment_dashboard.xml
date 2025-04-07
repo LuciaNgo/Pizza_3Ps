@@ -222,15 +222,6 @@
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
-                <TextView
-                    android:id="@+id/pizza_see_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/see_all"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -259,15 +250,6 @@
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
-                <TextView
-                    android:id="@+id/chicken_see_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/see_all"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -296,15 +278,6 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/pasta_see_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="@string/see_all"
-                    android:textColor="@android:color/holo_blue_dark" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -333,15 +306,6 @@
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
-                <TextView
-                    android:id="@+id/appetizer_see_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/see_all"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -370,15 +334,6 @@
                     android:textStyle="bold"
                     android:layout_alignParentStart="true"/>
 
-                <TextView
-                    android:id="@+id/drinks_see_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/see_all"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

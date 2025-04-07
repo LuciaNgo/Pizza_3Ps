@@ -2,6 +2,7 @@ package com.example.pizza3ps.fragment
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -196,43 +197,47 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
             sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     basePrice += 40000
+                    selectedSize = "S"
                 } else {
                     basePrice -= 40000
                 }
                 updatePrice()
-                selectedSize = "S"
             }
 
             sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     basePrice += 70000
+                    selectedSize = "M"
                 } else {
                     basePrice -= 70000
                 }
                 updatePrice()
-                selectedSize = "M"
             }
 
             sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     basePrice += 90000
+                    selectedSize = "L"
                 } else {
                     basePrice -= 90000
                 }
                 updatePrice()
-                selectedSize = "L"
             }
 
             crustThinButton.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) basePrice += 10000 else basePrice -= 10000
+                if (isChecked) {
+                    basePrice += 10000
+                    selectedCrust = "Thin"
+                } else basePrice -= 10000
                 updatePrice()
-                selectedCrust = "Thin"
             }
 
             crustThickButton.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) basePrice += 20000 else basePrice -= 20000
+                if (isChecked) {
+                    basePrice += 20000
+                    selectedCrust = "Thick"
+                } else basePrice -= 20000
                 updatePrice()
-                selectedCrust = "Thick"
             }
 
             crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -240,9 +245,9 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                     crustChickenCheckBox.isChecked = false
                     crustSausageCheckBox.isChecked = false
                     basePrice += 40000
+                    selectedCrustBase = "Cheese"
                 } else basePrice -= 40000
                 updatePrice()
-                selectedCrustBase = "Cheese"
             }
 
             crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -250,9 +255,9 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                     crustCheeseCheckBox.isChecked = false
                     crustSausageCheckBox.isChecked = false
                     basePrice += 40000
+                    selectedCrustBase = "Chicken"
                 } else basePrice -= 40000
                 updatePrice()
-                selectedCrustBase = "Chicken"
             }
 
             crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -260,9 +265,9 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                     crustCheeseCheckBox.isChecked = false
                     crustChickenCheckBox.isChecked = false
                     basePrice += 30000
+                    selectedCrustBase = "Sausage"
                 } else basePrice -= 30000
                 updatePrice()
-                selectedCrustBase = "Sausage"
             }
 
             setupRecyclerViews(view)
@@ -277,6 +282,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
             val dbHelper = DatabaseHelper(requireContext())
+            Log.d("test quantity", quantity.toString())
 
             if (category == "pizza") {
                 selectedIngredients = (meatAdapter.getSelectedIngredients() +
