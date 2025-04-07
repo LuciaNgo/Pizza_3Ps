@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
@@ -33,7 +35,24 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         bottomNavigationView = findViewById(R.id.nav_view)
+
         bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_dashboard -> {
+                    if (navController.currentDestination?.id != R.id.navigation_dashboard) {
+                        navController.popBackStack(R.id.navigation_dashboard, false)
+                    }
+                    true
+                }
+
+                else -> {
+                    NavigationUI.onNavDestinationSelected(item, navController)
+                }
+            }
+        }
+
+
 
         cartFab.setOnClickListener {
             // Chuyển đến activity giỏ hàng
