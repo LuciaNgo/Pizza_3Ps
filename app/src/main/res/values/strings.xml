@@ -19,4 +19,66 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="make_a_call">Call</string>
+
+<!--    customize pizza-->
+    <string name="size">Size</string>
+    <string name="crust_thickness">Crust Thickness</string>
+    <string name="thin">Thin</string>
+    <string name="thick">Thick</string>
+    <string name="crust_base_ingredient">Crust Base Ingredient</string>
+    <string name="cheese">Cheese</string>
+    <string name="chicken">Chicken</string>
+    <string name="sausage">Sausage</string>
+    <string name="sauce">Sauce</string>
+    <string name="addition">Addition</string>
+    <string name="seafood">Seafood</string>
+    <string name="meat">Meat</string>
+    <string name="vegetable">Vegetable</string>
+    <string name="add_to_cart">Add to Cart</string>
+
+<!--    food info-->
+    <string name="pizza_name">Pizza name</string>
+
+<!--    account-->
+    <string name="greeting">Have a good day,</string>
+    <string name="user_name_placeholder">Name</string>
+    <string name="tracking_order">Tracking order</string>
+    <string name="personal_information">Personal information</string>
+    <string name="change_password">Change password</string>
+    <string name="switch_language">Switch language</string>
+    <string name="customer_service">Customer Service</string>
+    <string name="log_out">Log out</string>
+
+<!--    dashboard-->
+    <string name="event">Event</string>
+    <string name="categories">Categories</string>
+    <string name="pizza">Pizza</string>
+    <string name="pasta">Pasta</string>
+    <string name="appetizer">Appetizer</string>
+    <string name="drinks">Drinks</string>
+    <string name="best_seller">Best seller</string>
+    <string name="see_all">See all</string>
+
+<!--    edit info-->
+    <string name="full_name">Full name:</string>
+    <string name="phone">Phone:</string>
+    <string name="address">Address:</string>
+    <string name="points">Points:</string>
+    <string name="cancel">CANCEL</string>
+    <string name="save">SAVE</string>
+    <string name="placeholder_name">Name</string>
+    <string name="placeholder_email">email</string>
+    <string name="placeholder_phone">phone</string>
+    <string name="placeholder_address">address</string>
+
+<!--    language-->
+    <string name="english">English</string>
+    <string name="vietnamese">Vietnamese</string>
+
+<!--    menu-->
+    <string name="menu_search_hint">What do you got in mind?</string>
+
+<!--    edit info-->
+    <string name="close">CLOSE</string>
+    <string name="edit">EDIT</string>
 </resources>

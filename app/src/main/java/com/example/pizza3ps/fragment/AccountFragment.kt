@@ -25,6 +25,7 @@ class AccountFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userNameView: TextView
     private lateinit var showInfoBtn : MaterialButton
+    private lateinit var switchLanBtn : MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +51,7 @@ class AccountFragment : Fragment() {
 
         userNameView = view.findViewById(R.id.userName)
         showInfoBtn = view.findViewById(R.id.informationBtn)
+        switchLanBtn = view.findViewById(R.id.switchLanguageBtn)
 
         val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
         val cachedName = sharedPref.getString("username", "Guest")
@@ -67,6 +69,10 @@ class AccountFragment : Fragment() {
 
         showInfoBtn.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_account_to_personalInfoFragment)
+        }
+
+        switchLanBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_account_to_languageFragment)
         }
 
 

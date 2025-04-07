@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.AccountFragment">
 
-
     <TextView
         android:id="@+id/greetingHolder"
         android:layout_width="wrap_content"
@@ -16,12 +15,11 @@
         android:layout_marginTop="80dp"
         android:fontFamily="sans-serif"
         android:gravity="center"
-        android:text="Have a good day,"
+        android:text="@string/greeting"
         android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/userName"
@@ -30,13 +28,12 @@
         android:layout_marginStart="5dp"
         android:fontFamily="sans-serif"
         android:gravity="center"
-        android:text="Name"
+        android:text="@string/user_name_placeholder"
         android:textStyle="bold"
         android:textColor="@color/orange"
         android:textSize="25sp"
         app:layout_constraintStart_toEndOf="@+id/greetingHolder"
         app:layout_constraintTop_toTopOf="@+id/greetingHolder" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,7 +53,7 @@
             android:backgroundTint="@color/orange"
             android:elevation="10dp"
             android:gravity="center_vertical"
-            android:text="Tracking order"
+            android:text="@string/tracking_order"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:cornerRadius="5dp" />
@@ -72,7 +69,7 @@
             android:elevation="10dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:text="Personal information"
+            android:text="@string/personal_information"
             android:textSize="17sp"
             app:strokeColor="@color/orange"
             app:strokeWidth="2dp"/>
@@ -88,7 +85,7 @@
             android:elevation="10dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:text="Change password"
+            android:text="@string/change_password"
             android:textSize="17sp"
             app:strokeColor="@color/orange"
             app:strokeWidth="2dp"  />
@@ -104,7 +101,7 @@
             android:elevation="10dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:text="Switch language"
+            android:text="@string/switch_language"
             android:textSize="17sp"
             app:strokeColor="@color/orange"
             app:strokeWidth="2dp"  />
@@ -120,15 +117,13 @@
             android:elevation="10dp"
             android:gravity="center_vertical"
             app:strokeColor="@color/orange"
-            app:strokeWidth="2dp"
-            >
+            app:strokeWidth="2dp">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btnCustomerService"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                tools:layout_editor_absoluteX="64dp"
-                tools:layout_editor_absoluteY="664dp">
+                android:layout_gravity="center_vertical">
 
                 <ImageView
                     android:id="@+id/imageView6"
@@ -147,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:background="#00FFFFFF"
-                    android:text="Customer Service"
+                    android:text="@string/customer_service"
                     android:textStyle="bold"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -156,8 +151,6 @@
                     app:layout_constraintStart_toEndOf="@+id/imageView6"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
@@ -171,14 +164,9 @@
             android:elevation="10dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:text="Log out"
+            android:text="@string/log_out"
             android:textSize="17sp"
             app:strokeColor="@color/orange"
             app:strokeWidth="2dp"  />
-
     </LinearLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

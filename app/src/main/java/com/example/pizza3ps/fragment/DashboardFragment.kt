@@ -1,5 +1,6 @@
 package com.example.pizza3ps.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -130,6 +131,9 @@ class DashboardFragment : Fragment() {
     }
 
     private fun fetchFoodData() {
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("lang", "en") ?: "en"
+
         db.collection("Food")
             .get()
             .addOnSuccessListener { documents ->
@@ -140,9 +144,11 @@ class DashboardFragment : Fragment() {
                 drinksList.clear()
 
                 val dbHelper = FoodDatabaseHelper(requireContext())
+                dbHelper.clearAllFood()
 
                 for (document in documents) {
-                    val name = document.getString("name") ?: ""
+                    val nameMap = document.get("name") as? Map<*, *>
+                    val name = nameMap?.get(lang) as? String ?: ""
                     val price = document.getString("price")?.toIntOrNull() ?: 0
                     val formattedPrice = DecimalFormat("#,###").format(price)
                     val imgPath = document.getString("imgPath") ?: ""

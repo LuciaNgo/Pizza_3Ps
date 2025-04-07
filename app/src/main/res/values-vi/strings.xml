@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pizza 3P\'s</string>
+    <string name="welcome_title">Pizza 3Ps</string>
+    <string name="signup">Đăng ký</string>
+    <string name="login">Đăng nhập</string>
+    <string name="log_in">Đăng nhập</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="welcome_description">Thỏa sức sáng tạo, thưởng thức pizza đậm đà hương vị!</string>
+    <string name="or">HOẶC</string>
+    <string name="dont_have_account">Chưa có tài khoản?</string>
+    <string name="go_back">Quay lại</string>
+    <string name="name">Tên</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="sign_up_with_google">Đăng ký bằng Google</string>
+    <string name="already_have_an_account">Đã có tài khoản?</string>
+    <string name="hello_blank_fragment">Xin chào fragment trống</string>
+    <string name="make_a_call">Gọi</string>
+
+    <!-- Customize pizza -->
+    <string name="size">Kích cỡ</string>
+    <string name="crust_thickness">Độ dày đế bánh</string>
+    <string name="thin">Mỏng</string>
+    <string name="thick">Dày</string>
+    <string name="crust_base_ingredient">Nguyên liệu đế bánh</string>
+    <string name="cheese">Phô mai</string>
+    <string name="chicken">Gà</string>
+    <string name="sausage">Xúc xích</string>
+    <string name="sauce">Nước sốt</string>
+    <string name="addition">Thêm</string>
+    <string name="seafood">Hải sản</string>
+    <string name="meat">Thịt</string>
+    <string name="vegetable">Rau củ</string>
+    <string name="add_to_cart">Thêm vào giỏ</string>
+
+    <!-- Food info -->
+    <string name="pizza_name">Tên pizza</string>
+
+    <!-- Account -->
+    <string name="greeting">Chúc bạn một ngày tốt lành,</string>
+    <string name="user_name_placeholder">Tên</string>
+    <string name="tracking_order">Theo dõi đơn hàng</string>
+    <string name="personal_information">Thông tin cá nhân</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="switch_language">Chuyển ngôn ngữ</string>
+    <string name="customer_service">Chăm sóc khách hàng</string>
+    <string name="log_out">Đăng xuất</string>
+
+    <!-- Dashboard -->
+    <string name="event">Sự kiện</string>
+    <string name="categories">Danh mục</string>
+    <string name="pizza">Pizza</string>
+    <string name="pasta">Mì Ý</string>
+    <string name="appetizer">Khai vị</string>
+    <string name="drinks">Đồ uống</string>
+    <string name="best_seller">Bán chạy nhất</string>
+    <string name="see_all">Xem tất cả</string>
+
+    <!-- Edit info -->
+    <string name="full_name">Họ tên:</string>
+    <string name="phone">Điện thoại:</string>
+    <string name="address">Địa chỉ:</string>
+    <string name="points">Điểm:</string>
+    <string name="cancel">HỦY</string>
+    <string name="save">LƯU</string>
+    <string name="placeholder_name">Tên</string>
+    <string name="placeholder_email">email</string>
+    <string name="placeholder_phone">số điện thoại</string>
+    <string name="placeholder_address">địa chỉ</string>
+
+    <!-- Language -->
+    <string name="english">Tiếng Anh</string>
+    <string name="vietnamese">Tiếng Việt</string>
+
+    <!-- Menu -->
+    <string name="menu_search_hint">Bạn muốn tìm món gì?</string>
+
+    <!-- Edit info (button text) -->
+    <string name="close">ĐÓNG</string>
+    <string name="edit">CHỈNH SỬA</string>
+</resources>

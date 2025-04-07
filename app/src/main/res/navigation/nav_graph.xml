@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_navigation_account_to_personalInfoFragment"
             app:destination="@id/personalInfoFragment" />
+        <action
+            android:id="@+id/action_navigation_account_to_languageFragment"
+            app:destination="@id/languageFragment" />
 
     </fragment>
 
@@ -92,4 +95,9 @@
             android:id="@+id/action_editInfoFragment_to_personalInfoFragment2"
             app:destination="@id/personalInfoFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.example.pizza3ps.fragment.LanguageFragment"
+        android:label="fragment_language"
+        tools:layout="@layout/fragment_language" />
 </navigation>

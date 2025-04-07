@@ -1,5 +1,6 @@
 package com.example.pizza3ps.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.model.IngredientData
+import com.example.pizza3ps.tool.LanguageHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -275,5 +277,13 @@ class CustomizePizzaActivity : AppCompatActivity() {
         totalPrice = basePrice * quantity
         val formattedPrice = DecimalFormat("#,###").format(totalPrice)
         addToCartButton.text = "Add to cart - $formattedPrice VND"
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        val prefs = newBase?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val langCode = prefs?.getString("lang", "en") ?: "en"
+
+        val context = LanguageHelper.setLocale(newBase!!, langCode)
+        super.attachBaseContext(context)
     }
 }

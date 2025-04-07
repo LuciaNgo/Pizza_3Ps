@@ -1,6 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,34 +79,80 @@ class MenuFragment : Fragment() {
             }
         })
 
+//        pizzaCategory.setOnClickListener {
+//            foodList.clear()
+//            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pizza"))
+//            foodAdapter.notifyDataSetChanged()
+//            Log.d("ClickTest", "Pizza clicked!")
+//        }
+//
+//        chickenCategory.setOnClickListener {
+//            foodList.clear()
+//            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("chicken"))
+//            foodAdapter.notifyDataSetChanged()
+//            Log.d("ClickTest", "Chicken clicked!")
+//        }
+//
+//        pastaCategory.setOnClickListener {
+//            foodList.clear()
+//            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pasta"))
+//            foodAdapter.notifyDataSetChanged()
+//            Log.d("ClickTest", "Pasta clicked!")
+//        }
+//
+//        appetizerCategory.setOnClickListener {
+//            foodList.clear()
+//            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("appetizer"))
+//            foodAdapter.notifyDataSetChanged()
+//            Log.d("ClickTest", "appetizer clicked!")
+//        }
+//
+//        drinksCategory.setOnClickListener {
+//            foodList.clear()
+//            foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("drinks"))
+//            foodAdapter.notifyDataSetChanged()
+//            Log.d("ClickTest", "Drink clicked!")
+//        }
+        setupCategoryClickListeners()
+    }
+
+
+    private fun setupCategoryClickListeners() {
         pizzaCategory.setOnClickListener {
             foodList.clear()
             foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pizza"))
             foodAdapter.notifyDataSetChanged()
+            Log.d("ClickTest", "Pizza clicked!")
         }
 
         chickenCategory.setOnClickListener {
             foodList.clear()
             foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("chicken"))
             foodAdapter.notifyDataSetChanged()
+            Log.d("ClickTest", "Chicken clicked!")
         }
 
         pastaCategory.setOnClickListener {
             foodList.clear()
             foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("pasta"))
             foodAdapter.notifyDataSetChanged()
+            Log.d("ClickTest", "Pasta clicked!")
         }
 
         appetizerCategory.setOnClickListener {
             foodList.clear()
             foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("appetizer"))
             foodAdapter.notifyDataSetChanged()
+            Log.d("ClickTest", "Appetizer clicked!")
         }
 
         drinksCategory.setOnClickListener {
             foodList.clear()
             foodList.addAll(FoodDatabaseHelper(requireContext()).getFoodByCategory("drinks"))
             foodAdapter.notifyDataSetChanged()
+            Log.d("ClickTest", "Drink clicked!")
         }
     }
+
+
 }

@@ -50,7 +50,8 @@ class FoodDatabaseHelper(context: Context) :
             put(COLUMN_IMG_PATH, food.imgPath)
             put(COLUMN_INGREDIENTS, food.ingredients.joinToString(","))
         }
-        db.insert(TABLE_NAME, null, values)
+        //db.insert(TABLE_NAME, null, values)
+        db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE)
         //db.close()
     }
 
@@ -114,5 +115,21 @@ class FoodDatabaseHelper(context: Context) :
         cursor.close()
         db.close()
         return foodList
+    }
+
+    fun clearAllFood() {
+        val db = writableDatabase
+
+        val cursor = db.rawQuery(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name= '$TABLE_NAME'",
+            null
+        )
+
+        val tableExists = cursor.count > 0
+        cursor.close()
+
+        if (tableExists) {
+            db.delete(TABLE_NAME, null, null)
+        }
     }
 }
