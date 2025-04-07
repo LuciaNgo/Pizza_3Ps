@@ -150,7 +150,9 @@ class DashboardFragment : Fragment() {
                 dbHelper.deleteAllFood()
 
                 for (document in documents) {
-                    val name = document.getString("name") ?: ""
+                    val nameMap = document.get("name") as? Map<String, Any> // Lấy "name" là Map
+                    val name = nameMap?.get("en") as? String ?: "" // Lấy giá trị tiếng Anh, nếu không có thì trả về chuỗi rỗng
+//                    val name = document.getString("name") ?: ""
                     val price = document.getString("price")?.toIntOrNull() ?: 0
                     val formattedPrice = DecimalFormat("#,###").format(price)
                     val imgPath = document.getString("imgPath") ?: ""

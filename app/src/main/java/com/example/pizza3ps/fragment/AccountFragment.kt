@@ -1,5 +1,6 @@
 package com.example.pizza3ps.fragment
 
+import android.content.Intent
 import com.example.pizza3ps.model.UserData
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
+import com.example.pizza3ps.activity.LogInActivity
 import com.example.pizza3ps.database.DatabaseHelper
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +28,7 @@ class AccountFragment : Fragment() {
     private lateinit var userNameView: TextView
     private lateinit var showInfoBtn : MaterialButton
     private lateinit var fab: FloatingActionButton
+    private lateinit var btnLogOut: MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +46,12 @@ class AccountFragment : Fragment() {
         btnCustomerService.setOnClickListener {
             // Dùng NavController để điều hướng tới CustomerServiceFragment
             findNavController().navigate(R.id.action_accountFragment_to_customerServiceFragment)
+        }
+
+        btnLogOut = view.findViewById(R.id.logOutBtn)
+
+        btnLogOut.setOnClickListener {
+            signOut()
         }
 
         // Cập nhật padding cho view khi có thay đổi từ system bars (mặc định dùng EdgeToEdge)
@@ -76,7 +85,7 @@ class AccountFragment : Fragment() {
             Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
             return
         }
-//        val userId = "10"
+
         val dbHelper = DatabaseHelper(requireContext())
 
         db.collection("Users").document(userId)
@@ -104,5 +113,12 @@ class AccountFragment : Fragment() {
                 Log.e("Firestore", "Failed to load user data", exception)
                 //Toast.makeText(context, "Failed to load user data", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        val intent = Intent(context, LogInActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }
