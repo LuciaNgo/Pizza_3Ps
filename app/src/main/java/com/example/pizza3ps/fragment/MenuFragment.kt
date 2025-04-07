@@ -24,8 +24,8 @@ class MenuFragment : Fragment() {
     private lateinit var drinksCategory: LinearLayout
 
     private lateinit var foodRecyclerView: RecyclerView
-    private lateinit var foodAdapter: FoodAdapter
     private val foodList = mutableListOf<FoodData>()
+    private lateinit var foodAdapter: FoodAdapter
 
     private lateinit var searchBar: SearchView
     private lateinit var fab: CounterFab
@@ -57,9 +57,9 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val dbHelper = DatabaseHelper(requireContext())
 
         // Load food data category = pizza trong database
-        val dbHelper = DatabaseHelper(requireContext())
         foodList.clear()
         foodList.addAll(dbHelper.getFoodByCategory("pizza"))
         foodAdapter.notifyDataSetChanged()
@@ -74,7 +74,6 @@ class MenuFragment : Fragment() {
                     food.name.contains(newText ?: "", ignoreCase = true)
                 }
                 foodAdapter.updateData(filteredList)
-
                 return true
             }
         })

@@ -65,8 +65,7 @@ class CartAdapter(private val cartItems: List<CartData>) :
         if (item.category == "pizza") {
             holder.ingredients.visibility = View.VISIBLE
             holder.ingredients.text = "Ingredients: ${item.ingredients?.joinToString(", ")}"
-        }
-        else {
+        } else {
             holder.ingredients.visibility = View.GONE
         }
 

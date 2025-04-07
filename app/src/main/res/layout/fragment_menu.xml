@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:showAsAction="always|collapseActionView"
-            android:queryHint="What do you got in mind?" />
+            android:queryHint="@string/menu_search_hint" />
     </FrameLayout>
 
     <LinearLayout
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Pizza"
+                android:text="@string/pizza"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Chicken"
+                android:text="@string/chicken"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -103,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Pasta"
+                android:text="@string/pasta"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -127,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Appetizer"
+                android:text="@string/appetizer"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -151,7 +151,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Drinks"
+                android:text="@string/drinks"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -169,8 +169,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_bar"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

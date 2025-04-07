@@ -282,6 +282,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
             val dbHelper = DatabaseHelper(requireContext())
+            Log.d("test quantity", quantity.toString())
 
             if (category == "pizza") {
                 selectedIngredients = (meatAdapter.getSelectedIngredients() +
