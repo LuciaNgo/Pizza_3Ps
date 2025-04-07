@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Pizza 3P\'s</string>
+    <string name="google_web_client_id" translatable="false">45181302476-hgcrnmprqhodpv6g8ngdr2ce5qhod2ma.apps.googleusercontent.com</string>
     <string name="welcome_title">Pizza 3Ps</string>
     <string name="signup">Sign Up</string>
     <string name="login">Log In</string>
