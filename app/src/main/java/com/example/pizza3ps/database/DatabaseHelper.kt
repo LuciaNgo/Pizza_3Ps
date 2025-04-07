@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.pizza3ps.model.CartData
+import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
 
 class DatabaseHelper(context: Context) :
@@ -24,7 +25,7 @@ class DatabaseHelper(context: Context) :
         const val COLUMN_CRUST = "crust"
         const val COLUMN_CRUST_BASE = "crust_base"
         const val COLUMN_QUANTITY = "quantity"
-
+        const val COLUMN_DESCRIPTION = "description"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -54,13 +55,24 @@ class DatabaseHelper(context: Context) :
             );
         """.trimIndent()
 
+        val createEventTable = """
+            CREATE TABLE IF NOT EXISTS Event (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_NAME TEXT,
+                $COLUMN_IMG_PATH TEXT,
+                $COLUMN_DESCRIPTION TEXT
+            )
+        """.trimIndent()
+
         db.execSQL(createFoodTable)
         db.execSQL(createCartTable)
+        db.execSQL(createEventTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS Food")
         db.execSQL("DROP TABLE IF EXISTS Cart")
+        db.execSQL("DROP TABLE IF EXISTS Event")
         onCreate(db)
     }
 
@@ -132,6 +144,17 @@ class DatabaseHelper(context: Context) :
         }
     }
 
+    fun addEvent(event: EventData) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_NAME, event.name)
+            put(COLUMN_IMG_PATH, event.imgPath)
+            put(COLUMN_DESCRIPTION, event.description)
+        }
+        db.insert("Event", null, values)
+        db.close()
+    }
+
     fun getCartItemCount(): Int {
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT COUNT(*) FROM Cart", null)
@@ -188,6 +211,7 @@ class DatabaseHelper(context: Context) :
         db.close()
         return foodList
     }
+
 
     fun deleteAllFood() {
         val db = writableDatabase

@@ -27,7 +27,7 @@
             android:name=".activity.CustomizePizzaActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.FoodInfoBottomSheet"
+            android:name=".fragment.FoodInfoFragment"
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"

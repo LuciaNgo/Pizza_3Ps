@@ -1,6 +1,7 @@
 package com.example.pizza3ps.activity
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 
 class ShowCartActivity : AppCompatActivity() {
+    private lateinit var backButton: ImageView
     private lateinit var cartRecyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
     private var cartList = listOf<CartData>()
@@ -25,9 +27,13 @@ class ShowCartActivity : AppCompatActivity() {
         //dbHelper.deleteAllCart()
         cartList = dbHelper.getAllCartItems()
 
+        backButton = findViewById(R.id.back_button)
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
         cartRecyclerView.adapter = CartAdapter(cartList)
 
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
     }
 }

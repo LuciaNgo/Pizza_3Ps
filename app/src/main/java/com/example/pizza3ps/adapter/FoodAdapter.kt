@@ -1,7 +1,6 @@
 
 package com.example.pizza3ps.adapter
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
-import com.example.pizza3ps.activity.FoodInfoBottomSheet
+import com.example.pizza3ps.fragment.FoodInfoFragment
 import com.example.pizza3ps.model.FoodData
 
 class FoodAdapter(
@@ -60,7 +59,7 @@ class FoodAdapter(
             val context = holder.itemView.context
 
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
-            val foodInfoBottomSheet = FoodInfoBottomSheet().apply {
+            val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
                     putString("food_name", food.name)
                     putString("food_price", food.price)
@@ -71,14 +70,14 @@ class FoodAdapter(
             }
 
             // Hiển thị BottomSheet
-            foodInfoBottomSheet.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+            foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
 
         holder.addToCartButton.setOnClickListener {
             val context = holder.itemView.context
 
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
-            val foodInfoBottomSheet = FoodInfoBottomSheet().apply {
+            val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
                     putString("food_name", food.name)
                     putString("food_price", food.price)
@@ -89,7 +88,7 @@ class FoodAdapter(
             }
 
             // Hiển thị BottomSheet
-            foodInfoBottomSheet.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+            foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
 
     }
