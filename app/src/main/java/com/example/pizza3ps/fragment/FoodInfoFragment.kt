@@ -153,10 +153,10 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
 
         // Lấy dữ liệu từ Intent
         val name = arguments?.getString("food_name") ?: ""
-        //val price = arguments?.getString("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
-        val price = arguments?.getString("food_price")
-            ?.replace(".", "") // Remove dot, not comma
-            ?.toIntOrNull() ?: 0
+        val price = arguments?.getString("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
+//        val price = arguments?.getString("food_price")
+//            ?.replace(".", "") // Remove dot, not comma
+//            ?.toIntOrNull() ?: 0
         val category = arguments?.getString("food_category") ?: ""
         val imgPath = arguments?.getString("food_image") ?: ""
         ingredientList = arguments?.getStringArrayList("ingredientList") ?: arrayListOf()

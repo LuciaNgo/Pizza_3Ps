@@ -68,7 +68,7 @@ class EditInfoFragment : Fragment() {
         val updatedEmail = view?.findViewById<EditText>(R.id.emailHolder)?.text.toString()
         val updatedPhone = view?.findViewById<EditText>(R.id.phoneHolder)?.text.toString()
         val updatedAddress = view?.findViewById<EditText>(R.id.addressHolder)?.text.toString()
-        val updatedPointsText = view?.findViewById<EditText>(R.id.pointHolder)?.text.toString()
+        val updatedPointsText = view?.findViewById<TextView>(R.id.pointHolder)?.text.toString()
         val updatedPoints = updatedPointsText.toLongOrNull() ?: 0L
 
         // 2. Firestore user ID – use current UID or hardcoded test ID
