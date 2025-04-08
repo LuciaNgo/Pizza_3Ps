@@ -20,7 +20,6 @@ import java.text.DecimalFormat
 class CartAdapter(private val cartItems: List<CartData>) :
     RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-
     class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.food_name)
         val size: TextView = view.findViewById(R.id.food_size)
