@@ -38,6 +38,7 @@
 
     <!-- Food info -->
     <string name="pizza_name">Tên pizza</string>
+    <string name="original_price">Giá gốc </string>
 
     <!-- Account -->
     <string name="greeting">Chúc bạn một ngày tốt lành,</string>
