@@ -1,5 +1,6 @@
 package com.example.pizza3ps.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -30,10 +31,19 @@ class ShowCartActivity : AppCompatActivity() {
         backButton = findViewById(R.id.back_button)
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
-        cartRecyclerView.adapter = CartAdapter(cartList)
-
+        //cartRecyclerView.adapter = CartAdapter(cartList)
+        cartAdapter = CartAdapter(this, cartList)
+        cartRecyclerView.adapter = cartAdapter
         backButton.setOnClickListener {
             onBackPressed()
         }
     }
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val langCode = prefs.getString("lang", "en") ?: "en"
+        val context = com.example.pizza3ps.tool.LanguageHelper.setLocale(newBase, langCode)
+        super.attachBaseContext(context)
+    }
+
 }

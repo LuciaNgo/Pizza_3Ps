@@ -1,5 +1,6 @@
 package com.example.pizza3ps.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.FoodAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.FoodData
+import com.example.pizza3ps.tool.LanguageHelper
 
 class MenuFragment : Fragment() {
     private lateinit var pizzaCategory: LinearLayout
@@ -35,6 +37,13 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_menu, container, false)
+
+//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
+//
+//        val themedInflater = inflater.cloneInContext(localizedContext)
+//        val view = themedInflater.inflate(R.layout.fragment_menu, container, false)
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.VISIBLE

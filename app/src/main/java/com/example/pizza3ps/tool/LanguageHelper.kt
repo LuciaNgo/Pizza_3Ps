@@ -2,6 +2,8 @@ package com.example.pizza3ps.tool
 
 import android.content.Context
 import android.content.res.Configuration
+import android.view.ContextThemeWrapper
+import com.example.pizza3ps.R
 import java.util.Locale
 
 
@@ -16,4 +18,5 @@ object LanguageHelper {
 
         return context.createConfigurationContext(config)
     }
+
 }

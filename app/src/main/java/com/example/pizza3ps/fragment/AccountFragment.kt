@@ -136,6 +136,8 @@ class AccountFragment : Fragment() {
 
     private fun signOut() {
         FirebaseAuth.getInstance().signOut()
+        val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        sharedPref.edit().remove("username").apply()
         val intent = Intent(context, LogInActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
