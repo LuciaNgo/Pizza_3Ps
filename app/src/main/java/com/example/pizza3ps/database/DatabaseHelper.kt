@@ -94,6 +94,7 @@ class DatabaseHelper(context: Context) :
         onCreate(db)
     }
 
+    // ===== FOOD TABLE =====
     fun addFood(food: FoodData) {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -181,6 +182,38 @@ class DatabaseHelper(context: Context) :
         }
         cursor.close()
         db.close()
+    }
+
+    fun updateCartItemQuantity(id: Int, quantity: Int) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_QUANTITY, quantity)
+        }
+        db.update("Cart", values, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        db.close()
+    }
+
+    fun getIdOfCartItem(cartItem: CartData): Int {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT $COLUMN_ID FROM Cart " +
+                    "WHERE $COLUMN_NAME = ?" +
+                    "AND $COLUMN_PRICE = ?" +
+                    "AND $COLUMN_CATEGORY = ?" +
+                    "AND $COLUMN_INGREDIENTS = ?" +
+                    "AND $COLUMN_SIZE = ?" +
+                    "AND $COLUMN_CRUST = ?" +
+                    "AND $COLUMN_CRUST_BASE = ?",
+            arrayOf(cartItem.name, cartItem.price.toString(), cartItem.category,
+                cartItem.ingredients.sorted().joinToString(","), cartItem.size, cartItem.crust, cartItem.crustBase)
+        )
+        var id = -1
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+        }
+        cursor.close()
+        db.close()
+        return id
     }
 
     fun getCartItemCount(): Int {

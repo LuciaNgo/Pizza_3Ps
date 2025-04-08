@@ -12,12 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.fragment.FoodInfoFragment
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 
 class CartAdapter(private val cartItems: List<CartData>) :
     RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+
 
     class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.food_name)
@@ -39,6 +41,7 @@ class CartAdapter(private val cartItems: List<CartData>) :
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val item = cartItems[position]
+        var quantity = item.quantity
         holder.name.text = item.name
 
         if (item.size == "") {
@@ -98,6 +101,32 @@ class CartAdapter(private val cartItems: List<CartData>) :
 
             // Hiển thị BottomSheet
             foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+        }
+
+        holder.minus.setOnClickListener {
+            if (quantity > 1) {
+                quantity--
+                val dbHelper = DatabaseHelper(holder.itemView.context)
+                val id = dbHelper.getIdOfCartItem(item)
+                dbHelper.updateCartItemQuantity(id, quantity)
+
+                holder.quantity.text = quantity.toString()
+                val newPrice = item.price * quantity
+                val formattedPrice = DecimalFormat("#,###").format(newPrice)
+                holder.price.text = "$formattedPrice VND"
+            }
+        }
+
+        holder.plus.setOnClickListener {
+            quantity++
+            val dbHelper = DatabaseHelper(holder.itemView.context)
+            val id = dbHelper.getIdOfCartItem(item)
+            dbHelper.updateCartItemQuantity(id, quantity)
+
+            holder.quantity.text = quantity.toString()
+            val newPrice = item.price * quantity
+            val formattedPrice = DecimalFormat("#,###").format(newPrice)
+            holder.price.text = "$formattedPrice VND"
         }
     }
 
