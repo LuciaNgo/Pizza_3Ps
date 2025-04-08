@@ -132,7 +132,8 @@ class DashboardFragment : Fragment() {
                 for (document in documents) {
                     val name = document.getString("name") ?: ""
                     val imgPath = document.getString("imgPath") ?: ""
-                    eventList.add(EventData(name, imgPath))
+                    val description = document.getString("description") ?: ""
+                    eventList.add(EventData(name, imgPath, description))
                 }
                 eventAdapter.notifyDataSetChanged()
             }

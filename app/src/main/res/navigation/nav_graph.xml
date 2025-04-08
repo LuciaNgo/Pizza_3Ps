@@ -9,7 +9,29 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pizza3ps.fragment.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_eventInfoFragment"
+            app:destination="@id/eventInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventInfoFragment"
+        android:name="com.example.pizza3ps.fragment.EventInfoFragment"
+        android:label="Event Info"
+        tools:layout="@layout/fragment_event_info" >
+        <argument
+            android:name="eventTitle"
+            app:argType="string" />
+
+        <argument
+            android:name="eventImage"
+            app:argType="string" />
+
+        <argument
+            android:name="eventDescription"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_menu"
@@ -62,7 +84,6 @@
         <action
             android:id="@+id/action_personalInfoFragment_to_editInfoFragment"
             app:destination="@id/editInfoFragment" />
-        />
     </fragment>
     <fragment
         android:id="@+id/editInfoFragment"

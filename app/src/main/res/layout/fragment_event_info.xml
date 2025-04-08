@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="32sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_gravity="center" />
         </androidx.appcompat.widget.Toolbar>
@@ -61,27 +61,36 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="match_parent" >
 
                 <ImageView
                     android:id="@+id/event_image"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="150dp"
                     android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
-                    android:id="@+id/eventDetailTextView"
+                <WebView
+                    android:id="@+id/event_webView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:lineSpacingExtra="6dp"
-                    android:textColor="@android:color/black"
+                    android:layout_margin="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_image" />
+                    app:layout_constraintTop_toBottomOf="@+id/event_image" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/event_webView"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -56,7 +56,7 @@ class EditInfoFragment : Fragment() {
 
         cancelBtn.setOnClickListener {
             findNavController().navigate(R.id.action_editInfoFragment_to_personalInfoFragment2)
-                    }
+        }
 
 
         return view

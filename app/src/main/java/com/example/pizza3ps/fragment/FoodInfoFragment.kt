@@ -347,6 +347,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                     crustBase = selectedCrustBase,
                     quantity = quantity
                 )
+                Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
             } else {
                 val cartData = CartData(
@@ -360,6 +361,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                     crustBase = "",
                     quantity = quantity
                 )
+                Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
             }
 
