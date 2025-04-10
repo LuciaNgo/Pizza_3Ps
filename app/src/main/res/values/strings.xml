@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Pizza 3P\'s</string>
     <string name="google_web_client_id" translatable="false">45181302476-hgcrnmprqhodpv6g8ngdr2ce5qhod2ma.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">4035884753395328</string>
+    <string name="facebook_client_token">c9d404135130e2e0766cf4d731b023d0</string>
+    <string name="fb_login_protocol_scheme">fb4035884753395328</string>
     <string name="welcome_title">Pizza 3Ps</string>
     <string name="signup">Sign Up</string>
     <string name="create_profile">Create New Profile</string>
@@ -41,6 +44,7 @@
 
 <!--    food info-->
     <string name="pizza_name">Pizza name</string>
+    <string name="original_price">Original price</string>
 
 <!--    account-->
     <string name="greeting">Have a good day,</string>
@@ -65,6 +69,7 @@
 <!--    edit info-->
     <string name="full_name">Full name:</string>
     <string name="phone">Phone:</string>
+    <string name="personal_email">Email:</string>
     <string name="address">Address:</string>
     <string name="points">Points:</string>
     <string name="cancel">CANCEL</string>

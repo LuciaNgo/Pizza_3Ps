@@ -17,7 +17,9 @@ import com.example.pizza3ps.fragment.FoodInfoFragment
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 
-class CartAdapter(private val cartItems: List<CartData>) :
+class CartAdapter(
+    private val activity: AppCompatActivity,
+    private val cartItems: List<CartData>) :
     RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -99,7 +101,9 @@ class CartAdapter(private val cartItems: List<CartData>) :
             }
 
             // Hiển thị BottomSheet
-            foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+//            foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
+            foodInfoFragment.show(activity.supportFragmentManager, "FoodInfoBottomSheet")
+
         }
 
         holder.minus.setOnClickListener {

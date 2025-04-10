@@ -1,8 +1,11 @@
 package com.example.pizza3ps.fragment
 
 import android.app.Dialog
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +24,13 @@ import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
+import com.example.pizza3ps.tool.LanguageHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
+import java.util.Locale
 
 class FoodInfoFragment : BottomSheetDialogFragment() {
     private lateinit var recyclerViewMeat: RecyclerView
@@ -99,11 +104,48 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         return dialog
     }
 
+//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        val locale = Locale(langCode)
+//        Locale.setDefault(locale)
+//
+//        val config = Configuration(requireContext().resources.configuration)
+//        config.setLocale(locale)
+//        val contextWithLocale = requireContext().createConfigurationContext(config)
+//
+//        // Apply theme with wrapped context
+//        val dialog = BottomSheetDialog(ContextThemeWrapper(contextWithLocale, R.style.Theme_Pizza3Ps), theme)
+//
+//        dialog.setOnShowListener {
+//            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+//            val behavior = BottomSheetBehavior.from(bottomSheet!!)
+//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//            behavior.isDraggable = false
+//            bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+//        }
+//
+//        return dialog
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
+//
+//        val localizedInflater = inflater.cloneInContext(localizedContext)
+//        return localizedInflater.inflate(R.layout.fragment_food_info, container, false)
         return inflater.inflate(R.layout.fragment_food_info, container, false)
+//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
+//
+//        val localizedInflater = LayoutInflater.from(localizedContext)
+//        return localizedInflater.inflate(R.layout.fragment_food_info, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,6 +154,9 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         // Lấy dữ liệu từ Intent
         val name = arguments?.getString("food_name") ?: ""
         val price = arguments?.getString("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
+//        val price = arguments?.getString("food_price")
+//            ?.replace(".", "") // Remove dot, not comma
+//            ?.toIntOrNull() ?: 0
         val category = arguments?.getString("food_category") ?: ""
         val imgPath = arguments?.getString("food_image") ?: ""
         ingredientList = arguments?.getStringArrayList("ingredientList") ?: arrayListOf()
@@ -417,4 +462,15 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         val formattedPrice = DecimalFormat("#,###").format(totalPrice)
         addToCartButton.text = "Add to cart - $formattedPrice VND"
     }
+
+
+
+
+//    override fun onAttach(context: Context) {
+//        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val langCode = prefs.getString("lang", "en") ?: "en"
+//        val localizedContext = LanguageHelper.setLocale(context, langCode)
+//        super.onAttach(localizedContext)
+//    }
+
 }
