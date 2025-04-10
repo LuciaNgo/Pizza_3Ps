@@ -69,6 +69,7 @@
 <!--    edit info-->
     <string name="full_name">Full name:</string>
     <string name="phone">Phone:</string>
+    <string name="personal_email">Email:</string>
     <string name="address">Address:</string>
     <string name="points">Points:</string>
     <string name="cancel">CANCEL</string>
