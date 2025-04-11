@@ -48,15 +48,14 @@ class DashboardFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var fab: CounterFab
 
-    private lateinit var localizedContext: Context
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
-//        val localizedInflater = inflater.cloneInContext(localizedContext)
-//        val view = localizedInflater.inflate(R.layout.fragment_dashboard, container, false)
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("lang", "en") ?: "en"
+
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.VISIBLE
@@ -96,11 +95,11 @@ class DashboardFragment : Fragment() {
         drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         eventAdapter = EventAdapter(eventList)
-        pizzaFoodAdapter = FoodAdapter(pizzaList, FoodAdapter.LayoutType.DASHBOARD)
-        chickenFoodAdapter = FoodAdapter(chickenList, FoodAdapter.LayoutType.DASHBOARD)
-        pastaFoodAdapter = FoodAdapter(pastaList, FoodAdapter.LayoutType.DASHBOARD)
-        appetizerFoodAdapter = FoodAdapter(appetizerList, FoodAdapter.LayoutType.DASHBOARD)
-        drinksFoodAdapter = FoodAdapter(drinksList, FoodAdapter.LayoutType.DASHBOARD)
+        pizzaFoodAdapter = FoodAdapter(lang, pizzaList, FoodAdapter.LayoutType.DASHBOARD)
+        chickenFoodAdapter = FoodAdapter(lang, chickenList, FoodAdapter.LayoutType.DASHBOARD)
+        pastaFoodAdapter = FoodAdapter(lang, pastaList, FoodAdapter.LayoutType.DASHBOARD)
+        appetizerFoodAdapter = FoodAdapter(lang, appetizerList, FoodAdapter.LayoutType.DASHBOARD)
+        drinksFoodAdapter = FoodAdapter(lang, drinksList, FoodAdapter.LayoutType.DASHBOARD)
 
         eventRecyclerView.adapter = eventAdapter
         pizzaRecyclerView.adapter = pizzaFoodAdapter
@@ -143,9 +142,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun fetchFoodData() {
-        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val lang = prefs.getString("lang", "en") ?: "en"
-
         db.collection("Food")
             .get()
             .addOnSuccessListener { documents ->
@@ -156,21 +152,21 @@ class DashboardFragment : Fragment() {
                 drinksList.clear()
 
                 val dbHelper = DatabaseHelper(requireContext())
-//                dbHelper.clearAllFood()
 
                 // Xóa dữ liệu cũ trong cơ sở dữ liệu cục bộ
                 dbHelper.deleteAllFood()
 
                 for (document in documents) {
                     val nameMap = document.get("name") as? Map<*, *>
-                    val name = nameMap?.get(lang) as? String ?: ""
+                    val name_en = nameMap?.get("en") as? String ?: ""
+                    val name_vi = nameMap?.get("vi") as? String ?: ""
                     val price = document.getString("price")?.toIntOrNull() ?: 0
                     val formattedPrice = DecimalFormat("#,###").format(price)
                     val imgPath = document.getString("imgPath") ?: ""
                     val ingredientString = document.getString("ingredient") ?: ""
                     val category = document.getString("category") ?: ""
                     val ingredientList = ingredientString.split(", ").map { it.trim() }
-                    val foodItem = FoodData(name, formattedPrice, category, imgPath, ingredientList)
+                    val foodItem = FoodData(name_en, name_vi, formattedPrice, category, imgPath, ingredientList)
 
                     when (category.lowercase()) {
                         "pizza" -> pizzaList.add(foodItem)
@@ -194,11 +190,4 @@ class DashboardFragment : Fragment() {
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
             }
     }
-
-//    override fun onAttach(context: Context) {
-//        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        localizedContext = LanguageHelper.setLocale(context, langCode)
-//        super.onAttach(localizedContext)
-//    }
 }

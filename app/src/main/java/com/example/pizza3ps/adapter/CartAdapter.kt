@@ -1,6 +1,8 @@
 package com.example.pizza3ps.adapter
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +35,7 @@ class CartAdapter(
         val minus : ImageButton = view.findViewById(R.id.minus)
         val quantity: TextView = view.findViewById(R.id.quantity_text)
         val image: ImageView = view.findViewById(R.id.food_image)
+        val delete: ImageView = view.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
@@ -40,10 +43,18 @@ class CartAdapter(
         return CartViewHolder(view)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val item = cartItems[position]
         var quantity = item.quantity
-        holder.name.text = item.name
+
+        val dlHelper = DatabaseHelper(holder.itemView.context)
+        val foodInfo = dlHelper.getFoodById(item.food_id)
+
+        // Log
+        Log.d("CartAdapter", "Food ID: ${item.food_id}, Food Info: $foodInfo")
+
+        holder.name.text = foodInfo.getName("en")
 
         if (item.size == "") {
             holder.size.visibility = View.GONE
@@ -63,12 +74,12 @@ class CartAdapter(
             holder.crustBase.visibility = View.GONE
         } else {
             holder.crustBase.visibility = View.VISIBLE
-            holder.crustBase.text = "Crust Base: ${item.crustBase}"
+            holder.crustBase.text = "Crust base: ${item.crustBase}"
         }
 
-        if (item.category == "pizza") {
+        if (foodInfo.category == "pizza") {
             holder.ingredients.visibility = View.VISIBLE
-            holder.ingredients.text = "Ingredients: ${item.ingredients?.joinToString(", ")}"
+            holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
         } else {
             holder.ingredients.visibility = View.GONE
         }
@@ -80,7 +91,7 @@ class CartAdapter(
 
         // Load ảnh bằng Glide
         Glide.with(holder.itemView.context)
-            .load(item.imgPath)
+            .load(foodInfo.imgPath)
             .placeholder(R.drawable.placeholder_image)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.image)
@@ -92,10 +103,12 @@ class CartAdapter(
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
             val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString("food_name", item.name)
+                    putInt("food_id", item.food_id)
                     putInt("food_price", item.price)
-                    putString("food_category", item.category)
-                    putString("food_image", item.imgPath)
+                    putString("size", item.size)
+                    putString("crust", item.crust)
+                    putString("crustBase", item.crustBase)
+                    putInt("quantity", item.quantity)
                     putStringArrayList("ingredientList", ArrayList(item.ingredients))
                 }
             }
@@ -131,7 +144,31 @@ class CartAdapter(
             val formattedPrice = DecimalFormat("#,###").format(newPrice)
             holder.price.text = "$formattedPrice VND"
         }
+
+        holder.delete.setOnClickListener {
+            val dbHelper = DatabaseHelper(holder.itemView.context)
+            val id = dbHelper.getIdOfCartItem(item)
+
+            if (id != -1) {
+                dbHelper.deleteCartItem(id)
+
+                // Tạo danh sách mới loại bỏ item vừa xoá
+                val updatedList = cartItems.filterIndexed { index, cartItem ->
+                    index != holder.adapterPosition
+                }
+
+                // Cập nhật lại adapter
+                updateCart(updatedList)
+            }
+        }
     }
+
+    fun updateCart(newList: List<CartData>) {
+        (cartItems as? MutableList<CartData>)?.clear()
+        (cartItems as? MutableList<CartData>)?.addAll(newList)
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount(): Int = cartItems.size
 }

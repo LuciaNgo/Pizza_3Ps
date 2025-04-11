@@ -9,19 +9,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CustomerServiceFragment : Fragment() {
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var customerServiceMail : ConstraintLayout
+    private lateinit var customerServicePhone : ConstraintLayout
+    private lateinit var mailText : TextView
+    private lateinit var phoneText : TextView
+    private lateinit var backButton : ImageView
     private lateinit var fab: CounterFab
+
+    private lateinit var mailInfo : String
+    private lateinit var phoneInfo : String
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -31,22 +40,24 @@ class CustomerServiceFragment : Fragment() {
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.GONE
 
-        val mail = view.findViewById<TextView>(R.id.customerServiceMailValue)
-        val phone = view.findViewById<TextView>(R.id.customerServicePhoneValue)
-        val btnMakeCall = view.findViewById<MaterialButton>(R.id.btnMakeCall)
+        customerServiceMail = view.findViewById(R.id.customerServiceMailContainer)
+        customerServicePhone = view.findViewById(R.id.customerServicePhoneContainer)
+        mailText = view.findViewById(R.id.customerServiceMailText)
+        phoneText = view.findViewById(R.id.customerServicePhoneText)
+        backButton = view.findViewById(R.id.backButton)
 
         val docRef = db.collection("RestaurantInfo").document("Info")
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val mailInfo = document.getString("mail")
-                    val phoneInfo = document.getString("phone")
+                    mailInfo = document.getString("mail").toString()
+                    phoneInfo = document.getString("phone").toString()
 
                     Log.d("Firestore", "mail: $mailInfo")
                     Log.d("Firestore", "phone: $phoneInfo")
 
-                    mail.text = mailInfo
-                    phone.text = phoneInfo
+                    mailText.text = "Email: $mailInfo"
+                    phoneText.text = "Hotline: $phoneInfo"
                 } else {
                     Log.d("Firestore", "Document không tồn tại")
                 }
@@ -55,8 +66,8 @@ class CustomerServiceFragment : Fragment() {
                 Log.d("Firestore", "Lỗi khi đọc document: ", exception)
             }
 
-        btnMakeCall.setOnClickListener {
-            val phoneNumber = phone.text.toString()
+        customerServicePhone.setOnClickListener {
+            val phoneNumber = phoneInfo
             Log.d("phoneNumber", phoneNumber)
             val callIntent = Intent(Intent.ACTION_CALL).apply {
                 data = Uri.parse("tel:$phoneNumber")
@@ -71,6 +82,10 @@ class CustomerServiceFragment : Fragment() {
             } else {
                 ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), 1)
             }
+        }
+
+        backButton.setOnClickListener {
+            requireActivity().onBackPressed()
         }
 
         return view
