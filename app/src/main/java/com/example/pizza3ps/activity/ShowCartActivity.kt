@@ -2,7 +2,9 @@ package com.example.pizza3ps.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,9 +13,12 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.CartAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
+import java.text.DecimalFormat
 
 class ShowCartActivity : AppCompatActivity() {
     private lateinit var backButton: ImageView
+    private lateinit var totalPrice : TextView
+    private lateinit var checkoutButton : Button
     private lateinit var cartRecyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
     private var cartList = listOf<CartData>()
@@ -29,14 +34,19 @@ class ShowCartActivity : AppCompatActivity() {
         cartList = dbHelper.getAllCartItems()
 
         backButton = findViewById(R.id.back_button)
+        totalPrice = findViewById(R.id.total_price)
+        checkoutButton = findViewById(R.id.checkout_button)
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
-        //cartRecyclerView.adapter = CartAdapter(cartList)
-        cartAdapter = CartAdapter(this, cartList)
-        cartRecyclerView.adapter = cartAdapter
+        cartRecyclerView.adapter = CartAdapter(this, cartList)
+
         backButton.setOnClickListener {
             onBackPressed()
         }
+
+        val totalPrice = dbHelper.calculateTotalPrice()
+        val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
+        this.totalPrice.text = formattedTotalPrice
     }
 
     override fun attachBaseContext(newBase: Context) {

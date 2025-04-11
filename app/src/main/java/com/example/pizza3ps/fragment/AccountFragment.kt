@@ -8,29 +8,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.LogInActivity
 import com.example.pizza3ps.database.DatabaseHelper
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
-    private lateinit var btnCustomerService: ConstraintLayout
+    private lateinit var termsPoliciesLayout: ConstraintLayout
+    private lateinit var customerServiceLayout: ConstraintLayout
+    private lateinit var userInfoLayout: ConstraintLayout
+    private lateinit var changeLanguageLayout: ConstraintLayout
+    private lateinit var logOutLayout: LinearLayout
+    private lateinit var userNameView: TextView
     private lateinit var fab: CounterFab
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var userNameView: TextView
-    private lateinit var showInfoBtn : MaterialButton
-    private lateinit var btnLogOut: MaterialButton
-    private lateinit var switchLanBtn : MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,42 +37,20 @@ class AccountFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
+        termsPoliciesLayout = view.findViewById(R.id.termsAndPoliciesContainer)
+        customerServiceLayout = view.findViewById(R.id.supportCenterContainer)
+        userInfoLayout = view.findViewById(R.id.userInfoContainer)
+        changeLanguageLayout = view.findViewById(R.id.languageContainer)
+        logOutLayout = view.findViewById(R.id.logoutContainer)
+        userNameView = view.findViewById(R.id.userName)
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.GONE
-
-        // Lấy tham chiếu đến nút Customer Service
-        btnCustomerService = view.findViewById(R.id.btnCustomerService)
-
-        // Thiết lập sự kiện nhấn nút
-        btnCustomerService.setOnClickListener {
-            // Dùng NavController để điều hướng tới CustomerServiceFragment
-            findNavController().navigate(R.id.action_accountFragment_to_customerServiceFragment)
-        }
-
-        btnLogOut = view.findViewById(R.id.logOutBtn)
-
-        btnLogOut.setOnClickListener {
-            signOut()
-        }
-
-        // Cập nhật padding cho view khi có thay đổi từ system bars (mặc định dùng EdgeToEdge)
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        userNameView = view.findViewById(R.id.userName)
-        showInfoBtn = view.findViewById(R.id.informationBtn)
-        switchLanBtn = view.findViewById(R.id.switchLanguageBtn)
 
         val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
         val cachedName = sharedPref.getString("username", "Guest")
         userNameView.text = cachedName
 
-
         Log.d("FETCH", "fetchUserData() called")
-
 
         if (cachedName == "Guest") {
             fetchUserData()
@@ -81,14 +58,21 @@ class AccountFragment : Fragment() {
             userNameView.text = cachedName
         }
 
-        showInfoBtn.setOnClickListener {
+        customerServiceLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_accountFragment_to_customerServiceFragment)
+        }
+
+        userInfoLayout.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_account_to_personalInfoFragment)
         }
 
-        switchLanBtn.setOnClickListener {
+        changeLanguageLayout.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_account_to_languageFragment)
         }
 
+        logOutLayout.setOnClickListener {
+            signOut()
+        }
 
         return view
     }
@@ -123,7 +107,7 @@ class AccountFragment : Fragment() {
                     sharedPref.edit().putString("username", name).apply()
 
                     // Save to SQLite
-                    val user = UserData(name, email, phone, address, points)
+                    val user = UserData(email, name, phone, address, points)
                     dbHelper.addUser(user)
                     Log.e("Firestore_FetchDataDone", "Done")
                 }
