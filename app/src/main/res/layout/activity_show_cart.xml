@@ -58,7 +58,7 @@
             android:layout_weight="1"
             android:layout_marginTop="8dp"
             android:layout_margin="16dp"
-            android:background="@color/gray"
+            android:background="@color/light_gray"
             app:elevation="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
             android:layout_marginBottom="8dp"
             android:text="Total"
             android:textStyle="bold"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/checkout_button"/>
 
@@ -88,7 +88,7 @@
             android:layout_marginBottom="8dp"
             android:text=""
             android:textStyle="bold"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/line"
             app:layout_constraintBottom_toTopOf="@id/checkout_button"/>
