@@ -329,15 +329,18 @@ class CustomizeFragment : Fragment() {
         if (isSelected) {
             basePrice += ingredient.price.toInt()
             updatePrice()
+
             val imageView = ImageView(requireContext())
             Glide.with(this)
                 .load(ingredient.layerImgPath)
                 .into(imageView)
+
             layerContainer.addView(imageView)
             ingredientImageViews[ingredient.name] = imageView
         } else {
             basePrice -= ingredient.price.toInt()
             updatePrice()
+
             ingredientImageViews[ingredient.name]?.let { layerContainer.removeView(it) }
             ingredientImageViews.remove(ingredient.name)
         }

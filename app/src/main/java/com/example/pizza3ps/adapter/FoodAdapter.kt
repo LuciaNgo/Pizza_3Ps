@@ -89,7 +89,6 @@ class FoodAdapter(
                 }
             }
 
-            // Hiển thị BottomSheet
             foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
 

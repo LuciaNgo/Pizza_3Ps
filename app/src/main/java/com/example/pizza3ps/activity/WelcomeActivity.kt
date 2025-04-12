@@ -18,13 +18,11 @@ class WelcomeActivity : AppCompatActivity() {
 
         signUpButton.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
-
             startActivity(intent)
         }
 
         logInButton.setOnClickListener {
             val intent = Intent(this, LogInActivity::class.java)
-
             startActivity(intent)
         }
     }
