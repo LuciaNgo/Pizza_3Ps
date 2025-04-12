@@ -1,6 +1,7 @@
 package com.example.pizza3ps.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -20,7 +21,6 @@ class ShowCartActivity : AppCompatActivity() {
     private lateinit var totalPrice : TextView
     private lateinit var checkoutButton : Button
     private lateinit var cartRecyclerView: RecyclerView
-    private lateinit var cartAdapter: CartAdapter
     private var cartList = listOf<CartData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,6 @@ class ShowCartActivity : AppCompatActivity() {
 
         // Lấy danh sách giỏ hàng từ cart
         val dbHelper = DatabaseHelper(this)
-//        dbHelper.deleteAllCart()
         cartList = dbHelper.getAllCartItems()
 
         backButton = findViewById(R.id.back_button)
@@ -40,10 +39,35 @@ class ShowCartActivity : AppCompatActivity() {
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
         cartRecyclerView.adapter = CartAdapter(this, cartList)
 
+        val totalPrice = dbHelper.calculateTotalPrice()
+        val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
+        this.totalPrice.text = formattedTotalPrice
+
         backButton.setOnClickListener {
             onBackPressed()
         }
 
+        checkoutButton.setOnClickListener {
+            val intent = Intent(this, PaymentActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val dbHelper = DatabaseHelper(this)
+
+        // Clear cartList va doc lai du lieu
+        cartList = listOf<CartData>()
+        cartList = dbHelper.getAllCartItems()
+
+        // Cap nhat lai adapter
+        cartRecyclerView.adapter = CartAdapter(this, cartList)
+        cartRecyclerView.adapter?.notifyDataSetChanged()
+
+        // Cap nhat lai tong tien
         val totalPrice = dbHelper.calculateTotalPrice()
         val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
         this.totalPrice.text = formattedTotalPrice

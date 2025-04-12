@@ -12,16 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
+import com.example.pizza3ps.activity.PaymentActivity
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 
-class CartAdapter(
+class PaymentCartAdapter(
     private val activity: AppCompatActivity,
     private val cartItems: List<CartData>) :
-    RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+    RecyclerView.Adapter<PaymentCartAdapter.PaymentCartViewHolder>() {
 
-    class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class PaymentCartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.food_name)
         val size: TextView = view.findViewById(R.id.food_size)
         val crust: TextView = view.findViewById(R.id.food_crust)
@@ -35,13 +36,13 @@ class CartAdapter(
         val delete: ImageView = view.findViewById(R.id.delete_button)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
-        return CartViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentCartViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.payment_cart_item, parent, false)
+        return PaymentCartViewHolder(view)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PaymentCartViewHolder, position: Int) {
         val item = cartItems[position]
         var quantity = item.quantity
 
@@ -185,11 +186,8 @@ class CartAdapter(
     }
 
     fun updatePrice() {
-        val dbHelper = DatabaseHelper(activity)
-        val totalPrice = dbHelper.calculateTotalPrice()
-        val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
-        val totalPriceTextView: TextView? = activity.findViewById(R.id.total_price)
-        totalPriceTextView?.text = formattedTotalPrice
+        val paymentActivity = activity as? PaymentActivity
+        paymentActivity?.updateTotalPrice()
     }
 
     override fun getItemCount(): Int = cartItems.size
