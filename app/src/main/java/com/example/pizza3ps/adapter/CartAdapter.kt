@@ -106,6 +106,7 @@ class CartAdapter(
         holder.price.text = "$formattedPrice VND"
         holder.quantity.text = item.quantity.toString()
 
+        /*
         // Thiết lập sự kiện click để mở FoodInfoActivity
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
@@ -129,6 +130,8 @@ class CartAdapter(
 
         }
 
+         */
+
         holder.minus.setOnClickListener {
             if (quantity > 1) {
                 quantity--
@@ -140,6 +143,8 @@ class CartAdapter(
                 val newPrice = item.price * quantity
                 val formattedPrice = DecimalFormat("#,###").format(newPrice)
                 holder.price.text = "$formattedPrice VND"
+
+                updatePrice()
             }
         }
 
@@ -153,6 +158,8 @@ class CartAdapter(
             val newPrice = item.price * quantity
             val formattedPrice = DecimalFormat("#,###").format(newPrice)
             holder.price.text = "$formattedPrice VND"
+
+            updatePrice()
         }
 
         holder.delete.setOnClickListener {
@@ -177,6 +184,15 @@ class CartAdapter(
         (cartItems as? MutableList<CartData>)?.clear()
         (cartItems as? MutableList<CartData>)?.addAll(newList)
         notifyDataSetChanged()
+        updatePrice()
+    }
+
+    fun updatePrice() {
+        val dbHelper = DatabaseHelper(activity)
+        val totalPrice = dbHelper.calculateTotalPrice()
+        val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
+        val totalPriceTextView: TextView? = activity.findViewById(R.id.total_price)
+        totalPriceTextView?.text = formattedTotalPrice
     }
 
 
