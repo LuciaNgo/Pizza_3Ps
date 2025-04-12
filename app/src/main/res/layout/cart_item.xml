@@ -84,11 +84,11 @@
             android:id="@+id/food_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:text=""
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@id/linearLayout"
             app:layout_constraintTop_toBottomOf="@id/linearLayout"/>
 
@@ -101,12 +101,12 @@
             android:paddingEnd="8dp"
             android:paddingBottom="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/food_price">
+            app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
             <ImageButton
                 android:id="@+id/minus"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:background="@drawable/bg_minus_quantity_button"
                 android:src="@drawable/ic_remove"
                 android:contentDescription="Minus"
@@ -126,8 +126,8 @@
 
             <ImageButton
                 android:id="@+id/plus"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:background="@drawable/bg_plus_quantity_button"
                 android:src="@drawable/ic_add"
                 android:contentDescription="Plus"

@@ -9,12 +9,11 @@
 
     <FrameLayout
         android:id="@+id/search_bar_container"
-        android:layout_width="match_parent"
+        android:layout_width="320dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <SearchView
@@ -24,6 +23,15 @@
             app:showAsAction="always|collapseActionView"
             android:queryHint="@string/menu_search_hint" />
     </FrameLayout>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/category_bar"
