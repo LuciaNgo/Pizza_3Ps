@@ -48,13 +48,37 @@ class CartAdapter(
         val item = cartItems[position]
         var quantity = item.quantity
 
-        val dlHelper = DatabaseHelper(holder.itemView.context)
-        val foodInfo = dlHelper.getFoodById(item.food_id)
+        if (item.food_id != 0) {
+            val dlHelper = DatabaseHelper(holder.itemView.context)
+            val foodInfo = dlHelper.getFoodById(item.food_id)
 
-        // Log
-        Log.d("CartAdapter", "Food ID: ${item.food_id}, Food Info: $foodInfo")
+            holder.name.text = foodInfo.getName("en")
 
-        holder.name.text = foodInfo.getName("en")
+            Glide.with(holder.itemView.context)
+                .load(foodInfo.imgPath)
+                .placeholder(R.drawable.placeholder_image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.image)
+
+            if (foodInfo.category == "pizza") {
+                holder.ingredients.visibility = View.VISIBLE
+                holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
+            } else {
+                holder.ingredients.visibility = View.GONE
+            }
+        }
+        else if (item.food_id == 0) { // customize pizza
+            holder.name.text = "Customize pizza"
+
+            Glide.with(holder.itemView.context)
+                .load(R.drawable.default_customize_pizza)
+                .placeholder(R.drawable.placeholder_image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.image)
+
+            holder.ingredients.visibility = View.VISIBLE
+            holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
+        }
 
         if (item.size == "") {
             holder.size.visibility = View.GONE
@@ -77,24 +101,10 @@ class CartAdapter(
             holder.crustBase.text = "Crust base: ${item.crustBase}"
         }
 
-        if (foodInfo.category == "pizza") {
-            holder.ingredients.visibility = View.VISIBLE
-            holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
-        } else {
-            holder.ingredients.visibility = View.GONE
-        }
-
         val price = item.price * item.quantity
         val formattedPrice = DecimalFormat("#,###").format(price)
         holder.price.text = "$formattedPrice VND"
         holder.quantity.text = item.quantity.toString()
-
-        // Load ảnh bằng Glide
-        Glide.with(holder.itemView.context)
-            .load(foodInfo.imgPath)
-            .placeholder(R.drawable.placeholder_image)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(holder.image)
 
         // Thiết lập sự kiện click để mở FoodInfoActivity
         holder.itemView.setOnClickListener {

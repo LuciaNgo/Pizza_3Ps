@@ -73,4 +73,9 @@ class IngredientAdapter(
         selectedIngredients.addAll(selectedList)
         notifyDataSetChanged()
     }
+
+    fun clearSelectedIngredients() {
+        selectedIngredients.clear()
+        notifyDataSetChanged()
+    }
 }
