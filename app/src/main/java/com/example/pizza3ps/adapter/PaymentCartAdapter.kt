@@ -54,8 +54,6 @@ class PaymentCartAdapter(
 
             Glide.with(holder.itemView.context)
                 .load(foodInfo.imgPath)
-                .placeholder(R.drawable.placeholder_image)
-                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.image)
 
             if (foodInfo.category == "pizza") {
@@ -70,8 +68,6 @@ class PaymentCartAdapter(
 
             Glide.with(holder.itemView.context)
                 .load(R.drawable.default_customize_pizza)
-                .placeholder(R.drawable.placeholder_image)
-                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.image)
 
             holder.ingredients.visibility = View.VISIBLE

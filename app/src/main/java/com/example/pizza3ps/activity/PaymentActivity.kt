@@ -22,6 +22,17 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var deliveryCharge : TextView
     private lateinit var discount : TextView
     private lateinit var totalPrice : TextView
+
+    private lateinit var cashContainer : ConstraintLayout
+    private lateinit var paypalContainer : ConstraintLayout
+    private lateinit var momoContainer : ConstraintLayout
+    private lateinit var cashText : TextView
+    private lateinit var paypalText : TextView
+    private lateinit var momoText : TextView
+    private lateinit var cashCheck : ImageView
+    private lateinit var paypalCheck : ImageView
+    private lateinit var momoCheck : ImageView
+
     private lateinit var redeemPoints : ConstraintLayout
 
     private lateinit var cartRecyclerView: RecyclerView
@@ -30,6 +41,7 @@ class PaymentActivity : AppCompatActivity() {
     private var deliveryValue: Int = 0
     private var discountValue: Int = 0
     private var totalValue: Int = 0
+    private var selectedPaymentMethod = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +52,44 @@ class PaymentActivity : AppCompatActivity() {
         cartList = dbHelper.getAllCartItems()
 
         redeemPoints = findViewById(R.id.pointsContainer)
+
         backButton = findViewById(R.id.back_button)
         checkoutButton = findViewById(R.id.checkout_button)
         subtotalPrice = findViewById(R.id.subtotal_price)
         deliveryCharge = findViewById(R.id.delivery_charge_price)
         discount = findViewById(R.id.discount)
         totalPrice = findViewById(R.id.total_price)
+
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
         cartRecyclerView.adapter = PaymentCartAdapter(this, cartList)
+
+        cashContainer = findViewById(R.id.cashContainer)
+        paypalContainer = findViewById(R.id.paypalContainer)
+        momoContainer = findViewById(R.id.momoContainer)
+        cashText = findViewById(R.id.cashText)
+        paypalText = findViewById(R.id.paypalText)
+        momoText = findViewById(R.id.momoText)
+        cashCheck = findViewById(R.id.cashCheck)
+        paypalCheck = findViewById(R.id.paypalCheck)
+        momoCheck = findViewById(R.id.momoCheck)
+
+        cashCheck.visibility = ImageView.INVISIBLE
+        paypalCheck.visibility = ImageView.INVISIBLE
+        momoCheck.visibility = ImageView.INVISIBLE
+
+        cashContainer.setOnClickListener {
+            updateSelectedPaymentMethod("cash")
+        }
+
+        paypalContainer.setOnClickListener {
+            updateSelectedPaymentMethod("paypal")
+        }
+
+        momoContainer.setOnClickListener {
+            updateSelectedPaymentMethod("momo")
+        }
+
 
         updateTotalPrice()
 
@@ -58,6 +99,35 @@ class PaymentActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             onBackPressed()
+        }
+    }
+
+    fun updateSelectedPaymentMethod(method: String) {
+        cashCheck.visibility = ImageView.INVISIBLE
+        paypalCheck.visibility = ImageView.INVISIBLE
+        momoCheck.visibility = ImageView.INVISIBLE
+
+        // Bo bold
+        cashText.setTypeface(cashText.typeface, android.graphics.Typeface.NORMAL)
+        paypalText.setTypeface(paypalText.typeface, android.graphics.Typeface.NORMAL)
+        momoText.setTypeface(momoText.typeface, android.graphics.Typeface.NORMAL)
+
+        when (method) {
+            "cash" -> {
+                cashCheck.visibility = ImageView.VISIBLE
+                cashText.setTypeface(cashText.typeface, android.graphics.Typeface.BOLD)
+                selectedPaymentMethod = "cash"
+            }
+            "paypal" -> {
+                paypalCheck.visibility = ImageView.VISIBLE
+                paypalText.setTypeface(paypalText.typeface, android.graphics.Typeface.BOLD)
+                selectedPaymentMethod = "paypal"
+            }
+            "momo" -> {
+                momoCheck.visibility = ImageView.VISIBLE
+                momoText.setTypeface(momoText.typeface, android.graphics.Typeface.BOLD)
+                selectedPaymentMethod = "momo"
+            }
         }
     }
 
