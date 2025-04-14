@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
+import com.example.pizza3ps.model.IngredientData
 import com.example.pizza3ps.model.UserData
 
 class DatabaseHelper(context: Context) :
@@ -14,7 +15,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 6
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -27,6 +28,17 @@ class DatabaseHelper(context: Context) :
                 category TEXT,
                 img_path TEXT,
                 ingredients TEXT
+            )
+        """.trimIndent()
+
+        val createIngredientTable = """
+            CREATE TABLE IF NOT EXISTS Ingredient (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                price REAL,
+                category TEXT,
+                icon_img_path TEXT,
+                layer_img_path TEXT
             )
         """.trimIndent()
 
@@ -66,6 +78,7 @@ class DatabaseHelper(context: Context) :
         """.trimIndent()
 
         db.execSQL(createFoodTable)
+        db.execSQL(createIngredientTable)
         db.execSQL(createCartTable)
         db.execSQL(createEventTable)
         db.execSQL(createUserTable)
@@ -73,6 +86,7 @@ class DatabaseHelper(context: Context) :
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS Food")
+        db.execSQL("DROP TABLE IF EXISTS Ingredient")
         db.execSQL("DROP TABLE IF EXISTS Cart")
         db.execSQL("DROP TABLE IF EXISTS Event")
         db.execSQL("DROP TABLE IF EXISTS User")
@@ -92,6 +106,26 @@ class DatabaseHelper(context: Context) :
         }
         db.insert("Food", null, values)
         db.close()
+    }
+
+    fun getAllFood(): List<FoodData> {
+        val foodList = mutableListOf<FoodData>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Food", null)
+        if (cursor.moveToFirst()) {
+            do {
+                val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+                val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+                val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
+                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
+                val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
+                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
+                foodList.add(FoodData(name_en, name_vi, price, category, imgPath, ingredients))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return foodList
     }
 
     fun getFoodByCategory(category: String): List<FoodData> {
@@ -149,6 +183,70 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Food'", null)
         if (cursor.count > 0) {
             db.execSQL("DELETE FROM Food")
+        }
+        cursor.close()
+        db.close()
+    }
+
+    // ===== INGREDIENT TABLE =====
+    fun addIngredient(ingredient: IngredientData) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", ingredient.name)
+            put("price", ingredient.price)
+            put("category", ingredient.category)
+            put("icon_img_path", ingredient.iconImgPath)
+            put("layer_img_path", ingredient.layerImgPath)
+        }
+        db.insert("Ingredient", null, values)
+        db.close()
+    }
+
+    fun getAllIngredients(): List<IngredientData> {
+        val ingredientList = mutableListOf<IngredientData>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Ingredient", null)
+        if (cursor.moveToFirst()) {
+            do {
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
+                val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
+                val iconImgPath = cursor.getString(cursor.getColumnIndexOrThrow("icon_img_path"))
+                val layerImgPath = cursor.getString(cursor.getColumnIndexOrThrow("layer_img_path"))
+                ingredientList.add(IngredientData(name, price, category, iconImgPath, layerImgPath))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return ingredientList
+    }
+
+    fun getFoodByIngredient(ingredient: String): List<FoodData> {
+        val foodList = mutableListOf<FoodData>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Food WHERE ingredients LIKE ?", arrayOf("%$ingredient%"))
+        if (cursor.moveToFirst()) {
+            do {
+                val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+                val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+                val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
+                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
+                val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
+                val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
+                foodList.add(FoodData(name_en, name_vi, price, category, imgPath, ingredients))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return foodList
+    }
+
+    fun deleteAllIngredients() {
+        val db = writableDatabase
+        // Kểm tra có bảng Ingredient không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Ingredient'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM Ingredient")
         }
         cursor.close()
         db.close()

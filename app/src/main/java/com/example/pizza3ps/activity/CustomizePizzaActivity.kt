@@ -188,7 +188,6 @@ class CustomizePizzaActivity : AppCompatActivity() {
         //Glide.with(this).load(imgPath).into(pizzaImageView)
 
         setupRecyclerViews()
-        fetchIngredientData()
 
     }
 
@@ -204,38 +203,6 @@ class CustomizePizzaActivity : AppCompatActivity() {
         recyclerViewVegetable.layoutManager = GridLayoutManager(this, 5)
         recyclerViewAddition.layoutManager = GridLayoutManager(this, 5)
         recyclerViewSauce.layoutManager = GridLayoutManager(this, 5)
-    }
-
-    private fun fetchIngredientData() {
-        db.collection("Ingredient")
-            .get()
-            .addOnSuccessListener { documents ->
-                meatList.clear()
-                seafoodList.clear()
-                vegetableList.clear()
-                additionList.clear()
-                sauceList.clear()
-
-                for (document in documents) {
-                    val name = document.getString("name") ?: ""
-                    val price = document.getString("price") ?: "0"
-                    val iconImgPath = document.getString("iconImgPath") ?: ""
-                    val layerImgPath = document.getString("layerImgPath") ?: ""
-                    val category = document.getString("category") ?: ""
-
-                    val ingredient = IngredientData(name, price, iconImgPath, layerImgPath)
-
-                    when (category.lowercase()) {
-                        "meat" -> meatList.add(ingredient)
-                        "seafood" -> seafoodList.add(ingredient)
-                        "vegetable" -> vegetableList.add(ingredient)
-                        "addition" -> additionList.add(ingredient)
-                        "sauce" -> sauceList.add(ingredient)
-                    }
-                }
-
-                setupAdapters()
-            }
     }
 
     private fun setupAdapters() {

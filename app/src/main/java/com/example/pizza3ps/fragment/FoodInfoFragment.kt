@@ -1,11 +1,8 @@
 package com.example.pizza3ps.fragment
 
 import android.app.Dialog
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,14 +21,11 @@ import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
-import com.example.pizza3ps.tool.LanguageHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
-import java.util.Locale
-import kotlin.properties.Delegates
 
 class FoodInfoFragment : BottomSheetDialogFragment() {
     private lateinit var recyclerViewMeat: RecyclerView
@@ -344,37 +338,18 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         recyclerViewSauce.layoutManager = GridLayoutManager(requireContext(), 5)
     }
 
-    private fun fetchIngredientData() {
-        db.collection("Ingredient")
-            .get()
-            .addOnSuccessListener { documents ->
-                meatList.clear()
-                seafoodList.clear()
-                vegetableList.clear()
-                additionList.clear()
-                sauceList.clear()
+    private fun setupAdapters() {
+        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
+        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
+        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
+        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
+        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
 
-                for (document in documents) {
-                    val name = document.getString("name") ?: ""
-                    val price = document.getString("price") ?: "0"
-                    val iconImgPath = document.getString("iconImgPath") ?: ""
-                    val layerImgPath = document.getString("layerImgPath") ?: ""
-                    val category = document.getString("category") ?: ""
-
-                    val ingredient = IngredientData(name, price, iconImgPath, layerImgPath)
-
-                    when (category.lowercase()) {
-                        "meat" -> meatList.add(ingredient)
-                        "seafood" -> seafoodList.add(ingredient)
-                        "vegetable" -> vegetableList.add(ingredient)
-                        "addition" -> additionList.add(ingredient)
-                        "sauce" -> sauceList.add(ingredient)
-                    }
-                }
-
-                setupAdapters()
-                selectPreChosenIngredients()
-            }
+        recyclerViewMeat.adapter = meatAdapter
+        recyclerViewSeafood.adapter = seafoodAdapter
+        recyclerViewVegetable.adapter = vegetableAdapter
+        recyclerViewAddition.adapter = additionAdapter
+        recyclerViewSauce.adapter = sauceAdapter
     }
 
     private fun selectPreChosenIngredients() {
@@ -393,19 +368,32 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         updatePrice()
     }
 
+    private fun fetchIngredientData() {
+        val dbHelper = DatabaseHelper(requireContext())
+        val ingredientList = dbHelper.getAllIngredients()
 
-    private fun setupAdapters() {
-        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
-        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
-        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
-        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
-        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+        meatList.clear()
+        seafoodList.clear()
+        vegetableList.clear()
+        additionList.clear()
+        sauceList.clear()
 
-        recyclerViewMeat.adapter = meatAdapter
-        recyclerViewSeafood.adapter = seafoodAdapter
-        recyclerViewVegetable.adapter = vegetableAdapter
-        recyclerViewAddition.adapter = additionAdapter
-        recyclerViewSauce.adapter = sauceAdapter
+        for (ingredient in ingredientList) {
+            if (ingredient.category == "meat") {
+                meatList.add(ingredient)
+            } else if (ingredient.category == "seafood") {
+                seafoodList.add(ingredient)
+            } else if (ingredient.category == "vegetable") {
+                vegetableList.add(ingredient)
+            } else if (ingredient.category == "addition") {
+                additionList.add(ingredient)
+            } else if (ingredient.category == "sauce") {
+                sauceList.add(ingredient)
+            }
+
+            setupAdapters()
+            selectPreChosenIngredients()
+        }
     }
 
     private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {

@@ -16,14 +16,12 @@ import android.widget.FrameLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -82,6 +80,30 @@ class CustomizeFragment : Fragment() {
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.GONE
+
+        recyclerViewMeat = view.findViewById(R.id.meat_recycler_view)!!
+        recyclerViewSeafood = view.findViewById(R.id.seafood_recycler_view)!!
+        recyclerViewVegetable = view.findViewById(R.id.vegetable_recycler_view)!!
+        recyclerViewAddition = view.findViewById(R.id.addition_recycler_view)!!
+        recyclerViewSauce = view.findViewById(R.id.sauce_recycler_view)!!
+
+        recyclerViewMeat.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewSeafood.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewVegetable.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewAddition.layoutManager = GridLayoutManager(requireContext(), 5)
+        recyclerViewSauce.layoutManager = GridLayoutManager(requireContext(), 5)
+
+        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
+        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
+        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
+        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
+        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+
+        recyclerViewMeat.adapter = meatAdapter
+        recyclerViewSeafood.adapter = seafoodAdapter
+        recyclerViewVegetable.adapter = vegetableAdapter
+        recyclerViewAddition.adapter = additionAdapter
+        recyclerViewSauce.adapter = sauceAdapter
 
         addToCartButton = view.findViewById(R.id.add_to_cart_button)
         pizzaImageView = view.findViewById(R.id.pizza_image)
@@ -258,68 +280,35 @@ class CustomizeFragment : Fragment() {
         return view
     }
 
-
-    private fun setupRecyclerViews() {
-        recyclerViewMeat = view?.findViewById(R.id.meat_recycler_view)!!
-        recyclerViewSeafood = view?.findViewById(R.id.seafood_recycler_view)!!
-        recyclerViewVegetable = view?.findViewById(R.id.vegetable_recycler_view)!!
-        recyclerViewAddition = view?.findViewById(R.id.addition_recycler_view)!!
-        recyclerViewSauce = view?.findViewById(R.id.sauce_recycler_view)!!
-
-
-        recyclerViewMeat.layoutManager = GridLayoutManager(requireContext(), 5)
-        recyclerViewSeafood.layoutManager = GridLayoutManager(requireContext(), 5)
-        recyclerViewVegetable.layoutManager = GridLayoutManager(requireContext(), 5)
-        recyclerViewAddition.layoutManager = GridLayoutManager(requireContext(), 5)
-        recyclerViewSauce.layoutManager = GridLayoutManager(requireContext(), 5)
-    }
-
     private fun fetchIngredientData() {
-        db.collection("Ingredient")
-            .get()
-            .addOnSuccessListener { documents ->
-                meatList.clear()
-                seafoodList.clear()
-                vegetableList.clear()
-                additionList.clear()
-                sauceList.clear()
+        val dbHelper = DatabaseHelper(requireContext())
+        val ingredientList = dbHelper.getAllIngredients()
 
-                for (document in documents) {
-                    val name = document.getString("name") ?: ""
-                    val price = document.getString("price") ?: "0"
-                    val iconImgPath = document.getString("iconImgPath") ?: ""
-                    val layerImgPath = document.getString("layerImgPath") ?: ""
-                    val category = document.getString("category") ?: ""
+        meatList.clear()
+        seafoodList.clear()
+        vegetableList.clear()
+        additionList.clear()
+        sauceList.clear()
 
-                    val ingredient = IngredientData(name, price, iconImgPath, layerImgPath)
-
-                    when (category.lowercase()) {
-                        "meat" -> meatList.add(ingredient)
-                        "seafood" -> seafoodList.add(ingredient)
-                        "vegetable" -> vegetableList.add(ingredient)
-                        "addition" -> additionList.add(ingredient)
-                        "sauce" -> sauceList.add(ingredient)
-                    }
-                }
-
-                setupAdapters()
+        for (ingredient in ingredientList) {
+            if (ingredient.category == "meat") {
+                meatList.add(ingredient)
+            } else if (ingredient.category == "seafood") {
+                seafoodList.add(ingredient)
+            } else if (ingredient.category == "vegetable") {
+                vegetableList.add(ingredient)
+            } else if (ingredient.category == "addition") {
+                additionList.add(ingredient)
+            } else if (ingredient.category == "sauce") {
+                sauceList.add(ingredient)
             }
-    }
+        }
 
-    private fun setupAdapters() {
-        setupRecyclerViews()
-
-        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
-        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
-        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
-        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
-        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
-
-        recyclerViewMeat.adapter = meatAdapter
-        recyclerViewSeafood.adapter = seafoodAdapter
-        recyclerViewVegetable.adapter = vegetableAdapter
-        recyclerViewAddition.adapter = additionAdapter
-        recyclerViewSauce.adapter = sauceAdapter
+        meatAdapter.notifyDataSetChanged()
+        seafoodAdapter.notifyDataSetChanged()
+        vegetableAdapter.notifyDataSetChanged()
+        additionAdapter.notifyDataSetChanged()
+        sauceAdapter.notifyDataSetChanged()
     }
 
     private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {
