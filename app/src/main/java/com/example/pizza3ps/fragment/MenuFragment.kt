@@ -50,8 +50,6 @@ class MenuFragment : Fragment() {
     private var currentMinPrice: Int = 0
     private var currentMaxPrice: Int = 400000
     private var selectedIngredients = mutableSetOf<String>()
-    private var currentSearchQuery: String = ""
-
 
     private lateinit var dbHelper: DatabaseHelper
 

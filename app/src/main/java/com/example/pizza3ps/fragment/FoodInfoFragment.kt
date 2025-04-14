@@ -71,7 +71,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
 
     private lateinit var addToCartButton: Button
 
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var dbHelper: DatabaseHelper
 
     private lateinit var ingredientList: List<String>
     private var basePrice = 50000
@@ -116,6 +116,8 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         val category = arguments?.getString("food_category") ?: ""
         val imgPath = arguments?.getString("food_image") ?: ""
         ingredientList = arguments?.getStringArrayList("ingredientList") ?: arrayListOf()
+
+        dbHelper = DatabaseHelper(requireContext())
 
         foodOriginalPriceTextView = view.findViewById(R.id.original_price)
         sizeTextView = view.findViewById(R.id.size_textview)
@@ -266,8 +268,10 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 updatePrice()
             }
 
-            setupRecyclerViews(view)
             fetchIngredientData()
+            setupRecyclerViews(view)
+            setupAdapters()
+            selectPreChosenIngredients()
         }
 
         if (category != "pizza") {
@@ -280,7 +284,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         addToCartButton.setOnClickListener {
 
             Log.d("test quantity", quantity.toString())
-            val dbHelper = DatabaseHelper(requireContext())
+
             val foodId = dbHelper.getFoodId(name)
 
             if (category == "pizza") {
@@ -369,8 +373,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
     }
 
     private fun fetchIngredientData() {
-        val dbHelper = DatabaseHelper(requireContext())
-        val ingredientList = dbHelper.getAllIngredients()
+        val ingredientData = dbHelper.getAllIngredients()
 
         meatList.clear()
         seafoodList.clear()
@@ -378,7 +381,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         additionList.clear()
         sauceList.clear()
 
-        for (ingredient in ingredientList) {
+        for (ingredient in ingredientData) {
             if (ingredient.category == "meat") {
                 meatList.add(ingredient)
             } else if (ingredient.category == "seafood") {
@@ -390,9 +393,6 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
             } else if (ingredient.category == "sauce") {
                 sauceList.add(ingredient)
             }
-
-            setupAdapters()
-            selectPreChosenIngredients()
         }
     }
 
