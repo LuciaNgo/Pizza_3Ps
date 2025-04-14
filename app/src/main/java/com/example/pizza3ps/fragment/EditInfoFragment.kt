@@ -93,7 +93,7 @@ class EditInfoFragment : Fragment() {
             .addOnSuccessListener {
                 // 4. Also update local SQLite
                 val dbHelper = DatabaseHelper(requireContext())
-                val user = UserData(updatedEmail, updatedName, updatedPhone, updatedAddress, updatedPoints.toInt())
+                val user = UserData(userId, updatedEmail, updatedName, updatedPhone, updatedAddress, updatedPoints.toInt())
                 dbHelper.addUser(user)
 
                 val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)

@@ -16,7 +16,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 7
+        private const val DATABASE_VERSION = 9
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -53,7 +53,6 @@ class DatabaseHelper(context: Context) :
                 crust TEXT,
                 crust_base TEXT,
                 quantity INTEGER,
-                user_email TEXT,
                 
                 FOREIGN KEY (food_id) REFERENCES Food(id)
             );
@@ -70,7 +69,8 @@ class DatabaseHelper(context: Context) :
 
         val createUserTable = """
             CREATE TABLE IF NOT EXISTS User (
-                email TEXT PRIMARY KEY,
+                id TEXT PRIMARY KEY,
+                email TEXT,
                 name TEXT,
                 phone TEXT,
                 address TEXT,
@@ -110,6 +110,7 @@ class DatabaseHelper(context: Context) :
     fun addFood(food: FoodData) {
         val db = writableDatabase
         val values = ContentValues().apply {
+            put("id", food.id)
             put("name_en", food.name_en)
             put("name_vi", food.name_vi)
             put("price", food.price)
@@ -127,13 +128,14 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM Food", null)
         if (cursor.moveToFirst()) {
             do {
-                val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
-                val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id")).toString()
+                val nameEn = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+                val nameVi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
                 val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
                 val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
                 val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
                 val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
-                foodList.add(FoodData(name_en, name_vi, price, category, imgPath, ingredients))
+                foodList.add(FoodData(id, nameEn, nameVi, price, category, imgPath, ingredients))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -147,12 +149,13 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM Food WHERE category = ?", arrayOf(category))
         if (cursor.moveToFirst()) {
             do {
-                val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
-                val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id")).toString()
+                val nameEn = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+                val nameVi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
                 val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
                 val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
                 val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
-                foodList.add(FoodData(name_en, name_vi, price, category, imgPath, ingredients))
+                foodList.add(FoodData(id, nameEn, nameVi, price, category, imgPath, ingredients))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -161,17 +164,17 @@ class DatabaseHelper(context: Context) :
     }
 
     fun getFoodById(id: Int): FoodData {
-        var food = FoodData("", "", "", "", "", emptyList())
+        var food = FoodData("","", "", "", "", "", emptyList())
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM Food WHERE id = ?", arrayOf(id.toString()))
         if (cursor.moveToFirst()) {
-            val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
-            val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+            val nameEn = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+            val nameVi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
             val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
             val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
             val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
             val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
-            food = FoodData(name_en, name_vi, price, category, imgPath, ingredients)
+            food = FoodData(id.toString(), nameEn, nameVi, price, category, imgPath, ingredients)
         }
         cursor.close()
         db.close()
@@ -240,13 +243,14 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM Food WHERE ingredients LIKE ?", arrayOf("%$ingredient%"))
         if (cursor.moveToFirst()) {
             do {
-                val name_en = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
-                val name_vi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id")).toString()
+                val nameEn = cursor.getString(cursor.getColumnIndexOrThrow("name_en"))
+                val nameVi = cursor.getString(cursor.getColumnIndexOrThrow("name_vi"))
                 val price = cursor.getString(cursor.getColumnIndexOrThrow("price"))
                 val imgPath = cursor.getString(cursor.getColumnIndexOrThrow("img_path"))
                 val category = cursor.getString(cursor.getColumnIndexOrThrow("category"))
                 val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
-                foodList.add(FoodData(name_en, name_vi, price, category, imgPath, ingredients))
+                foodList.add(FoodData(id, nameEn, nameVi, price, category, imgPath, ingredients))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -312,7 +316,53 @@ class DatabaseHelper(context: Context) :
                 put("crust", cartItem.crust)
                 put("crust_base", cartItem.crustBase)
                 put("quantity", cartItem.quantity)
-                put("user_email", cartItem.user_email)
+            }
+            db.insert("Cart", null, values)
+        }
+        cursor.close()
+        db.close()
+    }
+
+    fun addFoodToCartWithId(cartId: String, cartItem: CartData) {
+        val db = writableDatabase
+
+        // Kiểm tra xem món đã có trong giỏ chưa
+        val ingredientsStr = cartItem.ingredients.sorted().joinToString(",")
+        val query = """
+            SELECT * FROM Cart
+            WHERE id = ?
+        """.trimIndent()
+
+        val cursor = db.rawQuery(
+            query,
+            arrayOf(
+                cartId
+            )
+        )
+
+        if (cursor.count >0) {
+            // Nếu đã có item này trong cart, tăng số lượng lên 1
+            cursor.moveToFirst()
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val newQuantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity")) + 1
+
+            val values = ContentValues().apply {
+                put("quantity", newQuantity)
+            }
+            db.update("Cart", values, "id = ?", arrayOf(id.toString()))
+        }
+        else
+        {
+            // Nếu không có, thêm mới vào giỏ
+            val values = ContentValues().apply {
+                put("id", cartId)
+                put("food_id", cartItem.food_id)
+                put("price", cartItem.price)
+                put("ingredients", ingredientsStr)
+                put("size", cartItem.size)
+                put("crust", cartItem.crust)
+                put("crust_base", cartItem.crustBase)
+                put("quantity", cartItem.quantity)
             }
             db.insert("Cart", null, values)
         }
@@ -338,10 +388,9 @@ class DatabaseHelper(context: Context) :
                     "AND ingredients = ?" +
                     "AND size = ?" +
                     "AND crust = ?" +
-                    "AND crust_base = ?" +
-                    "AND user_email = ?",
+                    "AND crust_base = ?",
             arrayOf(cartItem.food_id.toString(), cartItem.price.toString(), cartItem.ingredients.sorted().joinToString(","),
-                cartItem.size, cartItem.crust, cartItem.crustBase, cartItem.user_email)
+                cartItem.size, cartItem.crust, cartItem.crustBase)
         )
         var id = -1
         if (cursor.moveToFirst()) {
@@ -350,6 +399,27 @@ class DatabaseHelper(context: Context) :
         cursor.close()
         db.close()
         return id
+    }
+
+    fun getCartById(id: Int): CartData? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Cart WHERE id = ?", arrayOf(id.toString()))
+        var cartItem: CartData? = null
+
+        if (cursor.moveToFirst()) {
+            val foodId = cursor.getInt(cursor.getColumnIndexOrThrow("food_id"))
+            val price = cursor.getInt(cursor.getColumnIndexOrThrow("price"))
+            val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
+            val size = cursor.getString(cursor.getColumnIndexOrThrow("size"))
+            val crust = cursor.getString(cursor.getColumnIndexOrThrow("crust"))
+            val crustBase = cursor.getString(cursor.getColumnIndexOrThrow("crust_base"))
+            val quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"))
+
+            cartItem = CartData(foodId, price, ingredients, size, crust, crustBase, quantity)
+        }
+        cursor.close()
+        db.close()
+        return cartItem
     }
 
     fun getCartItemCount(): Int {
@@ -371,16 +441,15 @@ class DatabaseHelper(context: Context) :
 
         if (cursor.moveToFirst()) {
             do {
-                val food_id = cursor.getString(cursor.getColumnIndexOrThrow("food_id")).toInt()
+                val foodId = cursor.getString(cursor.getColumnIndexOrThrow("food_id")).toInt()
                 val price = cursor.getString(cursor.getColumnIndexOrThrow("price")).toInt()
                 val ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients")).split(",").map { it.trim() }
                 val size = cursor.getString(cursor.getColumnIndexOrThrow("size"))
                 val crust = cursor.getString(cursor.getColumnIndexOrThrow("crust"))
                 val crustBase = cursor.getString(cursor.getColumnIndexOrThrow("crust_base"))
                 val quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"))
-                val user_email = cursor.getString(cursor.getColumnIndexOrThrow("user_email"))
 
-                cartList.add(CartData(food_id, price, ingredients, size, crust, crustBase, quantity, user_email))
+                cartList.add(CartData(foodId, price, ingredients, size, crust, crustBase, quantity))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -422,8 +491,9 @@ class DatabaseHelper(context: Context) :
     // ===== USER TABLE =====
     fun addUser(user: UserData) {
         val db = writableDatabase
-        db.delete("User", null, null) // Optional: keep latest only
+        db.delete("User", null, null)
         val values = ContentValues().apply {
+            put("id", user.id)
             put("email", user.email)
             put("name", user.name)
             put("phone", user.phone)
@@ -440,13 +510,14 @@ class DatabaseHelper(context: Context) :
         var user: UserData? = null
 
         if (cursor.moveToFirst()) {
+            val id = cursor.getString(cursor.getColumnIndexOrThrow("id"))
             val email = cursor.getString(cursor.getColumnIndexOrThrow("email"))
             val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
             val phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"))
             val address = cursor.getString(cursor.getColumnIndexOrThrow("address"))
             val points = cursor.getInt(cursor.getColumnIndexOrThrow("points"))
 
-            user = UserData(email, name, phone, address, points)
+            user = UserData(id, email, name, phone, address, points)
         }
         cursor.close()
         db.close()

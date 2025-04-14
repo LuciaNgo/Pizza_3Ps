@@ -245,6 +245,11 @@ class CustomizePizzaActivity : AppCompatActivity() {
             Log.d("Cart data", "Adding to cart: $cartData")
             dbHelper.addFoodToCart(cartData)
 
+            val userId = dbHelper.getUser()?.id
+            if (userId != null) {
+                syncCartItem(userId, cartData)
+            }
+
             Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show()
 
             // Reset cac lua chon
@@ -330,6 +335,24 @@ class CustomizePizzaActivity : AppCompatActivity() {
         val formatter = DecimalFormat("#,###")
         val formattedPrice = formatter.format(totalPrice)
         addToCartButton.text = "Add to Cart - $formattedPrice"
+    }
+
+    fun syncCartItem(userId: String, cartItem: CartData) {
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+
+        val id = dbHelper.getIdOfCartItem(cartItem)
+
+        databaseRef.document(id.toString())
+            .set(cartItem)
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $id")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $id", e)
+            }
     }
 
 }

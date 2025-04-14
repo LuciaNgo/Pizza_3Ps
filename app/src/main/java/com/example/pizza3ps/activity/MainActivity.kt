@@ -15,6 +15,7 @@ import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.tool.LanguageHelper
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.FoodData
 import com.example.pizza3ps.model.IngredientData
 import com.example.pizza3ps.model.UserData
@@ -35,12 +36,14 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        fetchFoodData()
-        fetchIngredientData()
+        dbHelper = DatabaseHelper(this)
+
         fetchUserData()
+        fetchFoodData()
+        fetchCartData()
+        fetchIngredientData()
         fetchRestaurantInfo()
 
-        dbHelper = DatabaseHelper(this)
         cartFab = findViewById(R.id.cart_fab)
         cartFab.count = dbHelper.getCartItemCount()
 
@@ -92,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 dbHelper.deleteAllFood()
 
                 for (document in documents) {
+                    val foodId = document.id
                     val nameMap = document.get("name") as? Map<*, *>
                     val name_en = nameMap?.get("en") as? String ?: ""
                     val name_vi = nameMap?.get("vi") as? String ?: ""
@@ -101,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                     val ingredientString = document.getString("ingredient") ?: ""
                     val category = document.getString("category") ?: ""
                     val ingredientList = ingredientString.split(", ").map { it.trim() }
-                    val foodItem = FoodData(name_en, name_vi, formattedPrice, category, imgPath, ingredientList)
+                    val foodItem = FoodData(foodId, name_en, name_vi, formattedPrice, category, imgPath, ingredientList)
 
                     dbHelper.addFood(foodItem)
                 }
@@ -134,6 +138,46 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun fetchCartData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { documents ->
+
+                dbHelper.deleteAllCart()
+
+                for (document in documents.documents) {
+                    val cartId = document.id
+                    val foodId = document.getLong("food_id")?.toInt() ?: 0
+                    val price = document.getLong("price")?.toInt() ?: 0
+                    val ingredients = document.get("ingredients") as? List<String> ?: emptyList()
+                    val size = document.getString("size") ?: ""
+                    val crust = document.getString("crust") ?: ""
+                    val crustBase = document.getString("crustBase") ?: ""
+                    val quantity = document.getLong("quantity")?.toInt() ?: 1
+
+                    val cartItem = CartData(
+                        food_id = foodId,
+                        price = price,
+                        ingredients = ingredients,
+                        size = size,
+                        crust = crust,
+                        crustBase = crustBase,
+                        quantity = quantity
+                    )
+
+                    dbHelper.addFoodToCartWithId(cartId, cartItem)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Failed to load cart data", exception)
+            }
+    }
+
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -150,7 +194,7 @@ class MainActivity : AppCompatActivity() {
                         val phone = document.getString("phone") ?: ""
                         val address = document.getString("address") ?: ""
                         val points = document.getLong("points")?.toInt() ?: 0
-                        val user = UserData(email, name, phone, address, points)
+                        val user = UserData(userId, email, name, phone, address, points)
 
                         val sharedPref = this.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
                         sharedPref.edit().putString("username", name).apply()

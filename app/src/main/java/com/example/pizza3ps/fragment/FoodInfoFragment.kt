@@ -24,6 +24,7 @@ import com.example.pizza3ps.model.IngredientData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -282,9 +283,6 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
 
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
-
-            Log.d("test quantity", quantity.toString())
-
             val foodId = dbHelper.getFoodId(name)
 
             if (category == "pizza") {
@@ -305,6 +303,12 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 )
                 Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
+
+                val userId = dbHelper.getUser()?.id
+                if (userId != null) {
+                    syncCartItem(userId, cartData)
+                }
+
             } else {
                 val cartData = CartData(
                     food_id = foodId,
@@ -317,6 +321,11 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 )
                 Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
+
+                val userId = dbHelper.getUser()?.id
+                if (userId != null) {
+                    syncCartItem(userId, cartData)
+                }
             }
 
             // Cập nhật lại số lượng món ăn trong giỏ hàng
@@ -407,14 +416,21 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         addToCartButton.text = "Add to cart - $formattedPrice VND"
     }
 
+    fun syncCartItem(userId: String, cartItem: CartData) {
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
 
+        val id = dbHelper.getIdOfCartItem(cartItem)
 
-
-//    override fun onAttach(context: Context) {
-//        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val localizedContext = LanguageHelper.setLocale(context, langCode)
-//        super.onAttach(localizedContext)
-//    }
-
+        databaseRef.document(id.toString())
+            .set(cartItem)
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $id")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $id", e)
+            }
+    }
 }
