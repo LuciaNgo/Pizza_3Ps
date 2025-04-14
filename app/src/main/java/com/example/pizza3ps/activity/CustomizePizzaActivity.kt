@@ -2,20 +2,25 @@ package com.example.pizza3ps.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.IngredientAdapter
+import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
 import com.example.pizza3ps.tool.LanguageHelper
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,18 +59,49 @@ class CustomizePizzaActivity : AppCompatActivity() {
     private lateinit var crustChickenCheckBox: CheckBox
     private lateinit var crustSausageCheckBox: CheckBox
 
-    private val db = FirebaseFirestore.getInstance()
-    private var quantity = 1
     private var basePrice = 50000
     private var totalPrice = basePrice
+    private var selectedSize : String = "S"
+    private var selectedCrust : String = "Thin"
+    private var selectedCrustBase : String = ""
+    private var selectedIngredients: List<String> = emptyList()
+    private var quantity = 1
 
     private lateinit var layerContainer: FrameLayout
     private val ingredientImageViews = mutableMapOf<String, ImageView>()
+
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_customize_pizza)
+
+        dbHelper = DatabaseHelper(this)
+
+        recyclerViewMeat = findViewById(R.id.meat_recycler_view)!!
+        recyclerViewSeafood = findViewById(R.id.seafood_recycler_view)!!
+        recyclerViewVegetable = findViewById(R.id.vegetable_recycler_view)!!
+        recyclerViewAddition = findViewById(R.id.addition_recycler_view)!!
+        recyclerViewSauce = findViewById(R.id.sauce_recycler_view)!!
+
+        recyclerViewMeat.layoutManager = GridLayoutManager(this, 5)
+        recyclerViewSeafood.layoutManager = GridLayoutManager(this, 5)
+        recyclerViewVegetable.layoutManager = GridLayoutManager(this, 5)
+        recyclerViewAddition.layoutManager = GridLayoutManager(this, 5)
+        recyclerViewSauce.layoutManager = GridLayoutManager(this, 5)
+
+        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
+        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
+        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
+        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
+        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+
+        recyclerViewMeat.adapter = meatAdapter
+        recyclerViewSeafood.adapter = seafoodAdapter
+        recyclerViewVegetable.adapter = vegetableAdapter
+        recyclerViewAddition.adapter = additionAdapter
+        recyclerViewSauce.adapter = sauceAdapter
 
         addToCartButton = findViewById(R.id.add_to_cart_button)
         pizzaImageView = findViewById(R.id.pizza_image)
@@ -106,7 +142,9 @@ class CustomizePizzaActivity : AppCompatActivity() {
         sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 basePrice += 40000
-            } else {
+                selectedSize = "S"
+            }
+            else {
                 basePrice -= 40000
             }
             updatePrice()
@@ -115,6 +153,7 @@ class CustomizePizzaActivity : AppCompatActivity() {
         sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 basePrice += 70000
+                selectedSize = "M"
             } else {
                 basePrice -= 70000
             }
@@ -124,6 +163,7 @@ class CustomizePizzaActivity : AppCompatActivity() {
         sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 basePrice += 90000
+                selectedSize = "L"
             } else {
                 basePrice -= 90000
             }
@@ -134,6 +174,7 @@ class CustomizePizzaActivity : AppCompatActivity() {
         crustThinButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 basePrice += 10000
+                selectedCrust = "Thin"
             } else {
                 basePrice -= 10000
             }
@@ -143,22 +184,21 @@ class CustomizePizzaActivity : AppCompatActivity() {
         crustThickButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 basePrice += 20000
-            }
-            else {
+                selectedCrust = "Thick"
+            } else {
                 basePrice -= 20000
             }
             updatePrice()
         }
 
-        // Crust base ingredient
+        // Crust base ingredients
         crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 crustChickenCheckBox.isChecked = false
                 crustSausageCheckBox.isChecked = false
+                selectedCrustBase = "Cheese"
                 basePrice += 40000
-            } else {
-                basePrice -= 40000
-            }
+            } else basePrice -= 40000
             updatePrice()
         }
 
@@ -166,10 +206,9 @@ class CustomizePizzaActivity : AppCompatActivity() {
             if (isChecked) {
                 crustCheeseCheckBox.isChecked = false
                 crustSausageCheckBox.isChecked = false
+                selectedCrustBase = "Chicken"
                 basePrice += 40000
-            } else {
-                basePrice -= 40000
-            }
+            } else basePrice -= 40000
             updatePrice()
         }
 
@@ -177,46 +216,96 @@ class CustomizePizzaActivity : AppCompatActivity() {
             if (isChecked) {
                 crustCheeseCheckBox.isChecked = false
                 crustChickenCheckBox.isChecked = false
+                selectedCrustBase = "Sausage"
                 basePrice += 30000
-            } else {
-                basePrice -= 30000
-            }
+            } else basePrice -= 30000
             updatePrice()
         }
 
         updatePrice()
-        //Glide.with(this).load(imgPath).into(pizzaImageView)
+        fetchIngredientData()
 
-        setupRecyclerViews()
+        addToCartButton.setOnClickListener {
+            selectedIngredients = (meatAdapter.getSelectedIngredients() +
+                    seafoodAdapter.getSelectedIngredients() +
+                    vegetableAdapter.getSelectedIngredients() +
+                    additionAdapter.getSelectedIngredients() +
+                    sauceAdapter.getSelectedIngredients()).distinct()
 
+            val cartData = CartData(
+                food_id = 0,
+                price = basePrice,
+                ingredients = selectedIngredients,
+                size = selectedSize,
+                crust = selectedCrust,
+                crustBase = selectedCrustBase,
+                quantity = quantity
+            )
+
+            Log.d("Cart data", "Adding to cart: $cartData")
+            dbHelper.addFoodToCart(cartData)
+
+            Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show()
+
+            // Cập nhật lại số lượng món ăn trong giỏ hàng
+            /*
+            val cartFab : CounterFab = requireActivity().findViewById(R.id.cart_fab)
+            val cartItemCount = dbHelper.getCartItemCount()
+            cartFab.count = cartItemCount
+             */
+
+            // Reset cac lua chon
+            selectedSize = "S"
+            selectedCrust = "Thin"
+            selectedCrustBase = ""
+            selectedIngredients = emptyList()
+            quantity = 1
+            quantityTextView.text = quantity.toString()
+            sizeSRadioButton.isChecked = true
+            crustThinButton.isChecked = true
+            crustCheeseCheckBox.isChecked = false
+            crustChickenCheckBox.isChecked = false
+            crustSausageCheckBox.isChecked = false
+            meatAdapter.clearSelectedIngredients()
+            seafoodAdapter.clearSelectedIngredients()
+            vegetableAdapter.clearSelectedIngredients()
+            additionAdapter.clearSelectedIngredients()
+            sauceAdapter.clearSelectedIngredients()
+            layerContainer.removeAllViews()
+            ingredientImageViews.clear()
+            basePrice = 50000
+            updatePrice()
+        }
     }
 
-    private fun setupRecyclerViews() {
-        recyclerViewMeat = findViewById(R.id.meat_recycler_view)
-        recyclerViewSeafood = findViewById(R.id.seafood_recycler_view)
-        recyclerViewVegetable = findViewById(R.id.vegetable_recycler_view)
-        recyclerViewAddition = findViewById(R.id.addition_recycler_view)
-        recyclerViewSauce = findViewById(R.id.sauce_recycler_view)
+    private fun fetchIngredientData() {
+        val ingredientList = dbHelper.getAllIngredients()
 
-        recyclerViewMeat.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewSeafood.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewVegetable.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewAddition.layoutManager = GridLayoutManager(this, 5)
-        recyclerViewSauce.layoutManager = GridLayoutManager(this, 5)
-    }
+        meatList.clear()
+        seafoodList.clear()
+        vegetableList.clear()
+        additionList.clear()
+        sauceList.clear()
 
-    private fun setupAdapters() {
-        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
-        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
-        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
-        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
-        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+        for (ingredient in ingredientList) {
+            if (ingredient.category == "meat") {
+                meatList.add(ingredient)
+            } else if (ingredient.category == "seafood") {
+                seafoodList.add(ingredient)
+            } else if (ingredient.category == "vegetable") {
+                vegetableList.add(ingredient)
+            } else if (ingredient.category == "addition") {
+                additionList.add(ingredient)
+            } else if (ingredient.category == "sauce") {
+                sauceList.add(ingredient)
+            }
+        }
 
-        recyclerViewMeat.adapter = meatAdapter
-        recyclerViewSeafood.adapter = seafoodAdapter
-        recyclerViewVegetable.adapter = vegetableAdapter
-        recyclerViewAddition.adapter = additionAdapter
-        recyclerViewSauce.adapter = sauceAdapter
+        meatAdapter.notifyDataSetChanged()
+        seafoodAdapter.notifyDataSetChanged()
+        vegetableAdapter.notifyDataSetChanged()
+        additionAdapter.notifyDataSetChanged()
+        sauceAdapter.notifyDataSetChanged()
     }
 
     private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {
@@ -226,15 +315,18 @@ class CustomizePizzaActivity : AppCompatActivity() {
         if (isSelected) {
             basePrice += ingredient.price.toInt()
             updatePrice()
+
             val imageView = ImageView(this)
             Glide.with(this)
                 .load(ingredient.layerImgPath)
                 .into(imageView)
+
             layerContainer.addView(imageView)
             ingredientImageViews[ingredient.name] = imageView
         } else {
             basePrice -= ingredient.price.toInt()
             updatePrice()
+
             ingredientImageViews[ingredient.name]?.let { layerContainer.removeView(it) }
             ingredientImageViews.remove(ingredient.name)
         }
@@ -242,15 +334,9 @@ class CustomizePizzaActivity : AppCompatActivity() {
 
     private fun updatePrice() {
         totalPrice = basePrice * quantity
-        val formattedPrice = DecimalFormat("#,###").format(totalPrice)
-        addToCartButton.text = "Add to cart - $formattedPrice VND"
+        val formatter = DecimalFormat("#,###")
+        val formattedPrice = formatter.format(totalPrice)
+        addToCartButton.text = "Add to Cart - $formattedPrice"
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        val prefs = newBase?.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val langCode = prefs?.getString("lang", "en") ?: "en"
-
-        val context = LanguageHelper.setLocale(newBase!!, langCode)
-        super.attachBaseContext(context)
-    }
 }

@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         fetchFoodData()
         fetchIngredientData()
 
-        val dbHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
         cartFab = findViewById(R.id.cart_fab)
         cartFab.count = dbHelper.getCartItemCount()
 
@@ -62,6 +63,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ShowCartActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dbHelper = DatabaseHelper(this)
+        cartFab.count = dbHelper.getCartItemCount()
     }
 
     override fun attachBaseContext(newBase: Context?) {
