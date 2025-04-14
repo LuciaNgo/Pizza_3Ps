@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
@@ -16,7 +17,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 9
+        private const val DATABASE_VERSION = 10
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -88,12 +89,23 @@ class DatabaseHelper(context: Context) :
             )
         """.trimIndent()
 
+        val createAddressTable = """
+            CREATE TABLE IF NOT EXISTS Address (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                phone TEXT,
+                address TEXT,
+                isDefault INTEGER
+            )
+        """.trimIndent()
+
         db.execSQL(createFoodTable)
         db.execSQL(createIngredientTable)
         db.execSQL(createCartTable)
         db.execSQL(createEventTable)
         db.execSQL(createUserTable)
         db.execSQL(createRestaurantInfoTable)
+        db.execSQL(createAddressTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -103,6 +115,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS Event")
         db.execSQL("DROP TABLE IF EXISTS User")
         db.execSQL("DROP TABLE IF EXISTS RestaurantInfo")
+        db.execSQL("DROP TABLE IF EXISTS Address")
         onCreate(db)
     }
 
@@ -572,6 +585,124 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='RestaurantInfo'", null)
         if (cursor.count > 0) {
             db.execSQL("DELETE FROM RestaurantInfo")
+        }
+        cursor.close()
+        db.close()
+    }
+
+    // ===== ADDRESS TABLE =====
+    fun addAddress(address: AddressData) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", address.name)
+            put("phone", address.phone)
+            put("address", address.address)
+            put("isDefault", if (address.isDefault) 1 else 0)
+        }
+        db.insert("Address", null, values)
+        db.close()
+    }
+
+    fun addAddressWithId(addressId: String, address: AddressData) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("id", addressId)
+            put("name", address.name)
+            put("phone", address.phone)
+            put("address", address.address)
+            put("isDefault", if (address.isDefault) 1 else 0)
+        }
+        db.insert("Address", null, values)
+        db.close()
+    }
+
+    fun getAllAddresses(): List<AddressData> {
+        val addressList = mutableListOf<AddressData>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Address", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"))
+                val address = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                val isDefault = cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) == 1
+
+                addressList.add(AddressData(name, phone, address, isDefault))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return addressList
+    }
+
+    fun getDefaultAddress(): AddressData? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Address WHERE isDefault = 1 LIMIT 1", null)
+        var address: AddressData? = null
+
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"))
+            val addressStr = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+            val isDefault = cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) == 1
+
+            address = AddressData(name, phone, addressStr, isDefault)
+        }
+        cursor.close()
+        db.close()
+        return address
+    }
+
+    fun getAddressId(address: AddressData): Int {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT id FROM Address WHERE name = ? AND phone = ? AND address = ? AND isDefault = ?",
+            arrayOf(address.name, address.phone, address.address)
+        )
+        var id = -1
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+        }
+        cursor.close()
+        db.close()
+        return id
+    }
+
+    fun updateAddress(id: Int, address: AddressData) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", address.name)
+            put("phone", address.phone)
+            put("address", address.address)
+            put("isDefault", if (address.isDefault) 1 else 0)
+        }
+        db.update("Address", values, "id = ?", arrayOf(id.toString()))
+        db.close()
+    }
+
+    fun updateDefaultAddress(id: Int) {
+        val db = writableDatabase
+        val value_1 = ContentValues().apply {
+            put("isDefault", 1)
+        }
+
+        val value_2 = ContentValues().apply {
+            put("isDefault", 0)
+        }
+
+        // Đặt tất cả các địa chỉ khác thành không mặc định
+        db.update("Address", value_2, "isDefault = 1", null)
+        db.update("Address", value_1, "id = ?", arrayOf(id.toString()))
+        db.close()
+    }
+
+    fun deleteAddress(id: Int) {
+        val db = writableDatabase
+        // Kểm tra có bảng Address không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Address'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM Address WHERE id = ?", arrayOf(id.toString()))
         }
         cursor.close()
         db.close()

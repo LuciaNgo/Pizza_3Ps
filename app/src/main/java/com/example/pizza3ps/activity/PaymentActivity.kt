@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.PaymentCartAdapter
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 
@@ -23,6 +24,10 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var deliveryCharge : TextView
     private lateinit var discount : TextView
     private lateinit var totalPrice : TextView
+    private lateinit var customerName: TextView
+    private lateinit var customerPhone: TextView
+    private lateinit var customerAddress: TextView
+    private lateinit var addressDetail: ImageView
 
     private lateinit var cashContainer : ConstraintLayout
     private lateinit var paypalContainer : ConstraintLayout
@@ -44,12 +49,14 @@ class PaymentActivity : AppCompatActivity() {
     private var totalValue: Int = 0
     private var selectedPaymentMethod = ""
 
+    private lateinit var dbHelper: DatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_payment)
 
-        val dbHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
         cartList = dbHelper.getAllCartItems()
 
         redeemPoints = findViewById(R.id.pointsContainer)
@@ -60,6 +67,10 @@ class PaymentActivity : AppCompatActivity() {
         deliveryCharge = findViewById(R.id.delivery_charge_price)
         discount = findViewById(R.id.discount)
         totalPrice = findViewById(R.id.total_price)
+        customerName = findViewById(R.id.customerName)
+        customerPhone = findViewById(R.id.customerPhoneNumber)
+        customerAddress = findViewById(R.id.customerAddress)
+        addressDetail = findViewById(R.id.addressDetailIcon)
 
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -78,6 +89,17 @@ class PaymentActivity : AppCompatActivity() {
         cashCheck.visibility = ImageView.INVISIBLE
         paypalCheck.visibility = ImageView.INVISIBLE
         momoCheck.visibility = ImageView.INVISIBLE
+
+        val defaultAddress = getDefaultAddress()
+        if (defaultAddress.name == "" && defaultAddress.phone == "" && defaultAddress.address == "") {
+            customerName.text = "No address added"
+            customerPhone.visibility = ImageView.GONE
+            customerAddress.visibility = ImageView.GONE
+        } else {
+            customerName.text = defaultAddress.name
+            customerPhone.text = defaultAddress.phone
+            customerAddress.text = defaultAddress.address
+        }
 
         cashContainer.setOnClickListener {
             updateSelectedPaymentMethod("cash")
@@ -100,6 +122,15 @@ class PaymentActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             onBackPressed()
+        }
+    }
+
+    fun getDefaultAddress(): AddressData {
+        val defaultAddress = dbHelper.getDefaultAddress()
+        return if (defaultAddress != null) {
+            defaultAddress
+        } else {
+            AddressData("", "", "", false)
         }
     }
 
