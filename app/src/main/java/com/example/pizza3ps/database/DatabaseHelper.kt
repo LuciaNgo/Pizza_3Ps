@@ -8,6 +8,7 @@ import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.model.FoodData
 import com.example.pizza3ps.model.IngredientData
+import com.example.pizza3ps.model.RestaurantData
 import com.example.pizza3ps.model.UserData
 
 class DatabaseHelper(context: Context) :
@@ -15,7 +16,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Pizza3PsDatabase.db"
-        private const val DATABASE_VERSION = 6
+        private const val DATABASE_VERSION = 7
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -77,11 +78,22 @@ class DatabaseHelper(context: Context) :
             );
         """.trimIndent()
 
+        val createRestaurantInfoTable = """
+            CREATE TABLE IF NOT EXISTS RestaurantInfo (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                address TEXT,
+                phone TEXT,
+                mail TEXT
+            )
+        """.trimIndent()
+
         db.execSQL(createFoodTable)
         db.execSQL(createIngredientTable)
         db.execSQL(createCartTable)
         db.execSQL(createEventTable)
         db.execSQL(createUserTable)
+        db.execSQL(createRestaurantInfoTable)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -90,6 +102,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS Cart")
         db.execSQL("DROP TABLE IF EXISTS Event")
         db.execSQL("DROP TABLE IF EXISTS User")
+        db.execSQL("DROP TABLE IF EXISTS RestaurantInfo")
         onCreate(db)
     }
 
@@ -438,5 +451,58 @@ class DatabaseHelper(context: Context) :
         cursor.close()
         db.close()
         return user
+    }
+
+    fun deleteAllUser() {
+        val db = writableDatabase
+        // Kểm tra có bảng User không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='User'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM User")
+        }
+        cursor.close()
+        db.close()
+    }
+
+    // ===== RESTAURANT INFO TABLE =====
+    fun addRestaurantInfo(name: String, address: String, phone: String, mail: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", name)
+            put("address", address)
+            put("phone", phone)
+            put("mail", mail)
+        }
+        db.insert("RestaurantInfo", null, values)
+        db.close()
+    }
+
+    fun getRestaurantInfo(): RestaurantData? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM RestaurantInfo LIMIT 1", null)
+        var restaurantInfo: RestaurantData? = null
+
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+            val address = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"))
+            val mail = cursor.getString(cursor.getColumnIndexOrThrow("mail"))
+
+            restaurantInfo = RestaurantData(name, address, phone, mail)
+        }
+        cursor.close()
+        db.close()
+        return restaurantInfo
+    }
+
+    fun deleteAllRestaurantInfo() {
+        val db = writableDatabase
+        // Kểm tra có bảng RestaurantInfo không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='RestaurantInfo'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM RestaurantInfo")
+        }
+        cursor.close()
+        db.close()
     }
 }

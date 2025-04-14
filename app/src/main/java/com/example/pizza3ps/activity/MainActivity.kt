@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
@@ -16,7 +17,9 @@ import com.example.pizza3ps.tool.LanguageHelper
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.FoodData
 import com.example.pizza3ps.model.IngredientData
+import com.example.pizza3ps.model.UserData
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
@@ -34,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         fetchFoodData()
         fetchIngredientData()
+        fetchUserData()
+        fetchRestaurantInfo()
 
         dbHelper = DatabaseHelper(this)
         cartFab = findViewById(R.id.cart_fab)
@@ -84,7 +89,6 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
 
-                val dbHelper = DatabaseHelper(this)
                 dbHelper.deleteAllFood()
 
                 for (document in documents) {
@@ -112,7 +116,6 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { documents ->
 
-                val dbHelper = DatabaseHelper(this)
                 dbHelper.deleteAllIngredients()
 
                 for (document in documents) {
@@ -121,7 +124,6 @@ class MainActivity : AppCompatActivity() {
                     val iconImgPath = document.getString("iconImgPath") ?: ""
                     val layerImgPath = document.getString("layerImgPath") ?: ""
                     val category = document.getString("category") ?: ""
-
                     val ingredientItem = IngredientData(name, price, category, iconImgPath, layerImgPath)
 
                     dbHelper.addIngredient(ingredientItem)
@@ -129,6 +131,57 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
+            }
+    }
+
+    private fun fetchUserData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId != null) {
+            db.collection("Users").document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+
+                    dbHelper.deleteAllUser()
+
+                    if (document != null && document.exists()) {
+                        val name = document.getString("name") ?: "Guest"
+                        val email = document.getString("email") ?: ""
+                        val phone = document.getString("phone") ?: ""
+                        val address = document.getString("address") ?: ""
+                        val points = document.getLong("points")?.toInt() ?: 0
+                        val user = UserData(email, name, phone, address, points)
+
+                        val sharedPref = this.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+                        sharedPref.edit().putString("username", name).apply()
+
+                        dbHelper.addUser(user)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Firestore", "Failed to load user data", exception)
+                }
+        }
+    }
+
+    private fun fetchRestaurantInfo() {
+        db.collection("RestaurantInfo").document("Info")
+        .get()
+            .addOnSuccessListener { document ->
+
+                dbHelper.deleteAllRestaurantInfo()
+
+                if (document != null && document.exists()) {
+                    val nameInfo = document.getString("name").toString()
+                    val locationInfo = document.getString("location").toString()
+                    val mailInfo = document.getString("mail").toString()
+                    val phoneInfo = document.getString("phone").toString()
+
+                    dbHelper.addRestaurantInfo(nameInfo, locationInfo, mailInfo, phoneInfo)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("Firestore", "Lỗi khi đọc document: ", exception)
             }
     }
 }

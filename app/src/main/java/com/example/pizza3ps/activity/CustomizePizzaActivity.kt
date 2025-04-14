@@ -247,13 +247,6 @@ class CustomizePizzaActivity : AppCompatActivity() {
 
             Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show()
 
-            // Cập nhật lại số lượng món ăn trong giỏ hàng
-            /*
-            val cartFab : CounterFab = requireActivity().findViewById(R.id.cart_fab)
-            val cartItemCount = dbHelper.getCartItemCount()
-            cartFab.count = cartItemCount
-             */
-
             // Reset cac lua chon
             selectedSize = "S"
             selectedCrust = "Thin"

@@ -29,7 +29,6 @@ class AccountFragment : Fragment() {
     private lateinit var logOutLayout: LinearLayout
     private lateinit var userNameView: TextView
     private lateinit var fab: CounterFab
-    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,44 +77,11 @@ class AccountFragment : Fragment() {
     }
 
     private fun fetchUserData() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        Log.d("userID", userId.toString())
-        if (userId == null) {
-            Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val dbHelper = DatabaseHelper(requireContext())
-
-        db.collection("Users").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                Log.e("Firestore_FetchData", "Begin to fetch")
-                if (document != null && document.exists()) {
-                    val name = document.getString("name") ?: "Guest"
-                    val email = document.getString("email") ?: ""
-                    val phone = document.getString("phone") ?: ""
-                    val address = document.getString("address") ?: ""
-                    val points = document.getLong("points")?.toInt() ?: 0
-                    Log.d("FETCH", "Document loaded successfully: name = $name")
-
-                    // Display name in UI
-                    userNameView.text = name
-
-                    // After getting the name from Firebase or SQLite
-                    val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
-                    sharedPref.edit().putString("username", name).apply()
-
-                    // Save to SQLite
-                    val user = UserData(email, name, phone, address, points)
-                    dbHelper.addUser(user)
-                    Log.e("Firestore_FetchDataDone", "Done")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Failed to load user data", exception)
-                //Toast.makeText(context, "Failed to load user data", Toast.LENGTH_SHORT).show()
-            }
+        val user = dbHelper.getUser()
+        if (user != null) {
+            userNameView.text = user.name
+        }
     }
 
     private fun signOut() {
