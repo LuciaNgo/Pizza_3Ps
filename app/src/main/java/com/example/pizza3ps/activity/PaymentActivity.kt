@@ -65,28 +65,15 @@ class PaymentActivity : AppCompatActivity() {
     private var lastGeneratedOrderId: String? = null
     private var orderId: String? = null
 
-    private val momoPaymentLauncher = registerForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val data = result.data
-        val status = data?.getIntExtra("status", -1) ?: -1
-
-        if (result.resultCode == RESULT_OK && status == 0) {
-            Toast.makeText(this, "MoMo payment successful", Toast.LENGTH_SHORT).show()
-            orderId?.let {
-                createOrderInFirestore(it, "momo")
-            }
-        } else {
-            val message = data?.getStringExtra("message") ?: "Payment failed or cancelled"
-            Toast.makeText(this, "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
-        }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_payment)
+
+        AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN)
+        AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT)
+        AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT)
 
         val dbHelper = DatabaseHelper(this)
 
@@ -171,6 +158,37 @@ class PaymentActivity : AppCompatActivity() {
 
     }
 
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == RESULT_OK && data != null) {
+//            val status = data.getIntExtra("status", -1)
+//            if (status == 0) {
+//                // Payment success
+//                createOrderInFirestore(orderId!!, "momo")
+//            } else {
+//                // Payment failed
+//                val message = data.getStringExtra("message") ?: "Unknown error"
+//                Toast.makeText(this, "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
+//            }
+//        }
+//    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == RESULT_OK && data != null) {
+            val status = data.getIntExtra("status", -1)
+            if (status == 0) {
+                // Success
+                Toast.makeText(this, "MoMo payment successful", Toast.LENGTH_SHORT).show()
+                createOrderInFirestore(orderId!!, "momo")
+            } else {
+                val message = data.getStringExtra("message") ?: "Payment failed"
+                Toast.makeText(this, "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
     fun updateSelectedPaymentMethod(method: String) {
         cashCheck.visibility = ImageView.INVISIBLE
@@ -223,34 +241,64 @@ class PaymentActivity : AppCompatActivity() {
         this.totalPrice.text = DecimalFormat("#,###").format(totalValue) + " VND"
     }
 
+//    fun requestMoMoPayment(amount: Int) {
+//        if (orderId == null) {
+//            Toast.makeText(this, "Order ID is not ready", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        val momoParams = HashMap<String, Any>()
+//        momoParams["merchantname"] = "Pizza3Ps"
+//        momoParams["merchantcode"] = momoClientId
+//        momoParams["amount"] = amount
+//        momoParams["orderId"] = orderId!!
+//        momoParams["orderLabel"] = "Food Order"
+//        momoParams["merchantnamelabel"] = "Pizza 3Ps Order"
+//        momoParams["fee"] = 0
+//        momoParams["description"] = "Payment for Pizza Order"
+//        momoParams["requestId"] = "ORDER_$orderId"
+//        momoParams["partnerCode"] = momoClientId
+//        momoParams["extraData"] = ""
+//        momoParams["environment"] = 0 // 0: sandbox, 1: production
+//
+//        AppMoMoLib.getInstance().requestMoMoCallBack(this, momoParams) // Correct usage
+//
+//
+//        lastGeneratedOrderId = orderId
+//    }
+
     fun requestMoMoPayment(amount: Int) {
         if (orderId == null) {
             Toast.makeText(this, "Order ID is not ready", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val momoParams = HashMap<String, Any>()
-        momoParams["merchantname"] = "Pizza3Ps"
-        momoParams["merchantcode"] = momoClientId
-        momoParams["amount"] = amount
-        momoParams["orderId"] = orderId!!
-        momoParams["orderLabel"] = "Food Order"
-        momoParams["merchantnamelabel"] = "Pizza 3Ps Order"
-        momoParams["fee"] = 0
-        momoParams["description"] = "Payment for Pizza Order"
-        momoParams["requestId"] = "ORDER_$orderId"
-        momoParams["partnerCode"] = momoClientId
-        momoParams["extraData"] = ""
-        momoParams["environment"] = 0 // 0: sandbox, 1: production
+        AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT);
+        AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN);
+        val momoParams = HashMap<String, Any>().apply {
+            put("merchantname", "Pizza3Ps") // Your MoMo merchant name
+            put("merchantcode", momoClientId) // Your MoMo merchant code
+            put("amount", amount) // Must be Int
+            put("orderId", orderId!!) // Unique per order
+            put("orderLabel", "Pizza Order") // Custom label
 
-        val momoIntent = Intent() // this is a placeholder; SDK should provide this
-        momoIntent.putExtra("action", "momo_payment") // and all params like orderId, amount, etc.
+            // Optional
+            put("merchantnamelabel", "Pizza3Ps Order")
+            put("fee", 0)
+            put("description", "Thanh toán đơn hàng Pizza")
 
-        momoPaymentLauncher.launch(momoIntent)
+            // Required for verifying transaction
+            put("requestId", momoClientId + "_billId_" + System.currentTimeMillis())
+            put("partnerCode", momoClientId)
 
+            // Optional extra info
+            put("extraData", "")
+            put("extra", "")
+        }
 
-        lastGeneratedOrderId = orderId
+        AppMoMoLib.getInstance().requestMoMoCallBack(this, momoParams)
     }
+
 
 
     fun generateOrderId(callback: (String) -> Unit) {
