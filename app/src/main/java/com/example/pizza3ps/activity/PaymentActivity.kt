@@ -1,5 +1,6 @@
 package com.example.pizza3ps.activity
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -107,10 +108,9 @@ class PaymentActivity : AppCompatActivity() {
         paypalCheck.visibility = ImageView.INVISIBLE
         momoCheck.visibility = ImageView.INVISIBLE
 
-        // Bo bold
-        cashText.setTypeface(cashText.typeface, android.graphics.Typeface.NORMAL)
-        paypalText.setTypeface(paypalText.typeface, android.graphics.Typeface.NORMAL)
-        momoText.setTypeface(momoText.typeface, android.graphics.Typeface.NORMAL)
+        cashText.typeface = Typeface.DEFAULT
+        paypalText.typeface = Typeface.DEFAULT
+        momoText.typeface = Typeface.DEFAULT
 
         when (method) {
             "cash" -> {
