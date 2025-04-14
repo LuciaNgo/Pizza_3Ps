@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/appSpecialContainer"
+            android:id="@+id/pointsContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="16dp">
@@ -102,6 +102,43 @@
                 android:textStyle="bold"
                 android:textColor="@color/lighter_black"
                 app:layout_constraintStart_toEndOf="@id/pointsIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/vouchersContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/vouchersIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/coupon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/vouchersText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Vouchers"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/vouchersIcon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 

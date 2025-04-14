@@ -6,17 +6,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.FoodAdapter
+import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.FoodData
 import com.example.pizza3ps.tool.LanguageHelper
+import com.google.android.material.slider.RangeSlider
 
 class MenuFragment : Fragment() {
     private lateinit var pizzaCategory: LinearLayout
@@ -29,8 +36,16 @@ class MenuFragment : Fragment() {
     private val foodList = mutableListOf<FoodData>()
     private lateinit var foodAdapter: FoodAdapter
 
-    private lateinit var searchBar: SearchView
     private lateinit var fab: CounterFab
+    private lateinit var searchBar: SearchView
+    private lateinit var filterButton: ImageView
+    private lateinit var filterLayout: ConstraintLayout
+    private lateinit var priceSlider: RangeSlider
+    private lateinit var ingredientFilterRecyclerView : RecyclerView
+    private lateinit var ingredientAdapter : IngredientAdapter
+
+    private var currentMinPrice: Int = 0
+    private var currentMaxPrice: Int = 400000
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,12 +64,20 @@ class MenuFragment : Fragment() {
         appetizerCategory = view.findViewById(R.id.appetizer_category)
         drinksCategory = view.findViewById(R.id.drinks_category)
         foodRecyclerView = view.findViewById(R.id.food_recyclerView)
+        filterButton = view.findViewById(R.id.filter_button)
+        filterLayout = view.findViewById(R.id.filter_container)
+        priceSlider = view.findViewById(R.id.priceRangeSlider)
+        ingredientFilterRecyclerView = view.findViewById(R.id.ingredient_filter_recyclerView)
         searchBar = view.findViewById(R.id.menu_search_bar)
         searchBar.clearFocus()
+
+        ingredientFilterRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         foodRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         foodAdapter = FoodAdapter(lang, foodList, FoodAdapter.LayoutType.MENU)
         foodRecyclerView.adapter = foodAdapter
+
+        filterLayout.visibility = View.GONE
 
         return view
     }
@@ -96,7 +119,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} pizzas")
             foodAdapter.updateData(newList)
-            foodRecyclerView.scrollToPosition(0)
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
         }
 
         chickenCategory.setOnClickListener {
@@ -105,7 +128,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} chickens")
             foodAdapter.updateData(newList)
-            foodRecyclerView.scrollToPosition(0)
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
         }
 
         pastaCategory.setOnClickListener {
@@ -114,7 +137,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} pastas")
             foodAdapter.updateData(newList)
-            foodRecyclerView.scrollToPosition(0)
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
         }
 
         appetizerCategory.setOnClickListener {
@@ -123,7 +146,7 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} appetizers")
             foodAdapter.updateData(newList)
-            foodRecyclerView.scrollToPosition(0)
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
         }
 
         drinksCategory.setOnClickListener {
@@ -132,7 +155,42 @@ class MenuFragment : Fragment() {
             foodList.addAll(newList)
             Log.d("MenuFragment", "Loaded ${newList.size} drinks")
             foodAdapter.updateData(newList)
-            foodRecyclerView.scrollToPosition(0)
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
         }
+
+        filterButton.setOnClickListener {
+            val transition = AutoTransition().apply {
+                duration = 300 // thời gian animation (ms)
+            }
+
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+
+            if (filterLayout.visibility == View.GONE) {
+                filterLayout.visibility = View.VISIBLE
+            } else {
+                filterLayout.visibility = View.GONE
+            }
+        }
+
+
+        priceSlider.addOnChangeListener { slider, _, _ ->
+            val values = slider.values
+            currentMinPrice = values[0].toInt()
+            currentMaxPrice = values[1].toInt()
+
+            filterProductsByPrice(currentMinPrice, currentMaxPrice)
+        }
+    }
+
+    private fun filterProductsByPrice(minPrice: Int, maxPrice: Int) {
+        val filteredList = foodList.filter { food ->
+            val price = food.price.toString().replace(",", "").toInt()
+            price in minPrice..maxPrice
+        }
+
+        // Cập nhật danh sách trong RecyclerView
+        foodAdapter.updateData(filteredList)
+        foodAdapter.notifyDataSetChanged()
+        foodRecyclerView.scrollToPosition(0)
     }
 }
