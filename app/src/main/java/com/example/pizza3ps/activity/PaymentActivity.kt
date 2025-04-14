@@ -284,7 +284,6 @@ class PaymentActivity : AppCompatActivity() {
         val user = dbHelper.getUser()
 
         val order = hashMapOf(
-            "orderId" to orderId,
             "userID" to FirebaseAuth.getInstance().uid,
             "receiverName" to user?.name,
             "phoneNumber" to user?.phone,
@@ -319,15 +318,15 @@ class PaymentActivity : AppCompatActivity() {
             val detail = mutableMapOf<String, Any>(
                 "foodId" to item.food_id,
                 "quantity" to item.quantity,
-                "unitPrice" to item.price,
-                "totalPrice" to item.quantity * item.price
+                "price" to item.price
             )
 
             if (category == "pizza") {
                 detail["size"] = item.size
                 detail["crust"] = item.crust
                 detail["crustBase"] = item.crustBase
-                detail["ingredients"] = item.ingredients ?: listOf<String>()
+                detail["ingredients"] = item.ingredients.joinToString(", ")
+
             }
 
             val docRef = orderDetailsRef.document((index + 1).toString())
