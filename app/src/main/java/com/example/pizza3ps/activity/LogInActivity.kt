@@ -54,7 +54,10 @@ class LogInActivity : AppCompatActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             // User đã đăng nhập trước đó, tự động vào màn hình chính
-            goToDashboard()
+            if (currentUser.email == "adminpizza3ps@gmail.com")
+                goToManagementHome()
+            else
+                goToDashboard()
         }
 
         auth = FirebaseAuth.getInstance()
@@ -94,7 +97,12 @@ class LogInActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        goToDashboard()
+                        if (email == "adminpizza3ps@gmail.com") {
+                            goToManagementHome()
+                        }
+                        else {
+                            goToDashboard()
+                        }
                     } else {
                         Toast.makeText(this, "Error: Incorrect password or email", Toast.LENGTH_SHORT).show()
                     }
@@ -241,6 +249,12 @@ class LogInActivity : AppCompatActivity() {
     private fun goToDashboard() {
         Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private fun goToManagementHome() {
+        Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, ManagementHomeActivity::class.java))
         finish()
     }
 }

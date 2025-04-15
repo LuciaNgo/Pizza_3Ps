@@ -17,6 +17,7 @@ import com.example.pizza3ps.fragment.FoodInfoFragment
 import com.example.pizza3ps.model.FoodData
 
 class FoodAdapter(
+    private val lang : String,
     private var foodList: List<FoodData>,
     private val layoutType: LayoutType
 ) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
@@ -44,7 +45,8 @@ class FoodAdapter(
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
         val food = foodList[position]
-        holder.nameTextView.text = food.name
+
+        holder.nameTextView.text = food.getName(lang)
         holder.priceTextView.text = "${food.price} VND"
 
         // Load ảnh bằng Glide
@@ -61,7 +63,7 @@ class FoodAdapter(
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
             val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString("food_name", food.name)
+                    putString("food_name", food.getName(lang))
                     putString("food_price", food.price)
                     putString("food_category", food.category)
                     putString("food_image", food.imgPath)
@@ -79,7 +81,7 @@ class FoodAdapter(
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
             val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString("food_name", food.name)
+                    putString("food_name", food.getName(lang))
                     putString("food_price", food.price)
                     putString("food_category", food.category)
                     putString("food_image", food.imgPath)
@@ -87,7 +89,6 @@ class FoodAdapter(
                 }
             }
 
-            // Hiển thị BottomSheet
             foodInfoFragment.show((context as AppCompatActivity).supportFragmentManager, "FoodInfoBottomSheet")
         }
 

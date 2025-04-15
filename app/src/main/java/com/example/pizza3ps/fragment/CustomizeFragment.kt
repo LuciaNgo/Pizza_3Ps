@@ -1,6 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.adapter.IngredientAdapter
+import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.CartData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
@@ -58,9 +61,14 @@ class CustomizeFragment : Fragment() {
     private lateinit var crustSausageCheckBox: CheckBox
 
     private val db = FirebaseFirestore.getInstance()
-    private var quantity = 1
+
     private var basePrice = 50000
     private var totalPrice = basePrice
+    private var selectedSize : String = "S"
+    private var selectedCrust : String = "Thin"
+    private var selectedCrustBase : String = ""
+    private var selectedIngredients: List<String> = emptyList()
+    private var quantity = 1
 
     private lateinit var layerContainer: FrameLayout
     private lateinit var fab: CounterFab
@@ -111,21 +119,141 @@ class CustomizeFragment : Fragment() {
         }
 
         // Size
-        sizeSRadioButton.setOnCheckedChangeListener { _, isChecked -> if (isChecked) basePrice += 40000 else basePrice -= 40000; updatePrice() }
-        sizeMRadioButton.setOnCheckedChangeListener { _, isChecked -> if (isChecked) basePrice += 70000 else basePrice -= 70000; updatePrice() }
-        sizeLRadioButton.setOnCheckedChangeListener { _, isChecked -> if (isChecked) basePrice += 90000 else basePrice -= 90000; updatePrice() }
+        sizeSRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 40000
+                selectedSize = "S"
+            }
+            else {
+                basePrice -= 40000
+            }
+            updatePrice()
+        }
+
+        sizeMRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 70000
+                selectedSize = "M"
+            } else {
+                basePrice -= 70000
+            }
+            updatePrice()
+        }
+
+        sizeLRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 90000
+                selectedSize = "L"
+            } else {
+                basePrice -= 90000
+            }
+            updatePrice()
+        }
 
         // Crust thickness
-        crustThinButton.setOnCheckedChangeListener { _, isChecked -> if (isChecked) basePrice += 10000 else basePrice -= 10000; updatePrice() }
-        crustThickButton.setOnCheckedChangeListener { _, isChecked -> if (isChecked) basePrice += 20000 else basePrice -= 20000; updatePrice() }
+        crustThinButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 10000
+                selectedCrust = "Thin"
+            } else {
+                basePrice -= 10000
+            }
+            updatePrice()
+        }
+
+        crustThickButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                basePrice += 20000
+                selectedCrust = "Thick"
+            } else {
+                basePrice -= 20000
+            }
+            updatePrice()
+        }
 
         // Crust base ingredients
-        crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked -> if (isChecked) { crustChickenCheckBox.isChecked = false; crustSausageCheckBox.isChecked = false; basePrice += 40000 } else basePrice -= 40000; updatePrice() }
-        crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked -> if (isChecked) { crustCheeseCheckBox.isChecked = false; crustSausageCheckBox.isChecked = false; basePrice += 40000 } else basePrice -= 40000; updatePrice() }
-        crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked -> if (isChecked) { crustCheeseCheckBox.isChecked = false; crustChickenCheckBox.isChecked = false; basePrice += 30000 } else basePrice -= 30000; updatePrice() }
+        crustCheeseCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                crustChickenCheckBox.isChecked = false
+                crustSausageCheckBox.isChecked = false
+                selectedCrustBase = "Cheese"
+                basePrice += 40000
+            } else basePrice -= 40000
+            updatePrice()
+        }
+
+        crustChickenCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                crustCheeseCheckBox.isChecked = false
+                crustSausageCheckBox.isChecked = false
+                selectedCrustBase = "Chicken"
+                basePrice += 40000
+            } else basePrice -= 40000
+            updatePrice()
+        }
+
+        crustSausageCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                crustCheeseCheckBox.isChecked = false
+                crustChickenCheckBox.isChecked = false
+                selectedCrustBase = "Sausage"
+                basePrice += 30000
+            } else basePrice -= 30000
+            updatePrice()
+        }
 
         updatePrice()
         fetchIngredientData()
+
+        addToCartButton.setOnClickListener {
+            val dbHelper = DatabaseHelper(requireContext())
+
+            selectedIngredients = (meatAdapter.getSelectedIngredients() +
+                    seafoodAdapter.getSelectedIngredients() +
+                    vegetableAdapter.getSelectedIngredients() +
+                    additionAdapter.getSelectedIngredients() +
+                    sauceAdapter.getSelectedIngredients()).distinct()
+
+            val cartData = CartData(
+                food_id = 0,
+                price = basePrice,
+                ingredients = selectedIngredients,
+                size = selectedSize,
+                crust = selectedCrust,
+                crustBase = selectedCrustBase,
+                quantity = quantity
+            )
+
+            Log.d("Cart data", "Adding to cart: $cartData")
+            dbHelper.addFoodToCart(cartData)
+
+            // Cập nhật lại số lượng món ăn trong giỏ hàng
+            val cartFab : CounterFab = requireActivity().findViewById(R.id.cart_fab)
+            val cartItemCount = dbHelper.getCartItemCount()
+            cartFab.count = cartItemCount
+
+            // Reset cac lua chon
+            basePrice = 50000
+            selectedSize = "S"
+            selectedCrust = "Thin"
+            selectedCrustBase = ""
+            selectedIngredients = emptyList()
+            quantity = 1
+            quantityTextView.text = quantity.toString()
+            sizeSRadioButton.isChecked = true
+            crustThinButton.isChecked = true
+            crustCheeseCheckBox.isChecked = false
+            crustChickenCheckBox.isChecked = false
+            crustSausageCheckBox.isChecked = false
+            meatAdapter.clearSelectedIngredients()
+            seafoodAdapter.clearSelectedIngredients()
+            vegetableAdapter.clearSelectedIngredients()
+            additionAdapter.clearSelectedIngredients()
+            sauceAdapter.clearSelectedIngredients()
+            layerContainer.removeAllViews()
+            ingredientImageViews.clear()
+            updatePrice()
+        }
 
         return view
     }
@@ -201,15 +329,18 @@ class CustomizeFragment : Fragment() {
         if (isSelected) {
             basePrice += ingredient.price.toInt()
             updatePrice()
+
             val imageView = ImageView(requireContext())
             Glide.with(this)
                 .load(ingredient.layerImgPath)
                 .into(imageView)
+
             layerContainer.addView(imageView)
             ingredientImageViews[ingredient.name] = imageView
         } else {
             basePrice -= ingredient.price.toInt()
             updatePrice()
+
             ingredientImageViews[ingredient.name]?.let { layerContainer.removeView(it) }
             ingredientImageViews.remove(ingredient.name)
         }

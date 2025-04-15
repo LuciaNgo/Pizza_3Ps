@@ -93,12 +93,11 @@ class EditInfoFragment : Fragment() {
             .addOnSuccessListener {
                 // 4. Also update local SQLite
                 val dbHelper = DatabaseHelper(requireContext())
-                val user = UserData(updatedName, updatedEmail, updatedPhone, updatedAddress, updatedPoints.toInt())
+                val user = UserData(updatedEmail, updatedName, updatedPhone, updatedAddress, updatedPoints.toInt())
                 dbHelper.addUser(user)
 
                 val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
                 sharedPref.edit().putString("username", updatedName).apply()
-
 
                 Toast.makeText(context, "Information updated!", Toast.LENGTH_SHORT).show()
 

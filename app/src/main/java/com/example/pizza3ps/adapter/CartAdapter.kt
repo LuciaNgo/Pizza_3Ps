@@ -1,6 +1,6 @@
 package com.example.pizza3ps.adapter
 
-import android.os.Bundle
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
-import com.example.pizza3ps.fragment.FoodInfoFragment
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 
@@ -21,7 +20,6 @@ class CartAdapter(
     private val activity: AppCompatActivity,
     private val cartItems: List<CartData>) :
     RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
-
 
     class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.food_name)
@@ -34,6 +32,7 @@ class CartAdapter(
         val minus : ImageButton = view.findViewById(R.id.minus)
         val quantity: TextView = view.findViewById(R.id.quantity_text)
         val image: ImageView = view.findViewById(R.id.food_image)
+        val delete: ImageView = view.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
@@ -41,10 +40,42 @@ class CartAdapter(
         return CartViewHolder(view)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val item = cartItems[position]
         var quantity = item.quantity
-        holder.name.text = item.name
+
+        if (item.food_id != 0) {
+            val dlHelper = DatabaseHelper(holder.itemView.context)
+            val foodInfo = dlHelper.getFoodById(item.food_id)
+
+            holder.name.text = foodInfo.getName("en")
+
+            Glide.with(holder.itemView.context)
+                .load(foodInfo.imgPath)
+                .placeholder(R.drawable.placeholder_image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.image)
+
+            if (foodInfo.category == "pizza") {
+                holder.ingredients.visibility = View.VISIBLE
+                holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
+            } else {
+                holder.ingredients.visibility = View.GONE
+            }
+        }
+        else if (item.food_id == 0) { // customize pizza
+            holder.name.text = "Customize pizza"
+
+            Glide.with(holder.itemView.context)
+                .load(R.drawable.default_customize_pizza)
+                .placeholder(R.drawable.placeholder_image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.image)
+
+            holder.ingredients.visibility = View.VISIBLE
+            holder.ingredients.text = "${item.ingredients?.joinToString(", ")}".replaceFirstChar { it.uppercase() }
+        }
 
         if (item.size == "") {
             holder.size.visibility = View.GONE
@@ -64,14 +95,7 @@ class CartAdapter(
             holder.crustBase.visibility = View.GONE
         } else {
             holder.crustBase.visibility = View.VISIBLE
-            holder.crustBase.text = "Crust Base: ${item.crustBase}"
-        }
-
-        if (item.category == "pizza") {
-            holder.ingredients.visibility = View.VISIBLE
-            holder.ingredients.text = "Ingredients: ${item.ingredients?.joinToString(", ")}"
-        } else {
-            holder.ingredients.visibility = View.GONE
+            holder.crustBase.text = "Crust base: ${item.crustBase}"
         }
 
         val price = item.price * item.quantity
@@ -79,13 +103,7 @@ class CartAdapter(
         holder.price.text = "$formattedPrice VND"
         holder.quantity.text = item.quantity.toString()
 
-        // Load ảnh bằng Glide
-        Glide.with(holder.itemView.context)
-            .load(item.imgPath)
-            .placeholder(R.drawable.placeholder_image)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(holder.image)
-
+        /*
         // Thiết lập sự kiện click để mở FoodInfoActivity
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
@@ -93,10 +111,12 @@ class CartAdapter(
             // Tạo một đối tượng FoodInfoBottomSheet và truyền dữ liệu vào Bundle
             val foodInfoFragment = FoodInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString("food_name", item.name)
+                    putInt("food_id", item.food_id)
                     putInt("food_price", item.price)
-                    putString("food_category", item.category)
-                    putString("food_image", item.imgPath)
+                    putString("size", item.size)
+                    putString("crust", item.crust)
+                    putString("crustBase", item.crustBase)
+                    putInt("quantity", item.quantity)
                     putStringArrayList("ingredientList", ArrayList(item.ingredients))
                 }
             }
@@ -106,6 +126,8 @@ class CartAdapter(
             foodInfoFragment.show(activity.supportFragmentManager, "FoodInfoBottomSheet")
 
         }
+
+         */
 
         holder.minus.setOnClickListener {
             if (quantity > 1) {
@@ -118,6 +140,8 @@ class CartAdapter(
                 val newPrice = item.price * quantity
                 val formattedPrice = DecimalFormat("#,###").format(newPrice)
                 holder.price.text = "$formattedPrice VND"
+
+                updatePrice()
             }
         }
 
@@ -131,7 +155,41 @@ class CartAdapter(
             val newPrice = item.price * quantity
             val formattedPrice = DecimalFormat("#,###").format(newPrice)
             holder.price.text = "$formattedPrice VND"
+
+            updatePrice()
         }
+
+        holder.delete.setOnClickListener {
+            val dbHelper = DatabaseHelper(holder.itemView.context)
+            val id = dbHelper.getIdOfCartItem(item)
+
+            if (id != -1) {
+                dbHelper.deleteCartItem(id)
+
+                // Tạo danh sách mới loại bỏ item vừa xoá
+                val updatedList = cartItems.filterIndexed { index, cartItem ->
+                    index != holder.adapterPosition
+                }
+
+                // Cập nhật lại adapter
+                updateCart(updatedList)
+            }
+        }
+    }
+
+    fun updateCart(newList: List<CartData>) {
+        (cartItems as? MutableList<CartData>)?.clear()
+        (cartItems as? MutableList<CartData>)?.addAll(newList)
+        notifyDataSetChanged()
+        updatePrice()
+    }
+
+    fun updatePrice() {
+        val dbHelper = DatabaseHelper(activity)
+        val totalPrice = dbHelper.calculateTotalPrice()
+        val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
+        val totalPriceTextView: TextView? = activity.findViewById(R.id.total_price)
+        totalPriceTextView?.text = formattedTotalPrice
     }
 
     override fun getItemCount(): Int = cartItems.size

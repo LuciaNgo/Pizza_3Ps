@@ -37,13 +37,8 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_menu, container, false)
-
-//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
-//
-//        val themedInflater = inflater.cloneInContext(localizedContext)
-//        val view = themedInflater.inflate(R.layout.fragment_menu, container, false)
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("lang", "en") ?: "en"
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.VISIBLE
@@ -58,7 +53,7 @@ class MenuFragment : Fragment() {
         searchBar.clearFocus()
 
         foodRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        foodAdapter = FoodAdapter(foodList, FoodAdapter.LayoutType.MENU)
+        foodAdapter = FoodAdapter(lang, foodList, FoodAdapter.LayoutType.MENU)
         foodRecyclerView.adapter = foodAdapter
 
         return view
@@ -66,11 +61,15 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lang = prefs.getString("lang", "en") ?: "en"
+
         val dbHelper = DatabaseHelper(requireContext())
 
         // Load food data category = pizza trong database
         foodList.clear()
         foodList.addAll(dbHelper.getFoodByCategory("pizza"))
+        Log.d("MenuFragment", "Loaded ${foodList.size} pizzas")
         foodAdapter.notifyDataSetChanged()
 
         searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -80,7 +79,11 @@ class MenuFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 val filteredList = foodList.filter { food ->
-                    food.name.contains(newText ?: "", ignoreCase = true)
+                    if (lang == "en") {
+                        food.name_en.contains(newText ?: "", ignoreCase = true)
+                    } else {
+                        food.name_vi.contains(newText ?: "", ignoreCase = true)
+                    }
                 }
                 foodAdapter.updateData(filteredList)
                 return true

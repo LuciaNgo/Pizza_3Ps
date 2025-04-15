@@ -1,44 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.LanguageFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/enBtn"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="@string/english"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:backgroundTint="@color/light_orange"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            app:cornerRadius = "0dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/ic_arrow_back"
+                android:backgroundTintMode="src_in"
+                android:contentDescription="@string/go_back"
+                android:clickable="true"
+                android:layout_gravity="start" />
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Language"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_gravity="center" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:id="@+id/line_1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@color/light_gray"
+            app:elevation="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/englishContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line_1">
+
+            <ImageView
+                android:id="@+id/englishIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/english"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/englishText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="English"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/englishIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/englishCheckIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/check"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/line_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:background="@color/light_gray"
+            app:elevation="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/englishContainer"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/vietnameseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line_2">
+
+            <ImageView
+                android:id="@+id/vietnameseIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/vietnam"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/vietnameseText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Vietnamese"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/vietnameseIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/vietnameseCheckIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/check"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/line_3"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:background="@color/light_gray"
+            app:elevation="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vietnameseContainer"/>
 
         <Button
-            android:id="@+id/vieBtn"
+            android:id="@+id/updateButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="@string/vietnamese"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:backgroundTint="@color/light_orange"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            app:cornerRadius = "0dp"/>
-    </LinearLayout>
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/orange"
+            android:text="Update"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/sapce"/>
+
+        <View
+            android:id="@+id/sapce"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-</FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
