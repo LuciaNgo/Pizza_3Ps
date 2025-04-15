@@ -57,36 +57,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/emailContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/white">
-
-            <TextView
-                android:id="@+id/emailTitleHolder"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="@string/personal_email"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/emailHolder"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="@string/placeholder_email"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/phoneContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -143,36 +113,6 @@
                 android:background="@color/white"
                 android:hint="address"
                 android:text="@string/placeholder_address"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/pointContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/white">
-
-            <TextView
-                android:id="@+id/pointTitleHolder"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="@string/points"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/pointHolder"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:text="0"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
         </LinearLayout>

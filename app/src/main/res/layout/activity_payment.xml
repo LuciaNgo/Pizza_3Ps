@@ -64,6 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_gray"
+                android:clickable="true"
                 app:layout_constraintTop_toBottomOf="@id/line_1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">

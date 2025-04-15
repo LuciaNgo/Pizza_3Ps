@@ -4,21 +4,24 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.braintreepayments.api.DropInClient
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.PaymentCartAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import com.google.firebase.firestore.FirebaseFirestore
-import org.w3c.dom.Text
 import java.text.DecimalFormat
 import vn.momo.momo_partner.AppMoMoLib
 import com.google.firebase.Timestamp
@@ -32,6 +35,7 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var customerName : TextView
     private lateinit var customerPhone : TextView
     private lateinit var customerAddress: TextView
+    private lateinit var addressLayout : LinearLayout
 
     private lateinit var backButton: ImageView
     private lateinit var checkoutButton : Button
@@ -65,6 +69,14 @@ class PaymentActivity : AppCompatActivity() {
     private var lastGeneratedOrderId: String? = null
     private var orderId: String? = null
 
+    private lateinit var dropInClient: DropInClient
+    private lateinit var dropInLauncher: ActivityResultLauncher<Intent>
+
+
+    private val REQUEST_CODE = 101
+    private val sandboxToken = "sandbox_zq6cwtqf_23pxw29xrgphjwfp"
+    private val CLIENT_ID = "ASursRuZJ17ROQ3HKBNtGjjVRcnHHNz46eb920Q4f9i9UnQQHBinAGJ0UNFKBNGMIoqQam2bN9aYOgu0"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +87,13 @@ class PaymentActivity : AppCompatActivity() {
         AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT)
         AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT)
 
+
         val dbHelper = DatabaseHelper(this)
 
         customerName = findViewById(R.id.customerName)
         customerPhone = findViewById(R.id.customerPhoneNumber)
         customerAddress = findViewById(R.id.customerAddress)
+        addressLayout = findViewById(R.id.address_layout)
 
         cartList = dbHelper.getAllCartItems()
 
@@ -151,27 +165,43 @@ class PaymentActivity : AppCompatActivity() {
                 when (selectedPaymentMethod) {
                     "momo" -> requestMoMoPayment(totalValue)
                     "cash" -> orderId?.let { createOrderInFirestore(it, selectedPaymentMethod) }
-                    "paypal" -> Toast.makeText(this, "Paypal is not supported right now.", Toast.LENGTH_SHORT).show()
+                    "paypal" ->  Toast.makeText(this, "huhu", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+        addressLayout.setOnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.edti_info_temp, null)
+            val nameInput = dialogView.findViewById<EditText>(R.id.etTempName)
+            val phoneInput = dialogView.findViewById<EditText>(R.id.etTempPhone)
+            val addressInput = dialogView.findViewById<EditText>(R.id.etTempAddress)
+            val applyBtn = dialogView.findViewById<Button>(R.id.btnApply)
+            val cancelBtn = dialogView.findViewById<Button>(R.id.btnCancel)
 
+            // Pre-fill with current values
+            nameInput.setText(customerName.text)
+            phoneInput.setText(customerPhone.text)
+            addressInput.setText(customerAddress.text)
+
+
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Edit Delivery Information")
+                .setView(dialogView)
+                .create()
+
+            applyBtn.setOnClickListener {
+                customerName.text = nameInput.text.toString()
+                customerPhone.text = phoneInput.text.toString()
+                customerAddress.text = addressInput.text.toString()
+                dialog.dismiss()
+            }
+
+            cancelBtn.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        }
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == RESULT_OK && data != null) {
-//            val status = data.getIntExtra("status", -1)
-//            if (status == 0) {
-//                // Payment success
-//                createOrderInFirestore(orderId!!, "momo")
-//            } else {
-//                // Payment failed
-//                val message = data.getStringExtra("message") ?: "Unknown error"
-//                Toast.makeText(this, "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
-//            }
-//        }
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -241,32 +271,6 @@ class PaymentActivity : AppCompatActivity() {
         this.totalPrice.text = DecimalFormat("#,###").format(totalValue) + " VND"
     }
 
-//    fun requestMoMoPayment(amount: Int) {
-//        if (orderId == null) {
-//            Toast.makeText(this, "Order ID is not ready", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//
-//        val momoParams = HashMap<String, Any>()
-//        momoParams["merchantname"] = "Pizza3Ps"
-//        momoParams["merchantcode"] = momoClientId
-//        momoParams["amount"] = amount
-//        momoParams["orderId"] = orderId!!
-//        momoParams["orderLabel"] = "Food Order"
-//        momoParams["merchantnamelabel"] = "Pizza 3Ps Order"
-//        momoParams["fee"] = 0
-//        momoParams["description"] = "Payment for Pizza Order"
-//        momoParams["requestId"] = "ORDER_$orderId"
-//        momoParams["partnerCode"] = momoClientId
-//        momoParams["extraData"] = ""
-//        momoParams["environment"] = 0 // 0: sandbox, 1: production
-//
-//        AppMoMoLib.getInstance().requestMoMoCallBack(this, momoParams) // Correct usage
-//
-//
-//        lastGeneratedOrderId = orderId
-//    }
-
     fun requestMoMoPayment(amount: Int) {
         if (orderId == null) {
             Toast.makeText(this, "Order ID is not ready", Toast.LENGTH_SHORT).show()
@@ -300,7 +304,6 @@ class PaymentActivity : AppCompatActivity() {
     }
 
 
-
     fun generateOrderId(callback: (String) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val today = SimpleDateFormat("yyMMdd", Locale.getDefault()).format(Date()) // e.g. 250414
@@ -329,13 +332,13 @@ class PaymentActivity : AppCompatActivity() {
     fun createOrderInFirestore(orderId: String, paymentMethod: String) {
         val db = FirebaseFirestore.getInstance()
         val dbHelper = DatabaseHelper(this)
-        val user = dbHelper.getUser()
+        //val user = dbHelper.getUser()
 
         val order = hashMapOf(
             "userID" to FirebaseAuth.getInstance().uid,
-            "receiverName" to user?.name,
-            "phoneNumber" to user?.phone,
-            "address" to user?.address,
+            "receiverName" to customerName.text.toString(),
+            "phoneNumber" to customerPhone.text.toString(),
+            "address" to customerAddress.text.toString(),
             "payment" to paymentMethod,
             "discount" to 0,
             "totalAfterDiscount" to totalValue,
