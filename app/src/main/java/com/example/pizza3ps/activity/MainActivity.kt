@@ -15,6 +15,7 @@ import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
 import com.example.pizza3ps.tool.LanguageHelper
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.FoodData
 import com.example.pizza3ps.model.IngredientData
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         fetchUserData()
         fetchFoodData()
         fetchCartData()
+        fetchAddressData()
         fetchIngredientData()
         fetchRestaurantInfo()
 
@@ -175,6 +177,34 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Failed to load cart data", exception)
+            }
+    }
+
+    private fun fetchAddressData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        db.collection("Address")
+            .document(userId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { documents ->
+
+                dbHelper.deleteAllAddress()
+
+                for (document in documents) {
+                    val addressId = document.id
+                    val name = document.getString("name") ?: ""
+                    val phone = document.getString("phone") ?: ""
+                    val address = document.getString("address") ?: ""
+                    val isDefault = document.getBoolean("default") ?: false
+                    val addressItem = AddressData(name, phone, address, isDefault)
+                    Log.d("AddressData", "Address ID: $addressId, Name: $name, Phone: $phone, Address: $address, IsDefault: $isDefault")
+
+                    dbHelper.addAddressWithId(addressId, addressItem)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Failed to load address data", exception)
             }
     }
 

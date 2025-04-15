@@ -1,8 +1,10 @@
 package com.example.pizza3ps.activity
 
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.PaymentCartAdapter
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.fragment.SavedAddressFragment
 import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
@@ -50,6 +53,7 @@ class PaymentActivity : AppCompatActivity() {
     private var selectedPaymentMethod = ""
 
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var fragmentContainerView : FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +62,9 @@ class PaymentActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
         cartList = dbHelper.getAllCartItems()
+
+        //fragmentContainerView = findViewById(R.id.fragment_container)
+        //fragmentContainerView.visibility = FrameLayout.GONE
 
         redeemPoints = findViewById(R.id.pointsContainer)
 
@@ -101,6 +108,17 @@ class PaymentActivity : AppCompatActivity() {
             customerAddress.text = defaultAddress.address
         }
 
+        addressDetail.setOnClickListener {
+            //fragmentContainerView.visibility = FrameLayout.VISIBLE
+
+            val fragment = SavedAddressFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main, fragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
+
         cashContainer.setOnClickListener {
             updateSelectedPaymentMethod("cash")
         }
@@ -111,6 +129,13 @@ class PaymentActivity : AppCompatActivity() {
 
         momoContainer.setOnClickListener {
             updateSelectedPaymentMethod("momo")
+        }
+
+        checkoutButton.setOnClickListener {
+            if (selectedPaymentMethod == "paypal") {
+                // Khởi tạo DropInRequest
+
+            }
         }
 
 

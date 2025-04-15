@@ -8,123 +8,113 @@
     android:layout_height="match_parent"
     tools:context=".fragment.SavedAddressFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/ic_arrow_back"
+            android:backgroundTintMode="src_in"
+            android:contentDescription="@string/go_back"
+            android:clickable="true"
+            android:layout_gravity="start" />
 
-            <ImageView
-                android:id="@+id/backButton"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/ic_arrow_back"
-                android:backgroundTintMode="src_in"
-                android:contentDescription="@string/go_back"
-                android:clickable="true"
-                android:layout_gravity="start" />
-
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Saved address"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center" />
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <View
-            android:id="@+id/line_1"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:background="@color/light_gray"
-            app:elevation="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/addressRecyclerView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/line_1"
-            app:layout_constraintBottom_toTopOf="@id/infoLayout"/>
+            android:text="Saved address"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/infoLayout"
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:background="@color/light_gray"
+        app:elevation="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/addressRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_1"
+        app:layout_constraintBottom_toTopOf="@id/infoLayout"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/infoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/addAddressButton">
+
+        <ImageView
+            android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_height="400dp"
+            android:layout_marginStart="-8dp"
+            android:background="@drawable/shipping_address"
+            android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/addAddressButton">
+            app:layout_constraintTop_toTopOf="parent"/>
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_marginStart="-8dp"
-                android:background="@drawable/shipping_address"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/sub_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-60dp"
+            android:text="Address list is empty :("
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image"/>
 
-            <TextView
-                android:id="@+id/sub_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-60dp"
-                android:text="Address list is empty :("
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/image"/>
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save and select addresses for faster checkout!"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sub_description"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <Button
-            android:id="@+id/addAddressButton"
-            android:layout_width="300dp"
-            android:layout_height="60dp"
-            android:backgroundTint="@color/orange"
-            android:layout_margin="-60dp"
-            android:text="Add new address"
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save and select addresses for faster checkout!"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/infoLayout"/>
-
-
-
-
+            app:layout_constraintTop_toBottomOf="@id/sub_description"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/addAddressButton"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/orange"
+        android:layout_margin="-60dp"
+        android:text="Add new address"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/infoLayout"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

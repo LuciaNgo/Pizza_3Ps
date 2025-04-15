@@ -593,13 +593,36 @@ class DatabaseHelper(context: Context) :
     // ===== ADDRESS TABLE =====
     fun addAddress(address: AddressData) {
         val db = writableDatabase
-        val values = ContentValues().apply {
-            put("name", address.name)
-            put("phone", address.phone)
-            put("address", address.address)
-            put("isDefault", if (address.isDefault) 1 else 0)
+
+        // Kiem tra address da ton tai chua
+        val cursor = db.rawQuery(
+            "SELECT * FROM Address WHERE name = ? AND phone = ? AND address = ?",
+            arrayOf(address.name, address.phone, address.address)
+        )
+
+        if (cursor.count > 0) {
+            // Dia chi da ton tai nhung isDefault co khac nhau khong
+            cursor.moveToFirst()
+            val isAddressDefault = if (address.isDefault) 1 else 0
+            if (cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) != isAddressDefault) {
+                // Dia chi da ton tai nhung isDefault khac nhau
+                val values = ContentValues().apply {
+                    put("isDefault", if (address.isDefault) 1 else 0)
+                }
+                db.update("Address", values, "name = ? AND phone = ? AND address = ?", arrayOf(address.name, address.phone, address.address))
+            }
         }
-        db.insert("Address", null, values)
+        else {
+            // Dia chi chua ton tai, them moi
+            val values = ContentValues().apply {
+                put("name", address.name)
+                put("phone", address.phone)
+                put("address", address.address)
+                put("isDefault", if (address.isDefault) 1 else 0)
+            }
+            db.insert("Address", null, values)
+        }
+        cursor.close()
         db.close()
     }
 
@@ -657,7 +680,7 @@ class DatabaseHelper(context: Context) :
     fun getAddressId(address: AddressData): Int {
         val db = readableDatabase
         val cursor = db.rawQuery(
-            "SELECT id FROM Address WHERE name = ? AND phone = ? AND address = ? AND isDefault = ?",
+            "SELECT id FROM Address WHERE name = ? AND phone = ? AND address = ?",
             arrayOf(address.name, address.phone, address.address)
         )
         var id = -1
@@ -707,4 +730,17 @@ class DatabaseHelper(context: Context) :
         cursor.close()
         db.close()
     }
+
+    fun deleteAllAddress() {
+        val db = writableDatabase
+        // Kểm tra có bảng Address không
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Address'", null)
+        if (cursor.count > 0) {
+            db.execSQL("DELETE FROM Address")
+        }
+        cursor.close()
+        db.close()
+    }
+
+
 }

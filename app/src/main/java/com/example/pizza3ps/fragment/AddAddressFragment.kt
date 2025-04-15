@@ -1,6 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,12 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.fragment.app.FragmentManager
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.AddressData
+import com.example.pizza3ps.model.CartData
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddAddressFragment : Fragment() {
     private lateinit var nameEditText: EditText
@@ -22,12 +26,16 @@ class AddAddressFragment : Fragment() {
     private lateinit var saveButton: Button
     private lateinit var backButton: ImageView
 
+    private lateinit var dbHelper: DatabaseHelper
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_add_address, container, false)
+
+        dbHelper = DatabaseHelper(requireContext())
 
         nameEditText = view.findViewById(R.id.receiverName)
         phoneEditText = view.findViewById(R.id.receiverPhone)
@@ -44,12 +52,39 @@ class AddAddressFragment : Fragment() {
             val isDefault = defaultAddress.isChecked
 
             if (name.isNotEmpty() && phone.isNotEmpty() && address.isNotEmpty()) {
+                // Validate the phone number format
+                if (!phone.matches(Regex("^[0-9]{10}$"))) {
+                    phoneEditText.error = "Invalid phone number"
+                    return@setOnClickListener
+                }
+                // Validate the address format
+                if (address.length < 10) {
+                    addressEditText.error = "Address must be at least 10 characters"
+                    return@setOnClickListener
+                }
+
+                val addressItem = AddressData(
+                    name = name,
+                    phone = phone,
+                    address = address,
+                    isDefault = isDefault
+                )
+
                 // Save the address to the database
                 val dbHelper = DatabaseHelper(requireContext())
-                dbHelper.addAddress(AddressData(name, phone, address, isDefault))
+                dbHelper.addAddress(addressItem)
+
+                // Sync to firestore
+                val userId = dbHelper.getUser()?.id
+                if (userId != null) {
+                    syncAddressItem(userId, addressItem)
+                }
 
                 // Navigate back to the saved addresses screen
-                requireActivity().onBackPressed()
+                val fragment = SavedAddressFragment()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .commit()
             } else {
                 // Show an error message
             }
@@ -57,10 +92,32 @@ class AddAddressFragment : Fragment() {
 
 
         backButton.setOnClickListener {
-            requireActivity().onBackPressed()
+            //requireActivity().onBackPressedDispatcher.onBackPressed()
+            val fragment = SavedAddressFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main, fragment)
+                .commit()
         }
 
         return view
+    }
+
+    fun syncAddressItem(userId: String, addressItem: AddressData) {
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Address")
+            .document(userId)
+            .collection("items")
+
+        val id = dbHelper.getAddressId(addressItem)
+
+        databaseRef.document(id.toString())
+            .set(addressItem)
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $id")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $id", e)
+            }
     }
 
 }
