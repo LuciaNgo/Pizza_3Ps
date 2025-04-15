@@ -10,7 +10,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.AddressData
@@ -81,10 +81,7 @@ class AddAddressFragment : Fragment() {
                 }
 
                 // Navigate back to the saved addresses screen
-                val fragment = SavedAddressFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .commit()
+                findNavController().navigateUp()
             } else {
                 // Show an error message
             }
@@ -92,11 +89,7 @@ class AddAddressFragment : Fragment() {
 
 
         backButton.setOnClickListener {
-            //requireActivity().onBackPressedDispatcher.onBackPressed()
-            val fragment = SavedAddressFragment()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main, fragment)
-                .commit()
+            findNavController().navigateUp()
         }
 
         return view

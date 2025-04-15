@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
@@ -59,7 +60,12 @@ class AccountFragment : Fragment() {
         }
 
         savedAddressLayout.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_account_to_savedAddressFragment)
+            //findNavController().navigate(R.id.action_navigation_account_to_savedAddressFragment)
+            findNavController().navigate(
+                R.id.action_navigation_account_to_savedAddressFragment,
+                bundleOf("source" to "main")
+            )
+
         }
 
         customerServiceLayout.setOnClickListener {

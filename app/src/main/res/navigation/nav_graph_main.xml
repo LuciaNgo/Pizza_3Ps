@@ -74,7 +74,16 @@
         android:id="@+id/savedAddressFragment"
         android:name="com.example.pizza3ps.fragment.SavedAddressFragment"
         android:label="Saved Address"
-        tools:layout="@layout/fragment_saved_address" />
+        tools:layout="@layout/fragment_saved_address" >
+        <argument
+            android:name="source"
+            app:argType="string"
+            android:defaultValue="main" />
+
+        <action
+            android:id="@+id/action_savedAddressFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/addAddressFragment"

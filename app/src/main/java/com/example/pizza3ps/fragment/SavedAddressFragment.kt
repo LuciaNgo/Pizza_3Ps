@@ -31,6 +31,13 @@ class SavedAddressFragment : Fragment() {
 
     private lateinit var dbHelper: DatabaseHelper
     private var addressList = mutableListOf<AddressData>()
+    private var source: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        source = arguments?.getString("source")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,17 +55,21 @@ class SavedAddressFragment : Fragment() {
 
         addButton.setOnClickListener {
             //findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
-
-            val fragment = AddAddressFragment()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main, fragment)
-                .addToBackStack(null)
-                .commit()
+            if (source == "main") {
+                findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
+            } else if (source == "payment") {
+                findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
+            }
+//            val fragment = AddAddressFragment()
+//            requireActivity().supportFragmentManager.beginTransaction()
+//                .replace(R.id.main, fragment)
+//                .addToBackStack(null)
+//                .commit()
 
         }
 
         backButton.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().navigateUp()
         }
 
         return view
