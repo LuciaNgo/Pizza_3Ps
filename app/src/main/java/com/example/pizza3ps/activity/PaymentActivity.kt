@@ -4,22 +4,22 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.braintreepayments.api.DropInClient
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.PaymentCartAdapter
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.fragment.SavedAddressFragment
+import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
@@ -35,7 +35,7 @@ class PaymentActivity : AppCompatActivity() {
     private lateinit var customerName : TextView
     private lateinit var customerPhone : TextView
     private lateinit var customerAddress: TextView
-    private lateinit var addressLayout : LinearLayout
+    private lateinit var addressDetail: ImageView
 
     private lateinit var backButton: ImageView
     private lateinit var checkoutButton : Button
@@ -64,19 +64,17 @@ class PaymentActivity : AppCompatActivity() {
     private var totalValue: Int = 0
     private var selectedPaymentMethod = ""
 
+    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var fragmentContainerView : FrameLayout
+
     private val momoClientId = "MOMO"
     private val momoSecret = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
     private var lastGeneratedOrderId: String? = null
     private var orderId: String? = null
 
-    private lateinit var dropInClient: DropInClient
-    private lateinit var dropInLauncher: ActivityResultLauncher<Intent>
-
-
     private val REQUEST_CODE = 101
     private val sandboxToken = "sandbox_zq6cwtqf_23pxw29xrgphjwfp"
     private val CLIENT_ID = "ASursRuZJ17ROQ3HKBNtGjjVRcnHHNz46eb920Q4f9i9UnQQHBinAGJ0UNFKBNGMIoqQam2bN9aYOgu0"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,14 +86,13 @@ class PaymentActivity : AppCompatActivity() {
         AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT)
 
 
-        val dbHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
+        cartList = dbHelper.getAllCartItems()
 
         customerName = findViewById(R.id.customerName)
         customerPhone = findViewById(R.id.customerPhoneNumber)
         customerAddress = findViewById(R.id.customerAddress)
-        addressLayout = findViewById(R.id.address_layout)
-
-        cartList = dbHelper.getAllCartItems()
+        addressDetail = findViewById(R.id.addressDetailIcon)
 
         redeemPoints = findViewById(R.id.pointsContainer)
 
@@ -124,10 +121,27 @@ class PaymentActivity : AppCompatActivity() {
         paypalCheck.visibility = ImageView.INVISIBLE
         momoCheck.visibility = ImageView.INVISIBLE
 
-        val user = DatabaseHelper(this).getUser()
-        customerName.text = user?.name ?: "Guest"
-        customerPhone.text = user?.phone?: "Phone"
-        customerAddress.text = user?.address?: "Address"
+        val defaultAddress = getDefaultAddress()
+        if (defaultAddress.name == "" && defaultAddress.phone == "" && defaultAddress.address == "") {
+            customerName.text = "No address added"
+            customerPhone.visibility = ImageView.GONE
+            customerAddress.visibility = ImageView.GONE
+        } else {
+            customerName.text = defaultAddress.name
+            customerPhone.text = defaultAddress.phone
+            customerAddress.text = defaultAddress.address
+        }
+
+        addressDetail.setOnClickListener {
+            //fragmentContainerView.visibility = FrameLayout.VISIBLE
+
+            val fragment = SavedAddressFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main, fragment)
+                .addToBackStack(null)
+                .commit()
+
+        }
 
         cashContainer.setOnClickListener {
             updateSelectedPaymentMethod("cash")
@@ -143,7 +157,6 @@ class PaymentActivity : AppCompatActivity() {
 
 
         updateTotalPrice()
-
 
         redeemPoints.setOnClickListener {
 
@@ -169,7 +182,7 @@ class PaymentActivity : AppCompatActivity() {
                 }
             }
         }
-        addressLayout.setOnClickListener {
+        addressDetail.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.edti_info_temp, null)
             val nameInput = dialogView.findViewById<EditText>(R.id.etTempName)
             val phoneInput = dialogView.findViewById<EditText>(R.id.etTempPhone)
@@ -219,6 +232,14 @@ class PaymentActivity : AppCompatActivity() {
         }
     }
 
+    fun getDefaultAddress(): AddressData {
+        val defaultAddress = dbHelper.getDefaultAddress()
+        return if (defaultAddress != null) {
+            defaultAddress
+        } else {
+            AddressData("", "", "", false)
+        }
+    }
 
     fun updateSelectedPaymentMethod(method: String) {
         cashCheck.visibility = ImageView.INVISIBLE
@@ -392,8 +413,4 @@ class PaymentActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to place order: ${it.message}", Toast.LENGTH_LONG).show()
         }
     }
-
-
-
-
 }

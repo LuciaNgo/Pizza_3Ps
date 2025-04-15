@@ -1,6 +1,7 @@
 package com.example.pizza3ps.model
 
 data class FoodData(
+    val id: String = "",
     val name_en: String = "",
     val name_vi: String = "",
     val price: String = "",

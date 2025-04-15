@@ -1,6 +1,7 @@
 package com.example.pizza3ps.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
 class CartAdapter(
@@ -131,6 +132,7 @@ class CartAdapter(
                 val dbHelper = DatabaseHelper(holder.itemView.context)
                 val id = dbHelper.getIdOfCartItem(item)
                 dbHelper.updateCartItemQuantity(id, quantity)
+                syncToFirebase(id)
 
                 holder.quantity.text = quantity.toString()
                 val newPrice = item.price * quantity
@@ -146,6 +148,7 @@ class CartAdapter(
             val dbHelper = DatabaseHelper(holder.itemView.context)
             val id = dbHelper.getIdOfCartItem(item)
             dbHelper.updateCartItemQuantity(id, quantity)
+            syncToFirebase(id)
 
             holder.quantity.text = quantity.toString()
             val newPrice = item.price * quantity
@@ -161,6 +164,7 @@ class CartAdapter(
 
             if (id != -1) {
                 dbHelper.deleteCartItem(id)
+                removeSyncToFirebase(id)
 
                 // Tạo danh sách mới loại bỏ item vừa xoá
                 val updatedList = cartItems.filterIndexed { index, cartItem ->
@@ -187,6 +191,47 @@ class CartAdapter(
         val totalPriceTextView: TextView? = activity.findViewById(R.id.total_price)
         totalPriceTextView?.text = formattedTotalPrice
     }
+
+    fun syncToFirebase(cartId: Int) {
+        val dbHelper = DatabaseHelper(activity)
+        val userId = dbHelper.getUser()!!.id
+        val cartItem = dbHelper.getCartById(cartId)
+
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+
+        if (cartItem != null) {
+            databaseRef.document(cartId.toString())
+                .set(cartItem)
+                .addOnSuccessListener {
+                    Log.d("FirebaseSync", "Synced item: $cartId")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseSync", "Failed to sync item: $cartId", e)
+                }
+        }
+    }
+
+    fun removeSyncToFirebase(cartId: Int) {
+        val dbHelper = DatabaseHelper(activity)
+        val userId = dbHelper.getUser()!!.id
+
+        FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+            .document(cartId.toString())
+            .delete()
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $cartId")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $cartId", e)
+            }
+    }
+
 
     override fun getItemCount(): Int = cartItems.size
 }
