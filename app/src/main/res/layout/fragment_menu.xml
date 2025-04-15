@@ -9,7 +9,7 @@
 
     <FrameLayout
         android:id="@+id/search_bar_container"
-        android:layout_width="320dp"
+        android:layout_width="336dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -25,6 +25,7 @@
     </FrameLayout>
 
     <ImageView
+        android:id="@+id/filter_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="16dp"
@@ -32,6 +33,56 @@
         android:background="@drawable/filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filter_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_bar_container">
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/priceRangeSlider"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:valueFrom="0"
+            android:valueTo="400000"
+            android:stepSize="50000"
+            app:trackColor="@color/light_gray"
+            app:tickColorActive="@color/gray"
+            app:trackHeight="8dp"
+            app:thumbColor="@color/orange"
+            app:thumbWidth="8dp"
+            app:thumbHeight="24dp"
+            app:values="@array/default_price_range"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/reset_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/reset"
+            app:layout_constraintStart_toEndOf="@id/priceRangeSlider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/ingredient_filter_recyclerView"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredient_filter_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceRangeSlider"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <LinearLayout
         android:id="@+id/category_bar"
@@ -41,7 +92,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_bar_container">
+        app:layout_constraintTop_toBottomOf="@id/filter_container">
 
         <LinearLayout
             android:id="@+id/pizza_category"

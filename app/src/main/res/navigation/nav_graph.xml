@@ -65,8 +65,22 @@
         <action
             android:id="@+id/action_navigation_account_to_languageFragment"
             app:destination="@id/languageFragment" />
-
+        <action
+            android:id="@+id/action_navigation_account_to_savedAddressFragment"
+            app:destination="@id/savedAddressFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/savedAddressFragment"
+        android:name="com.example.pizza3ps.fragment.SavedAddressFragment"
+        android:label="Saved Address"
+        tools:layout="@layout/fragment_saved_address" />
+
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.example.pizza3ps.fragment.AddAddressFragment"
+        android:label="Add Address"
+        tools:layout="@layout/fragment_add_address" />
 
     <fragment
         android:id="@+id/customerServiceFragment"

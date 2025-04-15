@@ -7,6 +7,5 @@ data class CartData(
     val size: String = "",
     val crust: String = "",
     val crustBase: String = "",
-    val quantity: Int = 1,
-    val user_email: String = ""
+    val quantity: Int = 1
 )

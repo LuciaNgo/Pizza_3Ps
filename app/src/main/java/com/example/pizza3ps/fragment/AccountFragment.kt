@@ -19,9 +19,9 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.LogInActivity
 import com.example.pizza3ps.database.DatabaseHelper
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
+    private lateinit var savedAddressLayout: ConstraintLayout
     private lateinit var termsPoliciesLayout: ConstraintLayout
     private lateinit var customerServiceLayout: ConstraintLayout
     private lateinit var userInfoLayout: ConstraintLayout
@@ -29,7 +29,6 @@ class AccountFragment : Fragment() {
     private lateinit var logOutLayout: LinearLayout
     private lateinit var userNameView: TextView
     private lateinit var fab: CounterFab
-    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +36,7 @@ class AccountFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
+        savedAddressLayout = view.findViewById(R.id.addressContainer)
         termsPoliciesLayout = view.findViewById(R.id.termsAndPoliciesContainer)
         customerServiceLayout = view.findViewById(R.id.supportCenterContainer)
         userInfoLayout = view.findViewById(R.id.userInfoContainer)
@@ -56,6 +56,10 @@ class AccountFragment : Fragment() {
             fetchUserData()
         } else {
             userNameView.text = cachedName
+        }
+
+        savedAddressLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_account_to_savedAddressFragment)
         }
 
         customerServiceLayout.setOnClickListener {
@@ -78,44 +82,11 @@ class AccountFragment : Fragment() {
     }
 
     private fun fetchUserData() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        Log.d("userID", userId.toString())
-        if (userId == null) {
-            Toast.makeText(context, "Please log in first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val dbHelper = DatabaseHelper(requireContext())
-
-        db.collection("Users").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                Log.e("Firestore_FetchData", "Begin to fetch")
-                if (document != null && document.exists()) {
-                    val name = document.getString("name") ?: "Guest"
-                    val email = document.getString("email") ?: ""
-                    val phone = document.getString("phone") ?: ""
-                    val address = document.getString("address") ?: ""
-                    val points = document.getLong("points")?.toInt() ?: 0
-                    Log.d("FETCH", "Document loaded successfully: name = $name")
-
-                    // Display name in UI
-                    userNameView.text = name
-
-                    // After getting the name from Firebase or SQLite
-                    val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
-                    sharedPref.edit().putString("username", name).apply()
-
-                    // Save to SQLite
-                    val user = UserData(email, name, phone, address, points)
-                    dbHelper.addUser(user)
-                    Log.e("Firestore_FetchDataDone", "Done")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Failed to load user data", exception)
-                //Toast.makeText(context, "Failed to load user data", Toast.LENGTH_SHORT).show()
-            }
+        val user = dbHelper.getUser()
+        if (user != null) {
+            userNameView.text = user.name
+        }
     }
 
     private fun signOut() {

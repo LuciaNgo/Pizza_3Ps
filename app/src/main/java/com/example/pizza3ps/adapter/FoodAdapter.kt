@@ -52,8 +52,6 @@ class FoodAdapter(
         // Load ảnh bằng Glide
         Glide.with(holder.itemView.context)
             .load(food.imgPath)
-            .placeholder(R.drawable.placeholder_image)
-            .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.foodImageView)
 
         // Thiết lập sự kiện click để mở FoodInfoBottomSheet

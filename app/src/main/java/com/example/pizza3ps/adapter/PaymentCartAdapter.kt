@@ -1,6 +1,7 @@
 package com.example.pizza3ps.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.PaymentActivity
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
 class PaymentCartAdapter(
@@ -54,8 +56,6 @@ class PaymentCartAdapter(
 
             Glide.with(holder.itemView.context)
                 .load(foodInfo.imgPath)
-                .placeholder(R.drawable.placeholder_image)
-                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.image)
 
             if (foodInfo.category == "pizza") {
@@ -70,8 +70,6 @@ class PaymentCartAdapter(
 
             Glide.with(holder.itemView.context)
                 .load(R.drawable.default_customize_pizza)
-                .placeholder(R.drawable.placeholder_image)
-                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.image)
 
             holder.ingredients.visibility = View.VISIBLE
@@ -151,6 +149,7 @@ class PaymentCartAdapter(
             val dbHelper = DatabaseHelper(holder.itemView.context)
             val id = dbHelper.getIdOfCartItem(item)
             dbHelper.updateCartItemQuantity(id, quantity)
+            syncToFirebase(id)
 
             holder.quantity.text = quantity.toString()
             val newPrice = item.price * quantity
@@ -166,6 +165,7 @@ class PaymentCartAdapter(
 
             if (id != -1) {
                 dbHelper.deleteCartItem(id)
+                removeSyncToFirebase(id)
 
                 // Tạo danh sách mới loại bỏ item vừa xoá
                 val updatedList = cartItems.filterIndexed { index, cartItem ->
@@ -188,6 +188,46 @@ class PaymentCartAdapter(
     fun updatePrice() {
         val paymentActivity = activity as? PaymentActivity
         paymentActivity?.updateTotalPrice()
+    }
+
+    fun syncToFirebase(cartId: Int) {
+        val dbHelper = DatabaseHelper(activity)
+        val userId = dbHelper.getUser()!!.id
+        val cartItem = dbHelper.getCartById(cartId)
+
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+
+        if (cartItem != null) {
+            databaseRef.document(cartId.toString())
+                .set(cartItem)
+                .addOnSuccessListener {
+                    Log.d("FirebaseSync", "Synced item: $cartId")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseSync", "Failed to sync item: $cartId", e)
+                }
+        }
+    }
+
+    fun removeSyncToFirebase(cartId: Int) {
+        val dbHelper = DatabaseHelper(activity)
+        val userId = dbHelper.getUser()!!.id
+
+        FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+            .document(cartId.toString())
+            .delete()
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $cartId")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $cartId", e)
+            }
     }
 
     override fun getItemCount(): Int = cartItems.size

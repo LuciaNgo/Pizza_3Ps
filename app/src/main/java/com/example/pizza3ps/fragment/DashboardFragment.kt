@@ -142,52 +142,33 @@ class DashboardFragment : Fragment() {
     }
 
     private fun fetchFoodData() {
-        db.collection("Food")
-            .get()
-            .addOnSuccessListener { documents ->
-                pizzaList.clear()
-                chickenList.clear()
-                pastaList.clear()
-                appetizerList.clear()
-                drinksList.clear()
+        val dbHelper = DatabaseHelper(requireContext())
+        val foodList = dbHelper.getAllFood()
 
-                val dbHelper = DatabaseHelper(requireContext())
+        pizzaList.clear()
+        chickenList.clear()
+        pastaList.clear()
+        appetizerList.clear()
+        drinksList.clear()
 
-                // Xóa dữ liệu cũ trong cơ sở dữ liệu cục bộ
-                dbHelper.deleteAllFood()
-
-                for (document in documents) {
-                    val nameMap = document.get("name") as? Map<*, *>
-                    val name_en = nameMap?.get("en") as? String ?: ""
-                    val name_vi = nameMap?.get("vi") as? String ?: ""
-                    val price = document.getString("price")?.toIntOrNull() ?: 0
-                    val formattedPrice = DecimalFormat("#,###").format(price)
-                    val imgPath = document.getString("imgPath") ?: ""
-                    val ingredientString = document.getString("ingredient") ?: ""
-                    val category = document.getString("category") ?: ""
-                    val ingredientList = ingredientString.split(", ").map { it.trim() }
-                    val foodItem = FoodData(name_en, name_vi, formattedPrice, category, imgPath, ingredientList)
-
-                    when (category.lowercase()) {
-                        "pizza" -> pizzaList.add(foodItem)
-                        "pasta" -> pastaList.add(foodItem)
-                        "chicken" -> chickenList.add(foodItem)
-                        "appetizer" -> appetizerList.add(foodItem)
-                        "drinks" -> drinksList.add(foodItem)
-                    }
-
-                    // Lưu vào cơ sở dữ liệu cục bộ
-                    dbHelper.addFood(foodItem)
-                }
-
-                pizzaFoodAdapter.notifyDataSetChanged()
-                chickenFoodAdapter.notifyDataSetChanged()
-                pastaFoodAdapter.notifyDataSetChanged()
-                appetizerFoodAdapter.notifyDataSetChanged()
-                drinksFoodAdapter.notifyDataSetChanged()
+        for (food in foodList) {
+            if (food.category == "pizza") {
+                pizzaList.add(food)
+            } else if (food.category == "chicken") {
+                chickenList.add(food)
+            } else if (food.category == "pasta") {
+                pastaList.add(food)
+            } else if (food.category == "appetizer") {
+                appetizerList.add(food)
+            } else if (food.category == "drinks") {
+                drinksList.add(food)
             }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Lỗi khi lấy dữ liệu", exception)
-            }
+
+            pizzaFoodAdapter.notifyDataSetChanged()
+            chickenFoodAdapter.notifyDataSetChanged()
+            pastaFoodAdapter.notifyDataSetChanged()
+            appetizerFoodAdapter.notifyDataSetChanged()
+            drinksFoodAdapter.notifyDataSetChanged()
+        }
     }
 }

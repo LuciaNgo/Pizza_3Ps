@@ -17,9 +17,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.andremion.counterfab.CounterFab
 import com.example.pizza3ps.R
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.model.RestaurantData
 
 class CustomerServiceFragment : Fragment() {
+    private lateinit var restaurantInfo : RestaurantData
     private lateinit var customerServiceMail : ConstraintLayout
     private lateinit var customerServicePhone : ConstraintLayout
     private lateinit var mailText : TextView
@@ -27,15 +29,14 @@ class CustomerServiceFragment : Fragment() {
     private lateinit var backButton : ImageView
     private lateinit var fab: CounterFab
 
-    private lateinit var mailInfo : String
-    private lateinit var phoneInfo : String
-
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_customer_service, container, false)
+
+        dbHelper = DatabaseHelper(requireContext())
 
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.GONE
@@ -46,6 +47,11 @@ class CustomerServiceFragment : Fragment() {
         phoneText = view.findViewById(R.id.customerServicePhoneText)
         backButton = view.findViewById(R.id.backButton)
 
+        restaurantInfo = dbHelper.getRestaurantInfo()!!
+        mailText.text = "Email: ${restaurantInfo.mail}"
+        phoneText.text = "Hotline: ${restaurantInfo.phone}"
+
+        /*
         val docRef = db.collection("RestaurantInfo").document("Info")
         docRef.get()
             .addOnSuccessListener { document ->
@@ -65,9 +71,10 @@ class CustomerServiceFragment : Fragment() {
             .addOnFailureListener { exception ->
                 Log.d("Firestore", "Lỗi khi đọc document: ", exception)
             }
+         */
 
         customerServicePhone.setOnClickListener {
-            val phoneNumber = phoneInfo
+            val phoneNumber = restaurantInfo.phone
             Log.d("phoneNumber", phoneNumber)
             val callIntent = Intent(Intent.ACTION_CALL).apply {
                 data = Uri.parse("tel:$phoneNumber")
