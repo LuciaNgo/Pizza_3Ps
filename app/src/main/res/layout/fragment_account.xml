@@ -7,166 +7,461 @@
     android:layout_height="match_parent"
     tools:context=".fragment.AccountFragment">
 
-    <TextView
-        android:id="@+id/greetingHolder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="80dp"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:text="@string/greeting"
-        android:textColor="@color/black"
-        android:textSize="25sp"
+    <ImageView
+        android:id="@+id/wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/wallpaper_7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/userName"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/userInfoContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:text="@string/user_name_placeholder"
-        android:textStyle="bold"
-        android:textColor="@color/orange"
-        android:textSize="25sp"
-        app:layout_constraintStart_toEndOf="@+id/greetingHolder"
-        app:layout_constraintTop_toTopOf="@+id/greetingHolder" />
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wallpaper">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tran Khanh Nhu"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0986843134"
+                android:textColor="@color/overlay_gray"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chevron"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/userInfoContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
+        android:id="@+id/specialContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userName">
+        app:layout_constraintTop_toBottomOf="@id/line_1">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/trackingBtn"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pointsContainer"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:backgroundTint="@color/orange"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:text="@string/tracking_order"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:cornerRadius="5dp" />
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/informationBtn"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:text="@string/personal_information"
-            android:textSize="17sp"
-            app:strokeColor="@color/orange"
-            app:strokeWidth="2dp"/>
+            <ImageView
+                android:id="@+id/pointsIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/reward"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/changePasswordBtn"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:text="@string/change_password"
-            android:textSize="17sp"
-            app:strokeColor="@color/orange"
-            app:strokeWidth="2dp"  />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/switchLanguageBtn"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:text="@string/switch_language"
-            android:textSize="17sp"
-            app:strokeColor="@color/orange"
-            app:strokeWidth="2dp"  />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/customerServicesContainer"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            app:strokeColor="@color/orange"
-            app:strokeWidth="2dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/btnCustomerService"
+            <TextView
+                android:id="@+id/pointsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical">
+                android:layout_marginStart="16dp"
+                android:text="Reward points"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/pointsIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-                <ImageView
-                    android:id="@+id/imageView6"
-                    android:layout_marginStart="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="#00FFFFFF"
-                    android:src="@drawable/ic_headphones"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/orange" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:background="#00FFFFFF"
-                    android:text="@string/customer_service"
-                    android:textStyle="bold"
-                    android:textSize="17sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/imageView6"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/logOutBtn"
-            android:layout_marginTop="10dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/vouchersContainer"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
-            android:elevation="10dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/black"
-            android:text="@string/log_out"
-            android:textSize="17sp"
-            app:strokeColor="@color/orange"
-            app:strokeWidth="2dp"  />
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/vouchersIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/coupon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/vouchersText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Vouchers"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/vouchersIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/paymentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/paymentIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/wallet"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/paymentText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Payment"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/paymentIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/addressIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/address"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/addressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Saved address"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/addressIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
+
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/specialContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/supportContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/termsAndPoliciesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/termsAndPolicyIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/terms"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/termsAndPoliciesText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Terms and Policies"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/termsAndPolicyIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/supportCenterContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/supportCenterIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/support_center_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/supportCenterText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Support Center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/supportCenterIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_3"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/supportContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/accountContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_3">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/changePasscodeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/changePasscodeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/key"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/changePasscodeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Change passcode"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/changePasscodeIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/languageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/languageIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/translate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/languageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Language"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/languageIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chevron"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_4"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/accountContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/logoutContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_4">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/logoutIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="#00FFFFFF"
+                android:src="@drawable/logout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/logoutText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Log out"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/lighter_black"
+                app:layout_constraintStart_toEndOf="@id/logoutIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

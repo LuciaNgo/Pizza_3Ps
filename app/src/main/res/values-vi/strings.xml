@@ -63,6 +63,7 @@
     <!-- Edit info -->
     <string name="full_name">Họ tên:</string>
     <string name="phone">Điện thoại:</string>
+    <string name="personal_email">Email:</string>
     <string name="address">Địa chỉ:</string>
     <string name="points">Điểm:</string>
     <string name="cancel">HỦY</string>

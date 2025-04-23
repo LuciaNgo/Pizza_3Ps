@@ -34,18 +34,14 @@ class EditInfoFragment : Fragment() {
         val args = EditInfoFragmentArgs.fromBundle(requireArguments())
 
         val name = args.name
-        val email = args.email
         val phone = args.phone
         val address = args.address
-        val points = args.points
 
         Log.d("Received_done", "Done receiving")
 
         view.findViewById<EditText>(R.id.nameHolder).setText(name)
-        view.findViewById<EditText>(R.id.emailHolder).setText(email)
         view.findViewById<EditText>(R.id.phoneHolder).setText(phone)
         view.findViewById<EditText>(R.id.addressHolder).setText(address)
-        view.findViewById<TextView>(R.id.pointHolder).text = "$points"
 
         saveBtn = view.findViewById(R.id.saveBtn)
         cancelBtn = view.findViewById(R.id.cancelBtn)
@@ -68,7 +64,7 @@ class EditInfoFragment : Fragment() {
         val updatedEmail = view?.findViewById<EditText>(R.id.emailHolder)?.text.toString()
         val updatedPhone = view?.findViewById<EditText>(R.id.phoneHolder)?.text.toString()
         val updatedAddress = view?.findViewById<EditText>(R.id.addressHolder)?.text.toString()
-        val updatedPointsText = view?.findViewById<EditText>(R.id.pointHolder)?.text.toString()
+        val updatedPointsText = view?.findViewById<TextView>(R.id.pointHolder)?.text.toString()
         val updatedPoints = updatedPointsText.toLongOrNull() ?: 0L
 
         // 2. Firestore user ID – use current UID or hardcoded test ID
@@ -93,12 +89,11 @@ class EditInfoFragment : Fragment() {
             .addOnSuccessListener {
                 // 4. Also update local SQLite
                 val dbHelper = DatabaseHelper(requireContext())
-                val user = UserData(updatedName, updatedEmail, updatedPhone, updatedAddress, updatedPoints.toInt())
+                val user = UserData(userId, updatedEmail, updatedName, updatedPhone, updatedAddress, updatedPoints.toInt())
                 dbHelper.addUser(user)
 
                 val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
                 sharedPref.edit().putString("username", updatedName).apply()
-
 
                 Toast.makeText(context, "Information updated!", Toast.LENGTH_SHORT).show()
 

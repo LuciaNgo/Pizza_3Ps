@@ -26,7 +26,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="make_a_call">Call</string>
 
-<!--    customize pizza-->
+    <!--    customize pizza-->
     <string name="size">Size</string>
     <string name="crust_thickness">Crust Thickness</string>
     <string name="thin">Thin</string>
@@ -42,11 +42,11 @@
     <string name="vegetable">Vegetable</string>
     <string name="add_to_cart">Add to Cart</string>
 
-<!--    food info-->
+    <!--    food info-->
     <string name="pizza_name">Pizza name</string>
     <string name="original_price">Original price</string>
 
-<!--    account-->
+    <!--    account-->
     <string name="greeting">Have a good day,</string>
     <string name="user_name_placeholder">Name</string>
     <string name="tracking_order">Tracking order</string>
@@ -56,7 +56,7 @@
     <string name="customer_service">Customer Service</string>
     <string name="log_out">Log out</string>
 
-<!--    dashboard-->
+    <!--    dashboard-->
     <string name="event">Event</string>
     <string name="categories">Categories</string>
     <string name="pizza">Pizza</string>
@@ -66,9 +66,10 @@
     <string name="best_seller">Best seller</string>
     <string name="see_all">See all</string>
 
-<!--    edit info-->
+    <!--    edit info-->
     <string name="full_name">Full name:</string>
     <string name="phone">Phone:</string>
+    <string name="personal_email">Email:</string>
     <string name="address">Address:</string>
     <string name="points">Points:</string>
     <string name="cancel">CANCEL</string>
@@ -78,14 +79,14 @@
     <string name="placeholder_phone">phone</string>
     <string name="placeholder_address">address</string>
 
-<!--    language-->
+    <!--    language-->
     <string name="english">English</string>
     <string name="vietnamese">Vietnamese</string>
 
-<!--    menu-->
+    <!--    menu-->
     <string name="menu_search_hint">What do you got in mind?</string>
 
-<!--    edit info-->
+    <!--    edit info-->
     <string name="close">CLOSE</string>
     <string name="edit">EDIT</string>
 </resources>

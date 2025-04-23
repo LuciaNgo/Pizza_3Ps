@@ -1,11 +1,8 @@
 package com.example.pizza3ps.fragment
 
 import android.app.Dialog
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,13 +21,11 @@ import com.example.pizza3ps.adapter.IngredientAdapter
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.IngredientData
-import com.example.pizza3ps.tool.LanguageHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
-import java.util.Locale
 
 class FoodInfoFragment : BottomSheetDialogFragment() {
     private lateinit var recyclerViewMeat: RecyclerView
@@ -76,7 +71,8 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
 
     private lateinit var addToCartButton: Button
 
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var dbHelper: DatabaseHelper
+
     private lateinit var ingredientList: List<String>
     private var basePrice = 50000
     private var totalPrice = basePrice
@@ -88,6 +84,7 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+
         dialog.setOnShowListener {
             val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             val behavior = BottomSheetBehavior.from(bottomSheet!!)
@@ -104,62 +101,23 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         return dialog
     }
 
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val locale = Locale(langCode)
-//        Locale.setDefault(locale)
-//
-//        val config = Configuration(requireContext().resources.configuration)
-//        config.setLocale(locale)
-//        val contextWithLocale = requireContext().createConfigurationContext(config)
-//
-//        // Apply theme with wrapped context
-//        val dialog = BottomSheetDialog(ContextThemeWrapper(contextWithLocale, R.style.Theme_Pizza3Ps), theme)
-//
-//        dialog.setOnShowListener {
-//            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-//            val behavior = BottomSheetBehavior.from(bottomSheet!!)
-//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            behavior.isDraggable = false
-//            bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-//        }
-//
-//        return dialog
-//    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
-//
-//        val localizedInflater = inflater.cloneInContext(localizedContext)
-//        return localizedInflater.inflate(R.layout.fragment_food_info, container, false)
         return inflater.inflate(R.layout.fragment_food_info, container, false)
-//        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val localizedContext = LanguageHelper.setLocale(requireContext(), langCode)
-//
-//        val localizedInflater = LayoutInflater.from(localizedContext)
-//        return localizedInflater.inflate(R.layout.fragment_food_info, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Lấy dữ liệu từ Intent
         val name = arguments?.getString("food_name") ?: ""
         val price = arguments?.getString("food_price") ?.replace(",", "")?.toIntOrNull() ?: 0
-//        val price = arguments?.getString("food_price")
-//            ?.replace(".", "") // Remove dot, not comma
-//            ?.toIntOrNull() ?: 0
         val category = arguments?.getString("food_category") ?: ""
         val imgPath = arguments?.getString("food_image") ?: ""
         ingredientList = arguments?.getStringArrayList("ingredientList") ?: arrayListOf()
+
+        dbHelper = DatabaseHelper(requireContext())
 
         foodOriginalPriceTextView = view.findViewById(R.id.original_price)
         sizeTextView = view.findViewById(R.id.size_textview)
@@ -210,16 +168,11 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
             crustCheeseCheckBox.visibility = Button.GONE
             crustChickenCheckBox.visibility = Button.GONE
             crustSausageCheckBox.visibility = Button.GONE
-            /*
-            recyclerViewMeat.visibility = Button.GONE
-            recyclerViewSeafood.visibility = Button.GONE
-            recyclerViewVegetable.visibility = Button.GONE
-            recyclerViewAddition.visibility = Button.GONE
-            recyclerViewSauce.visibility = Button.GONE
-            */
         }
 
-        Glide.with(this).load(imgPath).into(pizzaImageView)
+        Glide.with(this)
+            .load(imgPath)
+            .into(pizzaImageView)
 
         // Plus
         plusCardView.setOnClickListener {
@@ -315,19 +268,21 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 updatePrice()
             }
 
-            setupRecyclerViews(view)
             fetchIngredientData()
+            setupRecyclerViews(view)
+            setupAdapters()
+            selectPreChosenIngredients()
         }
 
         if (category != "pizza") {
-            basePrice = price.toInt()
+            basePrice = price
         }
+
         updatePrice()
 
         // Bấm vào addToCartButton thì thêm thông tin vào giỏ hàng
         addToCartButton.setOnClickListener {
-            val dbHelper = DatabaseHelper(requireContext())
-            Log.d("test quantity", quantity.toString())
+            val foodId = dbHelper.getFoodId(name)
 
             if (category == "pizza") {
                 selectedIngredients = (meatAdapter.getSelectedIngredients() +
@@ -337,10 +292,8 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                         sauceAdapter.getSelectedIngredients()).distinct()
 
                 val cartData = CartData(
-                    name = name,
+                    food_id = foodId,
                     price = basePrice,
-                    category = category,
-                    imgPath = imgPath,
                     ingredients = selectedIngredients,
                     size = selectedSize,
                     crust = selectedCrust,
@@ -349,12 +302,16 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 )
                 Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
+
+                val userId = dbHelper.getUser()?.id
+                if (userId != null) {
+                    syncCartItem(userId, cartData)
+                }
+
             } else {
                 val cartData = CartData(
-                    name = name,
+                    food_id = foodId,
                     price = basePrice,
-                    category = category,
-                    imgPath = imgPath,
                     ingredients = ingredientList,
                     size = "",
                     crust = "",
@@ -363,6 +320,11 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
                 )
                 Log.d("Cart data", "Adding to cart: $cartData")
                 dbHelper.addFoodToCart(cartData)
+
+                val userId = dbHelper.getUser()?.id
+                if (userId != null) {
+                    syncCartItem(userId, cartData)
+                }
             }
 
             // Cập nhật lại số lượng món ăn trong giỏ hàng
@@ -388,37 +350,18 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         recyclerViewSauce.layoutManager = GridLayoutManager(requireContext(), 5)
     }
 
-    private fun fetchIngredientData() {
-        db.collection("Ingredient")
-            .get()
-            .addOnSuccessListener { documents ->
-                meatList.clear()
-                seafoodList.clear()
-                vegetableList.clear()
-                additionList.clear()
-                sauceList.clear()
+    private fun setupAdapters() {
+        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
+        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
+        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
+        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
+        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
 
-                for (document in documents) {
-                    val name = document.getString("name") ?: ""
-                    val price = document.getString("price") ?: "0"
-                    val iconImgPath = document.getString("iconImgPath") ?: ""
-                    val layerImgPath = document.getString("layerImgPath") ?: ""
-                    val category = document.getString("category") ?: ""
-
-                    val ingredient = IngredientData(name, price, iconImgPath, layerImgPath)
-
-                    when (category.lowercase()) {
-                        "meat" -> meatList.add(ingredient)
-                        "seafood" -> seafoodList.add(ingredient)
-                        "vegetable" -> vegetableList.add(ingredient)
-                        "addition" -> additionList.add(ingredient)
-                        "sauce" -> sauceList.add(ingredient)
-                    }
-                }
-
-                setupAdapters()
-                selectPreChosenIngredients()
-            }
+        recyclerViewMeat.adapter = meatAdapter
+        recyclerViewSeafood.adapter = seafoodAdapter
+        recyclerViewVegetable.adapter = vegetableAdapter
+        recyclerViewAddition.adapter = additionAdapter
+        recyclerViewSauce.adapter = sauceAdapter
     }
 
     private fun selectPreChosenIngredients() {
@@ -437,19 +380,28 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         updatePrice()
     }
 
+    private fun fetchIngredientData() {
+        val ingredientData = dbHelper.getAllIngredients()
 
-    private fun setupAdapters() {
-        meatAdapter = IngredientAdapter(meatList, ::handleIngredientClick)
-        seafoodAdapter = IngredientAdapter(seafoodList, ::handleIngredientClick)
-        vegetableAdapter = IngredientAdapter(vegetableList, ::handleIngredientClick)
-        additionAdapter = IngredientAdapter(additionList, ::handleIngredientClick)
-        sauceAdapter = IngredientAdapter(sauceList, ::handleIngredientClick)
+        meatList.clear()
+        seafoodList.clear()
+        vegetableList.clear()
+        additionList.clear()
+        sauceList.clear()
 
-        recyclerViewMeat.adapter = meatAdapter
-        recyclerViewSeafood.adapter = seafoodAdapter
-        recyclerViewVegetable.adapter = vegetableAdapter
-        recyclerViewAddition.adapter = additionAdapter
-        recyclerViewSauce.adapter = sauceAdapter
+        for (ingredient in ingredientData) {
+            if (ingredient.category == "meat") {
+                meatList.add(ingredient)
+            } else if (ingredient.category == "seafood") {
+                seafoodList.add(ingredient)
+            } else if (ingredient.category == "vegetable") {
+                vegetableList.add(ingredient)
+            } else if (ingredient.category == "addition") {
+                additionList.add(ingredient)
+            } else if (ingredient.category == "sauce") {
+                sauceList.add(ingredient)
+            }
+        }
     }
 
     private fun handleIngredientClick(ingredient: IngredientData, isSelected: Boolean) {
@@ -463,14 +415,21 @@ class FoodInfoFragment : BottomSheetDialogFragment() {
         addToCartButton.text = "Add to cart - $formattedPrice VND"
     }
 
+    fun syncCartItem(userId: String, cartItem: CartData) {
+        val databaseRef = FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
 
+        val id = dbHelper.getIdOfCartItem(cartItem)
 
-
-//    override fun onAttach(context: Context) {
-//        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val langCode = prefs.getString("lang", "en") ?: "en"
-//        val localizedContext = LanguageHelper.setLocale(context, langCode)
-//        super.onAttach(localizedContext)
-//    }
-
+        databaseRef.document(id.toString())
+            .set(cartItem)
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $id")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $id", e)
+            }
+    }
 }
