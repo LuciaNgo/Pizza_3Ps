@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.material.v1100)
     implementation(libs.androidx.viewpager2)
+    implementation(libs.konfetti)
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }
