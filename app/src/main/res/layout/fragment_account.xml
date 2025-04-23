@@ -10,9 +10,9 @@
     <ImageView
         android:id="@+id/wallpaper"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="212dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/wallpaper_7"
+        android:src="@drawable/wallpaper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -151,6 +151,24 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </LinearLayout>
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/specialContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/savedContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line_2">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/paymentContainer"
             android:layout_width="match_parent"
@@ -227,11 +245,11 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/line_2"
+        android:id="@+id/line_3"
         android:layout_width="match_parent"
         android:layout_height="12dp"
         android:background="@color/light_gray"
-        app:layout_constraintTop_toBottomOf="@id/specialContainer"
+        app:layout_constraintTop_toBottomOf="@id/savedContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -242,7 +260,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line_2">
+        app:layout_constraintTop_toBottomOf="@id/line_3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/termsAndPoliciesContainer"
@@ -322,7 +340,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/line_3"
+        android:id="@+id/line_4"
         android:layout_width="match_parent"
         android:layout_height="12dp"
         android:background="@color/light_gray"
@@ -337,45 +355,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line_3">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/changePasscodeContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp">
-
-            <ImageView
-                android:id="@+id/changePasscodeIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="#00FFFFFF"
-                android:src="@drawable/key"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/changePasscodeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Change passcode"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/lighter_black"
-                app:layout_constraintStart_toEndOf="@id/changePasscodeIcon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/chevron"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@id/line_4">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/languageContainer"
@@ -417,7 +397,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/line_4"
+        android:id="@+id/line_5"
         android:layout_width="match_parent"
         android:layout_height="12dp"
         android:background="@color/light_gray"
@@ -430,9 +410,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line_4">
+        app:layout_constraintTop_toBottomOf="@id/line_5">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
