@@ -41,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/shopping_bag"
+        app:tint="@null"
         app:backgroundTint="@color/white"
         app:counterTextColor="@color/white"
         app:badgeBackgroundColor="@color/orange"

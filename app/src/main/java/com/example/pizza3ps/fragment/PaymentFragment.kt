@@ -21,6 +21,7 @@ import com.example.pizza3ps.model.CartData
 import java.text.DecimalFormat
 import androidx.navigation.fragment.findNavController
 import android.content.Intent
+import android.util.Log
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -349,6 +350,7 @@ class PaymentFragment : Fragment() {
 
         AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT)
         AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN)
+
         val momoParams = HashMap<String, Any>().apply {
             put("merchantname", "Pizza3Ps") // Your MoMo merchant name
             put("merchantcode", momoClientId) // Your MoMo merchant code
@@ -453,11 +455,39 @@ class PaymentFragment : Fragment() {
 
         batch.commit().addOnSuccessListener {
             Toast.makeText(requireContext(), "Order placed!", Toast.LENGTH_SHORT).show()
-            dbHelper.deleteAllCart()
+            deleteAllCart()
             requireActivity().onBackPressed()
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Failed to place order: ${it.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun removeSyncToFirebase(dbHelper: DatabaseHelper, cartId: Int) {
+        val userId = dbHelper.getUser()!!.id
+
+        FirebaseFirestore.getInstance()
+            .collection("Cart")
+            .document(userId)
+            .collection("items")
+            .document(cartId.toString())
+            .delete()
+            .addOnSuccessListener {
+                Log.d("FirebaseSync", "Synced item: $cartId")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseSync", "Failed to sync item: $cartId", e)
+            }
+    }
+
+    fun deleteAllCart() {
+        val dbHelper = DatabaseHelper(requireContext())
+
+        for (cart in cartList) {
+            val cartId = dbHelper.getIdOfCartItem(cart)
+            removeSyncToFirebase(dbHelper, cartId)
+        }
+
+        dbHelper.deleteAllCart()
     }
 
 }

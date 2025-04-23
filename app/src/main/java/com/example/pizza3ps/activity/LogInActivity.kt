@@ -38,7 +38,7 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
-    private lateinit var passwordToggle: TextView
+    private lateinit var passwordToggle: ImageView
     private lateinit var logInButton: Button
     private lateinit var signUpButton: TextView
     private lateinit var backButton: ImageView
