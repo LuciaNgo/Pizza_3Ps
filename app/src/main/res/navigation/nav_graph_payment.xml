@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_payment"
+    app:startDestination="@id/paymentFragment">
+
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.example.pizza3ps.fragment.PaymentFragment"
+        android:label="Payment"
+        tools:layout="@layout/fragment_payment" >
+        <action
+            android:id="@+id/action_paymentFragment_to_savedAddressFragment"
+            app:destination="@id/savedAddressFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedAddressFragment"
+        android:name="com.example.pizza3ps.fragment.SavedAddressFragment"
+        android:label="Saved Address"
+        tools:layout="@layout/fragment_saved_address" >
+        <argument
+            android:name="source"
+            app:argType="string"
+            android:defaultValue="payment" />
+
+        <action
+            android:id="@+id/action_savedAddressFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.example.pizza3ps.fragment.AddAddressFragment"
+        android:label="Add Address"
+        tools:layout="@layout/fragment_add_address" />
+
+</navigation>

@@ -15,12 +15,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.PaymentActivity
 import com.example.pizza3ps.database.DatabaseHelper
+import com.example.pizza3ps.fragment.PaymentFragment
 import com.example.pizza3ps.model.CartData
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DecimalFormat
 
 class PaymentCartAdapter(
-    private val activity: AppCompatActivity,
+    private val fragment: PaymentFragment,
     private val cartItems: List<CartData>) :
     RecyclerView.Adapter<PaymentCartAdapter.PaymentCartViewHolder>() {
 
@@ -134,6 +135,7 @@ class PaymentCartAdapter(
                 val dbHelper = DatabaseHelper(holder.itemView.context)
                 val id = dbHelper.getIdOfCartItem(item)
                 dbHelper.updateCartItemQuantity(id, quantity)
+                syncToFirebase(dbHelper, id)
 
                 holder.quantity.text = quantity.toString()
                 val newPrice = item.price * quantity
@@ -149,7 +151,7 @@ class PaymentCartAdapter(
             val dbHelper = DatabaseHelper(holder.itemView.context)
             val id = dbHelper.getIdOfCartItem(item)
             dbHelper.updateCartItemQuantity(id, quantity)
-            syncToFirebase(id)
+            syncToFirebase(dbHelper, id)
 
             holder.quantity.text = quantity.toString()
             val newPrice = item.price * quantity
@@ -165,7 +167,7 @@ class PaymentCartAdapter(
 
             if (id != -1) {
                 dbHelper.deleteCartItem(id)
-                removeSyncToFirebase(id)
+                removeSyncToFirebase(dbHelper, id)
 
                 // Tạo danh sách mới loại bỏ item vừa xoá
                 val updatedList = cartItems.filterIndexed { index, cartItem ->
@@ -186,12 +188,10 @@ class PaymentCartAdapter(
     }
 
     fun updatePrice() {
-        val paymentActivity = activity as? PaymentActivity
-        paymentActivity?.updateTotalPrice()
+        fragment.updateTotalPrice()
     }
 
-    fun syncToFirebase(cartId: Int) {
-        val dbHelper = DatabaseHelper(activity)
+    fun syncToFirebase(dbHelper: DatabaseHelper, cartId: Int) {
         val userId = dbHelper.getUser()!!.id
         val cartItem = dbHelper.getCartById(cartId)
 
@@ -212,8 +212,7 @@ class PaymentCartAdapter(
         }
     }
 
-    fun removeSyncToFirebase(cartId: Int) {
-        val dbHelper = DatabaseHelper(activity)
+    fun removeSyncToFirebase(dbHelper: DatabaseHelper, cartId: Int) {
         val userId = dbHelper.getUser()!!.id
 
         FirebaseFirestore.getInstance()
