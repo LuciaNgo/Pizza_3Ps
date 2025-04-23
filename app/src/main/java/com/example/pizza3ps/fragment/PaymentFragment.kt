@@ -26,6 +26,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.pizza3ps.activity.DeliveryActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import vn.momo.momo_partner.AppMoMoLib
 import com.google.firebase.Timestamp
@@ -131,7 +132,6 @@ class PaymentFragment : Fragment() {
         dbHelper = DatabaseHelper(requireContext())
         cartList = dbHelper.getAllCartItems()
 
-//        initViews(view)
         setupCartRecyclerView()
         setUpAddress()
         updateTotalPrice()
@@ -146,9 +146,9 @@ class PaymentFragment : Fragment() {
                 orderId = generatedId
 
                 when (selectedPaymentMethod) {
-                    "momo" -> requestMoMoPayment(totalValue)
-                    "cash" -> orderId?.let { createOrderInFirestore(it, selectedPaymentMethod) }
-                    "paypal" -> Toast.makeText(requireContext(), "huhu", Toast.LENGTH_SHORT).show()
+                    "Momo" -> requestMoMoPayment(totalValue)
+                    "Cash" -> orderId?.let { createOrderInFirestore(it, selectedPaymentMethod) }
+                    "Paypal" -> Toast.makeText(requireContext(), "huhu", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -161,15 +161,15 @@ class PaymentFragment : Fragment() {
         }
 
         cashContainer.setOnClickListener {
-            updateSelectedPaymentMethod("cash")
+            updateSelectedPaymentMethod("Cash")
         }
 
         paypalContainer.setOnClickListener {
-            updateSelectedPaymentMethod("paypal")
+            updateSelectedPaymentMethod("Paypal")
         }
 
         momoContainer.setOnClickListener {
-            updateSelectedPaymentMethod("momo")
+            updateSelectedPaymentMethod("Momo")
         }
 
         redeemPoints.setOnClickListener {
@@ -179,38 +179,6 @@ class PaymentFragment : Fragment() {
         backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-    }
-
-    private fun initViews(view: View) {
-        customerName = view.findViewById(R.id.customerName)
-        customerPhone = view.findViewById(R.id.customerPhoneNumber)
-        customerAddress = view.findViewById(R.id.customerAddress)
-        addressDetail = view.findViewById(R.id.addressDetailIcon)
-
-        redeemPoints = view.findViewById(R.id.pointsContainer)
-
-        backButton = view.findViewById(R.id.back_button)
-        checkoutButton = view.findViewById(R.id.checkout_button)
-        subtotalPrice = view.findViewById(R.id.subtotal_price)
-        deliveryCharge = view.findViewById(R.id.delivery_charge_price)
-        discount = view.findViewById(R.id.discount)
-        totalPrice = view.findViewById(R.id.total_price)
-
-        cartRecyclerView = view.findViewById(R.id.cart_recyclerView)
-
-        cashContainer = view.findViewById(R.id.cashContainer)
-        paypalContainer = view.findViewById(R.id.paypalContainer)
-        momoContainer = view.findViewById(R.id.momoContainer)
-        cashText = view.findViewById(R.id.cashText)
-        paypalText = view.findViewById(R.id.paypalText)
-        momoText = view.findViewById(R.id.momoText)
-        cashCheck = view.findViewById(R.id.cashCheck)
-        paypalCheck = view.findViewById(R.id.paypalCheck)
-        momoCheck = view.findViewById(R.id.momoCheck)
-
-        cashCheck.visibility = ImageView.INVISIBLE
-        paypalCheck.visibility = ImageView.INVISIBLE
-        momoCheck.visibility = ImageView.INVISIBLE
     }
 
     private fun setupCartRecyclerView() {
@@ -231,11 +199,6 @@ class PaymentFragment : Fragment() {
         }
     }
 
-
-
-
-
-
     fun getDefaultAddress(): AddressData {
         val defaultAddress = dbHelper.getDefaultAddress()
         return if (defaultAddress != null) {
@@ -255,20 +218,20 @@ class PaymentFragment : Fragment() {
         momoText.typeface = Typeface.DEFAULT
 
         when (method) {
-            "cash" -> {
+            "Cash" -> {
                 cashCheck.visibility = ImageView.VISIBLE
                 cashText.setTypeface(cashText.typeface, android.graphics.Typeface.BOLD)
-                selectedPaymentMethod = "cash"
+                selectedPaymentMethod = "Cash"
             }
-            "paypal" -> {
+            "Paypal" -> {
                 paypalCheck.visibility = ImageView.VISIBLE
                 paypalText.setTypeface(paypalText.typeface, android.graphics.Typeface.BOLD)
-                selectedPaymentMethod = "paypal"
+                selectedPaymentMethod = "Paypal"
             }
-            "momo" -> {
+            "Momo" -> {
                 momoCheck.visibility = ImageView.VISIBLE
                 momoText.setTypeface(momoText.typeface, android.graphics.Typeface.BOLD)
-                selectedPaymentMethod = "momo"
+                selectedPaymentMethod = "Momo"
             }
         }
     }
@@ -334,7 +297,7 @@ class PaymentFragment : Fragment() {
             if (status == 0) {
                 // Success
                 Toast.makeText(requireContext(), "MoMo payment successful", Toast.LENGTH_SHORT).show()
-                createOrderInFirestore(orderId!!, "momo")
+                createOrderInFirestore(orderId!!, "Momo")
             } else {
                 val message = data.getStringExtra("message") ?: "Payment failed"
                 Toast.makeText(requireContext(), "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
@@ -442,7 +405,7 @@ class PaymentFragment : Fragment() {
                 "price" to item.price
             )
 
-            if (category == "pizza") {
+            if (category == "pizza" || item.food_id == 0) {
                 detail["size"] = item.size
                 detail["crust"] = item.crust
                 detail["crustBase"] = item.crustBase
@@ -456,7 +419,10 @@ class PaymentFragment : Fragment() {
         batch.commit().addOnSuccessListener {
             Toast.makeText(requireContext(), "Order placed!", Toast.LENGTH_SHORT).show()
             deleteAllCart()
-            requireActivity().onBackPressed()
+
+            val intent = Intent(requireContext(), DeliveryActivity::class.java)
+            startActivity(intent)
+
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Failed to place order: ${it.message}", Toast.LENGTH_LONG).show()
         }

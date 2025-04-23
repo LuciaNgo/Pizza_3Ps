@@ -50,6 +50,7 @@ androidx-credentials = { group = "androidx.credentials", name = "credentials", v
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 konfetti = { module = "nl.dionsegijn:konfetti-xml", version.ref = "konfetti" }
+lottie = { module = "com.airbnb.android:lottie", version = "6.4.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
