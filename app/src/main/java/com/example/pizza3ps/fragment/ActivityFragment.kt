@@ -28,7 +28,6 @@ class ActivityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val intent = Intent(requireContext(), DeliveryActivity::class.java)
-        startActivity(intent)
+
     }
 }

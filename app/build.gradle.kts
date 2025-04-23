@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.konfetti)
     implementation(libs.lottie)
+    implementation(libs.stepview)
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }

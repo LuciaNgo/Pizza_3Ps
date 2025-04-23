@@ -376,7 +376,7 @@ class PaymentFragment : Fragment() {
             "discount" to 0,
             "totalAfterDiscount" to totalValue,
             "totalQuantity" to dbHelper.getAllCartItems().size,
-            "status" to "Awaiting confirmation",
+            "status" to "Pending",
             "createdDate" to com.google.firebase.Timestamp.now()
         )
 
@@ -421,6 +421,7 @@ class PaymentFragment : Fragment() {
             deleteAllCart()
 
             val intent = Intent(requireContext(), DeliveryActivity::class.java)
+            intent.putExtra("order_id", orderId)
             startActivity(intent)
 
         }.addOnFailureListener {
