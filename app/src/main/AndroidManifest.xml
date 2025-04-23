@@ -14,18 +14,28 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/pizzaa_128"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/pizzaa_128"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pizza3Ps"
-        tools:targetApi="31"
-        tools:replace="android:theme">
+        tools:replace="android:theme"
+        tools:targetApi="31">
         <activity
-            android:name=".activity.PaymentActivity"
+            android:name=".activity.DeliveryActivity"
             android:exported="false" />
-
         <activity android:name="com.braintreepayments.api.DropInActivity" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoInitEnabled"
+            android:value="true" />
+
         <activity
             android:name=".activity.ViewStatisticsActivity"
             android:exported="false" />
@@ -38,17 +48,6 @@
         <activity
             android:name=".activity.PaymentActivity"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
-        <meta-data
-            android:name="com.facebook.sdk.AutoInitEnabled"
-            android:value="true" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -73,18 +72,10 @@
             android:exported="false" />
         <activity
             android:name=".activity.CustomizePizzaActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".fragment.FoodInfoFragment" -->
-        <!-- android:exported="false" /> -->
+            android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.WelcomeActivity"
             android:exported="true" />
