@@ -38,6 +38,7 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var passwordToggle: TextView
     private lateinit var logInButton: Button
     private lateinit var signUpButton: TextView
     private lateinit var backButton: ImageView
@@ -54,7 +55,10 @@ class LogInActivity : AppCompatActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             // User đã đăng nhập trước đó, tự động vào màn hình chính
-            goToDashboard()
+            if (currentUser.email == "adminpizza3ps@gmail.com")
+                goToManagementHome()
+            else
+                goToDashboard()
         }
 
         auth = FirebaseAuth.getInstance()
@@ -66,6 +70,7 @@ class LogInActivity : AppCompatActivity() {
         signUpButton = findViewById(R.id.sign_up_text)
         facebookButton = findViewById(R.id.facebook_button)
         googleButton = findViewById(R.id.google_button)
+        passwordToggle = findViewById(R.id.password_toggle_icon)
 
 
         backButton.setOnClickListener {
@@ -94,7 +99,12 @@ class LogInActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        goToDashboard()
+                        if (email == "adminpizza3ps@gmail.com") {
+                            goToManagementHome()
+                        }
+                        else {
+                            goToDashboard()
+                        }
                     } else {
                         Toast.makeText(this, "Error: Incorrect password or email", Toast.LENGTH_SHORT).show()
                     }
@@ -241,6 +251,12 @@ class LogInActivity : AppCompatActivity() {
     private fun goToDashboard() {
         Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private fun goToManagementHome() {
+        Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, ManagementHomeActivity::class.java))
         finish()
     }
 }

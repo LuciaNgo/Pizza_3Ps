@@ -59,12 +59,15 @@
         <action
             android:id="@+id/action_accountFragment_to_customerServiceFragment"
             app:destination="@id/customerServiceFragment" />
+
         <action
             android:id="@+id/action_navigation_account_to_personalInfoFragment"
             app:destination="@id/personalInfoFragment" />
+
         <action
             android:id="@+id/action_navigation_account_to_languageFragment"
             app:destination="@id/languageFragment" />
+
         <action
             android:id="@+id/action_navigation_account_to_savedAddressFragment"
             app:destination="@id/savedAddressFragment" />
@@ -96,6 +99,7 @@
         android:name="com.example.pizza3ps.fragment.CustomerServiceFragment"
         android:label="Customer Service"
         tools:layout="@layout/fragment_customer_service" />
+
     <fragment
         android:id="@+id/personalInfoFragment"
         android:name="com.example.pizza3ps.fragment.PersonalInfoFragment"
@@ -104,10 +108,12 @@
         <action
             android:id="@+id/action_personalInfoFragment_to_navigation_account"
             app:destination="@id/navigation_account" />
+
         <action
             android:id="@+id/action_personalInfoFragment_to_editInfoFragment"
             app:destination="@id/editInfoFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/editInfoFragment"
         android:name="com.example.pizza3ps.fragment.EditInfoFragment"
@@ -116,29 +122,36 @@
             android:name="name"
             app:argType="string"
             android:defaultValue=" " />
+
         <argument
             android:name="email"
             app:argType="string"
             android:defaultValue=" " />
+
         <argument
             android:name="phone"
             app:argType="string"
             android:defaultValue=" " />
+
         <argument
             android:name="address"
             app:argType="string"
             android:defaultValue=" " />
+
         <argument
             android:name="points"
             app:argType="integer"
             android:defaultValue="0" />
+
         <action
             android:id="@+id/action_editInfoFragment_to_navigation_account"
             app:destination="@id/navigation_account" />
+
         <action
             android:id="@+id/action_editInfoFragment_to_personalInfoFragment2"
             app:destination="@id/personalInfoFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/languageFragment"
         android:name="com.example.pizza3ps.fragment.LanguageFragment"

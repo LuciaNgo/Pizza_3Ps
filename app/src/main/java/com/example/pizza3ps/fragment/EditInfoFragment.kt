@@ -34,18 +34,14 @@ class EditInfoFragment : Fragment() {
         val args = EditInfoFragmentArgs.fromBundle(requireArguments())
 
         val name = args.name
-        val email = args.email
         val phone = args.phone
         val address = args.address
-        val points = args.points
 
         Log.d("Received_done", "Done receiving")
 
         view.findViewById<EditText>(R.id.nameHolder).setText(name)
-        view.findViewById<EditText>(R.id.emailHolder).setText(email)
         view.findViewById<EditText>(R.id.phoneHolder).setText(phone)
         view.findViewById<EditText>(R.id.addressHolder).setText(address)
-        view.findViewById<TextView>(R.id.pointHolder).text = "$points"
 
         saveBtn = view.findViewById(R.id.saveBtn)
         cancelBtn = view.findViewById(R.id.cancelBtn)

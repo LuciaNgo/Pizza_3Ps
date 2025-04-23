@@ -251,7 +251,7 @@ class MainActivity : AppCompatActivity() {
                     val mailInfo = document.getString("mail").toString()
                     val phoneInfo = document.getString("phone").toString()
 
-                    dbHelper.addRestaurantInfo(nameInfo, locationInfo, mailInfo, phoneInfo)
+                    dbHelper.addRestaurantInfo(nameInfo, locationInfo, phoneInfo, mailInfo)
                 }
             }
             .addOnFailureListener { exception ->

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
