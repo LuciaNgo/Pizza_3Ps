@@ -38,6 +38,7 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var passwordToggle: TextView
     private lateinit var logInButton: Button
     private lateinit var signUpButton: TextView
     private lateinit var backButton: ImageView
@@ -69,6 +70,7 @@ class LogInActivity : AppCompatActivity() {
         signUpButton = findViewById(R.id.sign_up_text)
         facebookButton = findViewById(R.id.facebook_button)
         googleButton = findViewById(R.id.google_button)
+        passwordToggle = findViewById(R.id.password_toggle_icon)
 
 
         backButton.setOnClickListener {
