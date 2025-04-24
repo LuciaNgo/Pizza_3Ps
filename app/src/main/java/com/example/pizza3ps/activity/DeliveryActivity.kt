@@ -5,13 +5,17 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.example.pizza3ps.R
+import com.example.pizza3ps.adapter.DeliveryAdapter
+import com.example.pizza3ps.model.DeliveryData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.shuhart.stepview.StepView
@@ -40,8 +44,12 @@ class DeliveryActivity : AppCompatActivity() {
     private lateinit var subtotalLayout: ConstraintLayout
     private lateinit var parentLayout: LinearLayout
 
+    private lateinit var backButton: ImageView
     private lateinit var downChevron: ImageView
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var deliveryAdapter: DeliveryAdapter
+    private val deliveryList = mutableListOf<DeliveryData>()
 
     private val orderStates = listOf(
         "Pending",
@@ -72,14 +80,21 @@ class DeliveryActivity : AppCompatActivity() {
         subtotalLayout = findViewById(R.id.subtotal_amount_layout)
         parentLayout = findViewById(R.id.order_amount_container)
         downChevron = findViewById(R.id.down_chevron)
-        recyclerView = findViewById(R.id.recycler_view)
+        backButton = findViewById(R.id.back_button)
+
         stepView = findViewById(R.id.step_view)
         stepView.setSteps(orderStates)
+
+        recyclerView = findViewById(R.id.recycler_view)
+        deliveryAdapter = DeliveryAdapter(this, deliveryList)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = deliveryAdapter
 
         discountLayout.visibility = ConstraintLayout.GONE
         subtotalLayout.visibility = ConstraintLayout.GONE
 
         observeOrderStatus()
+        loadOrderItems(orderId)
 
         downChevron.setOnClickListener {
             val transition = AutoTransition()
@@ -95,6 +110,10 @@ class DeliveryActivity : AppCompatActivity() {
                 subtotalLayout.visibility = ConstraintLayout.GONE
                 downChevron.setImageResource(R.drawable.down_chevron)
             }
+        }
+
+        backButton.setOnClickListener {
+            onBackPressed()
         }
     }
 
@@ -132,12 +151,39 @@ class DeliveryActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadOrderItems(orderId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Orders")
+            .document(orderId)
+            .collection("OrderDetails")
+            .get()
+            .addOnSuccessListener { documents ->
+
+                deliveryList.clear()
+
+                for (document in documents) {
+                    val item = DeliveryData(
+                        foodId = document.getLong("foodId")?.toInt() ?: 0,
+                        price = document.getLong("price") ?.toInt() ?: 0,
+                        quantity = document.getLong("quantity")?.toInt() ?: 0,
+                        size = document.getString("size") ?: "",
+                        crust = document.getString("crust") ?: "",
+                        crustBase = document.getString("crustBase") ?: "",
+                        ingredients = document.getString("ingredients") ?: ""
+                    )
+                    Log.d("DeliveryActivityItem", "Item: $item")
+                    deliveryList.add(item)
+                }
+                deliveryAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Failed to load order items", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         // Hủy lắng nghe Firestore khi Activity bị huỷ
         listenerRegistration?.remove()
     }
-
-
-
 }
