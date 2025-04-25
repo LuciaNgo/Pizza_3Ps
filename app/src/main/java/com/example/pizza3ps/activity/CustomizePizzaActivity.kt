@@ -68,6 +68,7 @@ class CustomizePizzaActivity : AppCompatActivity() {
     private var quantity = 1
 
     private lateinit var layerContainer: FrameLayout
+    private lateinit var backButton: ImageView
     private val ingredientImageViews = mutableMapOf<String, ImageView>()
 
     private lateinit var dbHelper: DatabaseHelper
@@ -117,10 +118,15 @@ class CustomizePizzaActivity : AppCompatActivity() {
         crustChickenCheckBox = findViewById(R.id.crust_chicken)
         crustSausageCheckBox = findViewById(R.id.crust_sausage)
         layerContainer = findViewById(R.id.layerContainer)
+        backButton = findViewById(R.id.backButton)
 
         sizeSRadioButton.isChecked = true
         crustThinButton.isChecked = true
         quantityTextView.text = quantity.toString()
+
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
         // Plus
         plusCardView.setOnClickListener {
@@ -242,7 +248,6 @@ class CustomizePizzaActivity : AppCompatActivity() {
                 quantity = quantity
             )
 
-            Log.d("Cart data", "Adding to cart: $cartData")
             dbHelper.addFoodToCart(cartData)
 
             val userId = dbHelper.getUser()?.id
@@ -269,7 +274,18 @@ class CustomizePizzaActivity : AppCompatActivity() {
             vegetableAdapter.clearSelectedIngredients()
             additionAdapter.clearSelectedIngredients()
             sauceAdapter.clearSelectedIngredients()
-            layerContainer.removeAllViews()
+//            layerContainer.removeAllViews()
+
+            var i = 0
+            while (i < layerContainer.childCount) {
+                val view = layerContainer.getChildAt(i)
+                if (view != pizzaImageView) {
+                    layerContainer.removeViewAt(i)
+                } else {
+                    i++
+                }
+            }
+
             ingredientImageViews.clear()
             basePrice = 50000
             updatePrice()

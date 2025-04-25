@@ -31,7 +31,7 @@
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delivery"
+            android:text="Delivery Information"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_gravity="center" />
@@ -61,37 +61,79 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
-
-            <com.shuhart.stepview.StepView
-                android:id="@+id/step_view"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/resultLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                app:sv_doneStepLineColor="@color/orange"
-                app:sv_nextStepLineColor="@color/gray"
-                app:sv_doneCircleColor="@color/orange"
-                app:sv_selectedCircleColor="@color/orange"
-                app:sv_doneStepMarkColor="@color/white"
-                app:sv_selectedTextColor="@color/orange"
-                app:sv_nextTextColor="@color/gray"
-                app:sv_doneTextColor="@color/orange"
-                app:sv_selectedStepNumberColor="@color/white"
-                app:sv_stepNumberTextSize="12sp"
-                app:sv_doneCircleRadius="12dp"
-                app:sv_selectedCircleRadius="12dp"
-                app:sv_stepPadding="8dp"
-                app:sv_stepLineWidth="2dp"
-                app:sv_animationType="Line"
+                android:background="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lottie_view"/>
+                app:layout_constraintTop_toBottomOf="@id/lottie_view">
+
+                <com.shuhart.stepview.StepView
+                    android:id="@+id/step_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    app:sv_doneStepLineColor="@color/orange"
+                    app:sv_nextStepLineColor="@color/gray"
+                    app:sv_doneCircleColor="@color/orange"
+                    app:sv_selectedCircleColor="@color/orange"
+                    app:sv_doneStepMarkColor="@color/white"
+                    app:sv_selectedTextColor="@color/orange"
+                    app:sv_nextTextColor="@color/gray"
+                    app:sv_doneTextColor="@color/orange"
+                    app:sv_selectedStepNumberColor="@color/white"
+                    app:sv_stepNumberTextSize="12sp"
+                    app:sv_doneCircleRadius="12dp"
+                    app:sv_selectedCircleRadius="12dp"
+                    app:sv_stepPadding="8dp"
+                    app:sv_stepLineWidth="2dp"
+                    app:sv_animationType="Line"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cancel_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <ImageView
+                        android:id="@+id/cancel_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="16dp"
+                        android:src="@drawable/cancel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Your order is canceled :("
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/cancel_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/line_1"
                 android:layout_width="match_parent"
                 android:layout_height="12dp"
                 android:background="@color/light_gray"
-                app:layout_constraintTop_toBottomOf="@id/step_view"
+                app:layout_constraintTop_toBottomOf="@id/resultLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -415,8 +457,8 @@
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:paddingBottom="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -427,7 +469,7 @@
 
             <View
                 android:layout_width="wrap_content"
-                android:layout_height="140dp"
+                android:layout_height="120dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/food_list_container"/>
 
