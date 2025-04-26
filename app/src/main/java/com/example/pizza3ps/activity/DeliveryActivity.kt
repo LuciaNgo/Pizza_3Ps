@@ -1,5 +1,6 @@
 package com.example.pizza3ps.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -55,6 +56,7 @@ class DeliveryActivity : AppCompatActivity() {
     private lateinit var deliveryAdapter: DeliveryAdapter
     private val deliveryList = mutableListOf<DeliveryData>()
     private var currentState: String = "Pending"
+    private var fromNotification = false
 
     private val orderStates = listOf(
         "Pending",
@@ -70,7 +72,7 @@ class DeliveryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_delivery)
 
         orderId = intent.getStringExtra("order_id") ?: return
-        Log.d("DeliveryActivityOrderID", "Order ID: $orderId")
+        fromNotification = intent.getBooleanExtra("from_notification", false)
 
         orderID = findViewById(R.id.order_id)
         orderDate = findViewById(R.id.order_date)
@@ -121,7 +123,13 @@ class DeliveryActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener {
-            onBackPressed()
+            if (fromNotification) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                onBackPressed()
+            }
         }
     }
 
@@ -211,7 +219,6 @@ class DeliveryActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Hủy lắng nghe Firestore khi Activity bị huỷ
         listenerRegistration?.remove()
     }
 }
