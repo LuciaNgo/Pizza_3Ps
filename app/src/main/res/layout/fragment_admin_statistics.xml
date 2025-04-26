@@ -96,7 +96,7 @@
                         android:textColor="@color/dark_gray"/>
 
                     <TextView
-                        android:id="@+id/tvDailyRevenueValue"
+                        android:id="@+id/dailyRevenueValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="1.234.567 VND"
@@ -108,7 +108,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/btnSelectDate"
+                    android:id="@+id/dailySelectDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -153,7 +153,7 @@
                         android:textColor="@color/dark_gray"/>
 
                     <TextView
-                        android:id="@+id/tvWeeklyRevenueValue"
+                        android:id="@+id/monthlyRevenueValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="8.765.432 VND"
@@ -164,7 +164,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/btnSelectWeek"
+                    android:id="@+id/monthlySelectMonth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -208,7 +208,7 @@
                         android:textColor="@color/dark_gray"/>
 
                     <TextView
-                        android:id="@+id/tvYearlyRevenueValue"
+                        android:id="@+id/yearlyRevenueValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="123.456.789 VND"
@@ -219,7 +219,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/btnSelectYear"
+                    android:id="@+id/yearlySelectYear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -244,7 +244,7 @@
             android:layout_marginStart="20dp"/>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutRevenueTime"
+            android:id="@+id/tabLayoutRevenueLineChart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -257,22 +257,22 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theo Ngày"/>
+                android:text="Daily"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theo Tuần"/>
+                android:text="Monthly"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theo Năm"/>
+                android:text="Yearly"/>
 
         </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerRevenueChart"
+            android:id="@+id/viewPagerRevenueLineChart"
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:layout_marginStart="16dp"
@@ -289,6 +289,7 @@
             android:layout_marginStart="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"/>
