@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/wallpaper"
         android:layout_width="match_parent"
-        android:layout_height="212dp"
+        android:layout_height="216dp"
         android:scaleType="centerCrop"
         android:src="@drawable/wallpaper"
         app:layout_constraintStart_toStartOf="parent"

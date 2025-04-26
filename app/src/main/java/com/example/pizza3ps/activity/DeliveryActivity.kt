@@ -3,6 +3,7 @@ package com.example.pizza3ps.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -48,6 +49,7 @@ class DeliveryActivity : AppCompatActivity() {
     private lateinit var parentLayout: LinearLayout
     private lateinit var cancelLayout: ConstraintLayout
 
+    private lateinit var cancelButton: Button
     private lateinit var backButton: ImageView
     private lateinit var downChevron: ImageView
     private lateinit var recyclerView: RecyclerView
@@ -87,6 +89,7 @@ class DeliveryActivity : AppCompatActivity() {
         subtotalLayout = findViewById(R.id.subtotal_amount_layout)
         parentLayout = findViewById(R.id.order_amount_container)
         cancelLayout = findViewById(R.id.cancel_container)
+        cancelButton = findViewById(R.id.cancel_order_button)
         downChevron = findViewById(R.id.down_chevron)
         backButton = findViewById(R.id.back_button)
         lottieView = findViewById(R.id.lottie_view)
@@ -120,6 +123,10 @@ class DeliveryActivity : AppCompatActivity() {
                 subtotalLayout.visibility = ConstraintLayout.GONE
                 downChevron.setImageResource(R.drawable.down_chevron)
             }
+        }
+
+        cancelButton.setOnClickListener {
+            updateCancelOrderStatus()
         }
 
         backButton.setOnClickListener {
@@ -182,6 +189,10 @@ class DeliveryActivity : AppCompatActivity() {
                 cancelLayout.visibility = ConstraintLayout.VISIBLE
             }
 
+            if (status != "Pending") {
+                cancelButton.visibility = Button.GONE
+            } else cancelButton.visibility = Button.VISIBLE
+
             currentState = status
 
         }
@@ -214,6 +225,19 @@ class DeliveryActivity : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Failed to load order items", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateCancelOrderStatus() {
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("Orders").document(orderId)
+
+        docRef.update("status", "Cancelled")
+            .addOnSuccessListener {
+                Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+//                Toast.makeText(this, "Failed to cancel order: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
