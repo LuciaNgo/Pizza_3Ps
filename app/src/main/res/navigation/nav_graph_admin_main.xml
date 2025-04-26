@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_admin_orders"
-        android:name="com.example.pizza3ps.fragment.AdminOrdersFragment"
+        android:name="com.example.pizza3ps.fragment.OrderManagementFragment"
         android:label="Orders"
-        tools:layout="@layout/fragment_admin_orders" />
+        tools:layout="@layout/fragment_order_management" />
 
     <fragment
         android:id="@+id/navigation_admin_account"

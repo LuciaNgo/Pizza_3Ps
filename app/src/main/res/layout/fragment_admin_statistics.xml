@@ -19,7 +19,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:scaleType="center"
                 android:background="@drawable/restaurant"
                 app:layout_constraintStart_toStartOf="parent"
@@ -31,20 +31,22 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
                 android:text="Manage sales and track performance"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:background="@color/transparent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/overviewButton"
-                android:layout_width="120dp"
+                android:layout_width="140dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="8dp"
                 android:text="Overview"
+                android:textStyle="bold"
                 android:backgroundTint="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:text="Daily Revenue"
                         android:textSize="14sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:textColor="@color/dark_gray"/>
 
                     <TextView
                         android:id="@+id/tvDailyRevenueValue"
@@ -105,17 +107,18 @@
 
                 </LinearLayout>
 
-                <Button
+                <ImageView
                     android:id="@+id/btnSelectDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chọn ngày"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
-                    app:icon="@android:drawable/ic_menu_my_calendar"
+                    android:src="@drawable/calen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -147,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:text="Monthly Revenue"
                         android:textSize="14sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:textColor="@color/dark_gray"/>
 
                     <TextView
                         android:id="@+id/tvWeeklyRevenueValue"
@@ -160,13 +163,14 @@
                         android:layout_marginTop="8dp"/>
                 </LinearLayout>
 
-                <Button
+                <ImageView
                     android:id="@+id/btnSelectWeek"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chọn tuần"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
+                    android:src="@drawable/calen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
@@ -201,7 +205,7 @@
                         android:layout_height="wrap_content"
                         android:text="Yearly Revenue"
                         android:textSize="14sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:textColor="@color/dark_gray"/>
 
                     <TextView
                         android:id="@+id/tvYearlyRevenueValue"
@@ -214,14 +218,14 @@
                         android:layout_marginTop="8dp"/>
                 </LinearLayout>
 
-                <Button
+                <ImageView
                     android:id="@+id/btnSelectYear"
-                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chọn năm"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:textSize="12sp"
+                    android:src="@drawable/calen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
@@ -245,6 +249,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            app:tabIndicatorColor="@color/orange"
+            app:tabSelectedTextColor="@color/orange"
             app:tabMode="fixed"
             app:tabGravity="fill">
 
@@ -289,7 +295,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="20dp"/>
+            android:layout_height="120dp"/>
 
     </LinearLayout>
 

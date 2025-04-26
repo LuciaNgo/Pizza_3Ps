@@ -147,7 +147,7 @@ class OrderDetailsFragment : Fragment() {
 
                         Log.d("price", price.toString())
 
-                        val cartItem = CartData(food_id, price, emptyList(), size, crust, crustBase, quantity, ingredients)
+                        val cartItem = CartData(food_id, price, emptyList(), size, crust, crustBase, quantity)
                         items.add(cartItem)
                     }
 

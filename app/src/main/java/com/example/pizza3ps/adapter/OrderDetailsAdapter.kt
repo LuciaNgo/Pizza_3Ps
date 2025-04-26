@@ -40,7 +40,7 @@ class OrderDetailsAdapter(private val orderDetailsList: List<CartData>) :
 
             if (foodInfo.category == "pizza") {
                 holder.ingredients.visibility = View.VISIBLE
-                holder.ingredients.text = item.user_email
+                holder.ingredients.text = item.ingredients.toString()
             } else {
                 holder.ingredients.visibility = View.GONE
             }
@@ -48,7 +48,7 @@ class OrderDetailsAdapter(private val orderDetailsList: List<CartData>) :
         else if (item.food_id == 0) { // customize pizza
             holder.name.text = "Customize pizza"
             holder.ingredients.visibility = View.VISIBLE
-            holder.ingredients.text = item.user_email
+            holder.ingredients.text = item.ingredients.toString()
         }
 
         if (item.size == "") {
