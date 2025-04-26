@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.mpandroidchart)
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }

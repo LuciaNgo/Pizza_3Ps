@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray"
@@ -27,22 +28,44 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_title"
+                android:textColor="@color/white"
+                android:background="@android:color/transparent"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
                 android:text="Manage sales and track performance"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:background="@color/transparent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/title_text" />
 
             <Button
                 android:id="@+id/overviewButton"
-                android:layout_width="140dp"
+                android:layout_width="142dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:text="Overview"
@@ -54,8 +77,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         <TextView
+            android:id="@+id/revenueOverviewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Revenue Overview"
@@ -280,6 +303,15 @@
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/line_1"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/light_gray"
+            app:layout_constraintTop_toBottomOf="@id/userInfoContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 
         <TextView
@@ -289,7 +321,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="20dp"/>
 
         <com.google.android.material.tabs.TabLayout
@@ -320,12 +352,24 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerRevenueLineChart"
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/revenueLineChart"
             android:layout_width="match_parent"
             android:layout_height="280dp"
+            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"/>
+
+        <View
+            android:id="@+id/line_2"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/light_gray"
+            app:layout_constraintTop_toBottomOf="@id/userInfoContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -334,7 +378,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
@@ -24,6 +25,10 @@ import com.example.pizza3ps.adapter.BestSellerAdapter
 import com.example.pizza3ps.model.OrderData
 import com.example.pizza3ps.model.OrderItemData
 import com.example.pizza3ps.viewModel.OrdersViewModel
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.tabs.TabLayout
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -32,6 +37,7 @@ import java.util.Date
 import java.util.Locale
 
 class AdminStatisticsFragment : Fragment() {
+    private lateinit var scrollView: ScrollView
     private lateinit var overviewButton: Button
 
     private lateinit var dailyCardView: CardView
@@ -43,9 +49,10 @@ class AdminStatisticsFragment : Fragment() {
     private lateinit var weeklyRevenueValue: TextView
     private lateinit var monthlyRevenueValue: TextView
     private lateinit var yearlyRevenueValue: TextView
+    private lateinit var revenueOverviewTitle: TextView
 
     private lateinit var revenueTabLayout: TabLayout
-    private lateinit var revenueViewPager: ViewPager2
+    private lateinit var revenueLineChart: LineChart
 
     private lateinit var bestSellerRecyclerView: RecyclerView
     private lateinit var viewModel: OrdersViewModel
@@ -74,6 +81,7 @@ class AdminStatisticsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
 
+        scrollView = view.findViewById(R.id.scrollView)
         overviewButton = view.findViewById(R.id.overviewButton)
         dailyCardView = view.findViewById(R.id.dailyCardView)
         weeklyCardView = view.findViewById(R.id.weeklyCardView)
@@ -83,10 +91,13 @@ class AdminStatisticsFragment : Fragment() {
         weeklyRevenueValue = view.findViewById(R.id.weeklyRevenueValue)
         monthlyRevenueValue = view.findViewById(R.id.monthlyRevenueValue)
         yearlyRevenueValue = view.findViewById(R.id.yearlyRevenueValue)
+        revenueOverviewTitle = view.findViewById(R.id.revenueOverviewTitle)
         revenueTabLayout = view.findViewById(R.id.tabLayoutRevenueLineChart)
-        revenueViewPager = view.findViewById(R.id.viewPagerRevenueLineChart)
+        revenueLineChart = view.findViewById(R.id.revenueLineChart)
         bestSellerRecyclerView = view.findViewById(R.id.recyclerView)
         bestSellerRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        revenueLineChart.description.isEnabled = false
 //        bestSellerAdapter
 
         return view
@@ -97,7 +108,27 @@ class AdminStatisticsFragment : Fragment() {
 
         overviewButton.setOnClickListener {
             // Handle overview button click
+            scrollView.post {
+                val location = IntArray(2)
+                revenueOverviewTitle.getLocationOnScreen(location)
+                val scrollY = location[1] - scrollView.top - 68
+                scrollView.smoothScrollTo(0, scrollY)
+            }
         }
+
+        revenueTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> drawRevenueLineChart(orderList, revenueLineChart, "daily")
+                    1 -> drawRevenueLineChart(orderList, revenueLineChart, "monthly")
+                    2 -> drawRevenueLineChart(orderList, revenueLineChart, "yearly")
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+
 
         dailyCardView.setOnClickListener {
             val dialog = Dialog(requireContext())
@@ -188,6 +219,7 @@ class AdminStatisticsFragment : Fragment() {
             UpdateWeeklyRevenue()
             UpdateMonthlyRevenue()
             UpdateYearlyRevenue()
+            drawRevenueLineChart(orderList, revenueLineChart, "daily")
         }
 
         viewModel.orderItemList.observe(viewLifecycleOwner) { orderItems ->
@@ -200,6 +232,51 @@ class AdminStatisticsFragment : Fragment() {
             val bestSellerAdapter = BestSellerAdapter(bestSeller)
             bestSellerRecyclerView.adapter = bestSellerAdapter
         }
+    }
+
+    fun drawRevenueLineChart(orderList: List<OrderData>, lineChart: LineChart, mode: String) {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val revenueMap = mutableMapOf<String, Float>()
+
+        // Lặp qua orderList và cộng doanh thu theo ngày
+        for (order in orderList) {
+            val dateTriple = parseDateToDayMonthYear(order.createdDate)
+
+            if (dateTriple != null) {
+                val (day, month, year) = dateTriple
+
+                var orderDate = ""
+                if (mode == "daily") orderDate = "$day/$month/$year"
+                else if (mode == "monthly") orderDate = "$month/$year"
+                else if (mode == "yearly") orderDate = "$year"
+
+                // Cộng doanh thu vào doanh thu của ngày đó
+                revenueMap[orderDate] = revenueMap.getOrDefault(orderDate, 0f) + order.totalAfterDiscount.toFloat()
+            }
+        }
+
+        // Chuyển map doanh thu thành list các Entry (x là ngày, y là doanh thu)
+        val entries = mutableListOf<Entry>()
+        var xValue = 0f
+
+        for ((date, revenue) in revenueMap) {
+            entries.add(Entry(xValue++, revenue))
+        }
+
+        // Tạo LineDataSet từ list entries
+        val lineDataSet = LineDataSet(entries, "Doanh thu theo ngày")
+        lineDataSet.color = resources.getColor(R.color.orange)  // Màu đường line
+        lineDataSet.valueTextColor = resources.getColor(R.color.black)  // Màu giá trị
+        lineDataSet.valueTextSize = 10f
+
+        // Tạo LineData từ LineDataSet
+        val lineData = LineData(lineDataSet)
+
+        // Gán LineData vào LineChart
+        lineChart.data = lineData
+
+        // Cập nhật biểu đồ
+        lineChart.invalidate()  // Redraw chart
     }
 
     private fun UpdateDailyRevenue() {
@@ -248,7 +325,6 @@ class AdminStatisticsFragment : Fragment() {
         }
 
         val selectedDate = "$selectedDayForWeeklyRevenue/$selectedMonthForWeeklyRevenue/$selectedYearForWeeklyRevenue"
-        Log.d("Week", selectedDate)
 
         val (startOfWeek, endOfWeek) = getStartAndEndOfWeek(selectedDate) ?: return
 
@@ -274,42 +350,8 @@ class AdminStatisticsFragment : Fragment() {
             }
         }
 
-        Log.d("Week", "Weekly revenue: $weeklyRevenue")
         val currencyFormat = java.text.NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
         weeklyRevenueValue.text = currencyFormat.format(weeklyRevenue)
-    }
-
-    fun getStartAndEndOfWeek(dateString: String): Pair<String, String>? {
-        // Định dạng ngày đầu vào (dd/MM/yyyy)
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-        return try {
-            // Chuyển đổi chuỗi ngày thành đối tượng Date
-            val date = dateFormat.parse(dateString)
-
-            // Sử dụng Calendar để tính toán
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-
-            // Đặt lịch để bắt đầu tuần (Sunday)
-            calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-            val startOfWeek = calendar.time
-
-            // Lấy ngày cuối tuần (Saturday)
-            calendar.add(Calendar.DATE, 6) // Thêm 6 ngày để đến cuối tuần
-            val endOfWeek = calendar.time
-
-            // Chuyển đổi ngày đầu và cuối tuần thành chuỗi định dạng dd/MM/yyyy
-            val startOfWeekString = dateFormat.format(startOfWeek)
-            val endOfWeekString = dateFormat.format(endOfWeek)
-
-            Log.d("Week", "Start of week: $startOfWeekString, End of week: $endOfWeekString")
-
-            // Trả về cặp ngày đầu và ngày cuối tuần
-            Pair(startOfWeekString, endOfWeekString)
-        } catch (e: Exception) {
-            null
-        }
     }
 
     fun UpdateMonthlyRevenue() {
@@ -388,6 +430,32 @@ class AdminStatisticsFragment : Fragment() {
         }
     }
 
+    fun getStartAndEndOfWeek(dateString: String): Pair<String, String>? {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        return try {
+            val date = dateFormat.parse(dateString)
+
+            // Sử dụng Calendar để tính toán
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+
+            calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+            val startOfWeek = calendar.time
+
+            calendar.add(Calendar.DATE, 6)
+            val endOfWeek = calendar.time
+
+            // Chuyển đổi ngày đầu và cuối tuần thành chuỗi định dạng dd/MM/yyyy
+            val startOfWeekString = dateFormat.format(startOfWeek)
+            val endOfWeekString = dateFormat.format(endOfWeek)
+
+            Pair(startOfWeekString, endOfWeekString)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun getBestSellerFoodId(): List<Pair<Int, Int>> {
         val foodIdCountMap = mutableMapOf<Int, Int>()
 
@@ -399,6 +467,6 @@ class AdminStatisticsFragment : Fragment() {
 
         val sortedFoodIdCountMap = foodIdCountMap.toList().sortedByDescending { (_, count) -> count }
 
-        return sortedFoodIdCountMap.take(3)
+        return sortedFoodIdCountMap.filter { it.first != 0 }.take(3)
     }
 }
