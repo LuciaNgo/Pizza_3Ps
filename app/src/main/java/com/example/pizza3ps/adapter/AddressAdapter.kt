@@ -20,6 +20,8 @@ class AddressAdapter(
     private val addressList: List<AddressData>) :
     RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
 
+    private var selectedHolder: AddressViewHolder? = null
+
     class AddressViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val receiverName : TextView = view.findViewById(R.id.receiver_name)
         val receiverPhone : TextView = view.findViewById(R.id.receiver_phone_number)
@@ -44,14 +46,14 @@ class AddressAdapter(
 
         if (address.isDefault) {
             holder.defaultAddress.visibility = View.VISIBLE
+            holder.selectedIcon.visibility = View.VISIBLE
+            selectedHolder = holder
         }
 
         holder.itemView.setOnClickListener {
-            if (holder.selectedIcon.visibility == View.GONE) {
-                holder.selectedIcon.visibility = View.VISIBLE
-            } else {
-                holder.selectedIcon.visibility = View.GONE
-            }
+            selectedHolder?.selectedIcon?.visibility = View.GONE
+            holder.selectedIcon.visibility = View.VISIBLE
+            selectedHolder = holder
         }
     }
 

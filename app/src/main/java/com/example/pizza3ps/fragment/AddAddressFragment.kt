@@ -1,5 +1,11 @@
 package com.example.pizza3ps.fragment
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,12 +16,16 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.AddressData
 import com.example.pizza3ps.model.CartData
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 class AddAddressFragment : Fragment() {
     private lateinit var nameEditText: EditText
@@ -25,6 +35,8 @@ class AddAddressFragment : Fragment() {
     private lateinit var defaultAddress: CheckBox
     private lateinit var saveButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     private lateinit var dbHelper: DatabaseHelper
 
@@ -44,6 +56,11 @@ class AddAddressFragment : Fragment() {
         defaultAddress = view.findViewById(R.id.receiverDefaultAddress)
         saveButton = view.findViewById(R.id.addAddressButton)
         backButton = view.findViewById(R.id.backButton)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        mapIcon.setOnClickListener {
+            getCurrentLocation()
+        }
 
         saveButton.setOnClickListener {
             val name = nameEditText.text.toString()
@@ -113,4 +130,100 @@ class AddAddressFragment : Fragment() {
             }
     }
 
+    private fun getCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            requestNewLocationData()
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+                        val address = getAddressFromLocation(requireContext(), latitude, longitude)
+                        addressEditText.setText(address)
+                    }
+                }
+        } else {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    fun getAddressFromLocation(context: Context, latitude: Double, longitude: Double): String {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        return try {
+            val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val address: Address = addresses[0]
+                val addressLines = (0..address.maxAddressLineIndex).map { address.getAddressLine(it) }
+                addressLines.joinToString(separator = "\n")
+            } else {
+                "Không tìm thấy địa chỉ"
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Không thể lấy địa chỉ"
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                getCurrentLocation()
+                Log.d("permission", "Đã được cấp quyền truy cập vị trí.")
+            } else {
+                Log.d("permission", "Quyền truy cập vị trí bị từ chối.")
+            }
+        }
+    }
+
+    private fun requestNewLocationData() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val locationRequest = com.google.android.gms.location.LocationRequest.create().apply {
+            priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 0
+            fastestInterval = 0
+            numUpdates = 1
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : com.google.android.gms.location.LocationCallback() {
+                override fun onLocationResult(locationResult: com.google.android.gms.location.LocationResult) {
+                    val location = locationResult.lastLocation
+                    location?.let {
+                        val latitude = it.latitude
+                        val longitude = it.longitude
+                        if (isAdded) {
+                            val address = getAddressFromLocation(requireContext(), latitude, longitude)
+                            addressEditText.setText(address)
+                            addressEditText.setText(address)
+                        }
+                    }
+                }
+            },
+            null
+        )
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    }
 }
