@@ -1,4 +1,4 @@
-package com.example.pizza3ps.firebaseMessage
+package com.example.pizza3ps.FCM
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -25,6 +25,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             val orderId = remoteMessage.data["orderId"] ?: ""
             val status = remoteMessage.data["status"] ?: ""
 
+            Log.d("FirebaseMessaging", "Order ID: $orderId, Status: $status")
+
             val title = "Order Update"
             val message = when (status) {
                 "Shipping" -> "Your order is being delivered!"
@@ -32,6 +34,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 else -> "Your order has been updated!"
             }
 
+            Log.d("FirebaseMessaging", "Notification Title: $title, Message: $message")
             sendNotification(title, message, orderId)
         }
     }
