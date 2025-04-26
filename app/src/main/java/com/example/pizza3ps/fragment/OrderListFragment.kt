@@ -7,23 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.model.OrderData
-import com.google.firebase.firestore.DocumentSnapshot
+import com.example.pizza3ps.viewModel.OrdersViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class OrderListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
     private var db = FirebaseFirestore.getInstance()
     private var orderListenerRegistration: ListenerRegistration? = null
+    private lateinit var viewModel: OrdersViewModel
     private var orderStatus: String? = null
     private var isLoading = false
 
@@ -60,8 +59,7 @@ class OrderListFragment : Fragment() {
         )
         recyclerView.adapter = orderAdapter
 
-//        listenToOrdersRealtime()
-        loadOrders()
+        setupViewModel()
 
         return view
     }
@@ -71,65 +69,21 @@ class OrderListFragment : Fragment() {
         orderListenerRegistration?.remove()
     }
 
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
+
+        viewModel.orderList.observe(viewLifecycleOwner) { newOrderList ->
+            orderAdapter.submitList(newOrderList)
+        }
+
+        loadOrders()
+    }
+
     private fun loadOrders() {
         if (orderStatus == "Completed" || orderStatus == "Cancelled") {
-            listenToCompletedAndCancelledOrdersRealtime()
-        }
-        else {
-            listenToOrdersRealtime()
-        }
-    }
-
-    private fun listenToCompletedAndCancelledOrdersRealtime() {
-        if (orderStatus == null) return
-
-        orderListenerRegistration = db.collection("Orders")
-            .whereEqualTo("status", orderStatus)
-            .orderBy("createdDate", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                val newOrderList = snapshots?.mapNotNull { toOrderData(it) } ?: emptyList()
-
-                orderAdapter.submitList(newOrderList)
-            }
-    }
-
-    private fun listenToOrdersRealtime() {
-        if (orderStatus == null) return
-
-        orderListenerRegistration = db.collection("Orders")
-            .whereEqualTo("status", orderStatus)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                val newOrderList = snapshots?.mapNotNull { toOrderData(it) } ?: emptyList()
-
-                orderAdapter.submitList(newOrderList)
-            }
-    }
-
-    private fun toOrderData(doc: DocumentSnapshot): OrderData? {
-        return try {
-            OrderData(
-                orderId = doc.id,
-                createdDate = doc.getTimestamp("createdDate")?.let { formatTimestamp(it) } ?: "",
-                status = doc.getString("status") ?: "",
-                receiverName = doc.getString("receiverName") ?: "",
-                phoneNumber = doc.getString("phoneNumber") ?: "",
-                address = doc.getString("address") ?: "",
-                totalQuantity = doc.getLong("totalQuantity")?.toInt() ?: 0,
-                totalAfterDiscount = doc.getLong("totalAfterDiscount")?.toInt() ?: 0,
-                payment = doc.getString("payment") ?: ""
-            )
-        } catch (e: Exception) {
-            null
+            viewModel.startListeningOrders(orderStatus = orderStatus, orderByDate = true)
+        } else {
+            viewModel.startListeningOrders(orderStatus = orderStatus, orderByDate = false)
         }
     }
 
@@ -147,14 +101,6 @@ class OrderListFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private val dateFormatter by lazy {
-        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    }
-
-    fun formatTimestamp(timestamp: com.google.firebase.Timestamp): String {
-        return dateFormatter.format(timestamp.toDate())
     }
 
     private fun cancelOrder(order: OrderData) {
