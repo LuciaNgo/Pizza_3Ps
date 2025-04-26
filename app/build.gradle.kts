@@ -73,6 +73,9 @@ dependencies {
     implementation(libs.konfetti)
     implementation(libs.lottie)
     implementation(libs.stepview)
+    implementation(libs.firebase.messaging)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }

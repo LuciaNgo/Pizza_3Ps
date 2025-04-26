@@ -23,6 +23,7 @@ import com.example.pizza3ps.model.UserData
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         fetchAddressData()
         fetchIngredientData()
         fetchRestaurantInfo()
+        updateDeviceToken()
 
         cartFab = findViewById(R.id.cart_fab)
         cartFab.count = dbHelper.getCartItemCount()
@@ -257,5 +259,28 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.d("Firestore", "Lỗi khi đọc document: ", exception)
             }
+    }
+
+    fun updateDeviceToken() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            FirebaseMessaging.getInstance().token
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        val db = FirebaseFirestore.getInstance()
+                        db.collection("Users").document(userId)
+                            .update("deviceToken", token)
+                            .addOnSuccessListener {
+                                // Token saved successfully
+                                Log.d("DeviceToken", "Token updated successfully")
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle failure
+                                Log.e("DeviceToken", "Error updating token: ${e.message}")
+                            }
+                    }
+                }
+        }
     }
 }

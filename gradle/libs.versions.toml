@@ -25,6 +25,8 @@ googleid = "1.1.1"
 cardview = "1.0.0"
 konfetti = "2.0.2"
 stepview = "1.5.1"
+firebase-messaging = "23.4.0"
+retrofit = "2.9.0"
 
 [libraries]
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
@@ -53,6 +55,9 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 konfetti = { module = "nl.dionsegijn:konfetti-xml", version.ref = "konfetti" }
 lottie = { module = "com.airbnb.android:lottie", version = "6.4.0" }
 stepview = { group = "com.github.shuhart", name = "stepview", version.ref = "stepview" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
