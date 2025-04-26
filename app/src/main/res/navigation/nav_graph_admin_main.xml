@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_admin_main"
+    app:startDestination="@id/navigation_admin_statistics">
+
+    <fragment
+        android:id="@+id/navigation_admin_statistics"
+        android:name="com.example.pizza3ps.fragment.AdminStatisticsFragment"
+        android:label="Statistics"
+        tools:layout="@layout/fragment_admin_statistics" />
+
+    <fragment
+        android:id="@+id/navigation_admin_orders"
+        android:name="com.example.pizza3ps.fragment.AdminOrdersFragment"
+        android:label="Orders"
+        tools:layout="@layout/fragment_admin_orders" />
+
+    <fragment
+        android:id="@+id/navigation_admin_account"
+        android:name="com.example.pizza3ps.fragment.AdminAccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_admin_account" />
+
+</navigation>
