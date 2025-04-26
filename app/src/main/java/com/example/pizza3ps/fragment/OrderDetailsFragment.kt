@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
@@ -26,9 +27,8 @@ class OrderDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            orderData = it.getParcelable(ARG_ORDER)
-        }
+        val args: OrderDetailsFragmentArgs by navArgs()
+        orderData = args.order
     }
 
     override fun onCreateView(
@@ -110,18 +110,6 @@ class OrderDetailsFragment : Fragment() {
         }
 
         return view
-    }
-
-    companion object {
-        private const val ARG_ORDER = "arg_order"
-
-        fun newInstance(order: OrderData): OrderDetailsFragment {
-            val fragment = OrderDetailsFragment()
-            val args = Bundle()
-            args.putParcelable(ARG_ORDER, order)
-            fragment.arguments = args
-            return fragment
-        }
     }
 
     private fun getOrderDetailsItemList() {

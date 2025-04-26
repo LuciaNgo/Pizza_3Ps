@@ -15,7 +15,24 @@
         android:id="@+id/navigation_admin_orders"
         android:name="com.example.pizza3ps.fragment.OrderManagementFragment"
         android:label="Orders"
-        tools:layout="@layout/fragment_order_management" />
+        tools:layout="@layout/fragment_order_management" >
+
+        <action
+            android:id="@+id/action_orderManagement_to_orderDetails"
+            app:destination="@id/orderDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.pizza3ps.fragment.OrderDetailsFragment"
+        android:label="Order Details" >
+
+        <argument
+            android:name="order"
+            app:argType="com.example.pizza3ps.model.OrderData" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_admin_account"

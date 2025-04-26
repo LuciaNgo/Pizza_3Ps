@@ -1,7 +1,7 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
-import android.util.Log
+import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -115,22 +115,6 @@ class OrderListFragment : Fragment() {
             }
     }
 
-    private fun setupScrollListener() {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    val layoutManager = rv.layoutManager as LinearLayoutManager
-                    val totalItemCount = layoutManager.itemCount
-                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-                    if (!isLoading && lastVisibleItemPosition >= totalItemCount - 5) {
-//                        loadNextPage()
-                    }
-                }
-            }
-        })
-    }
-
     private fun toOrderData(doc: DocumentSnapshot): OrderData? {
         return try {
             OrderData(
@@ -147,6 +131,22 @@ class OrderListFragment : Fragment() {
         } catch (e: Exception) {
             null
         }
+    }
+
+    private fun setupScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    val layoutManager = rv.layoutManager as LinearLayoutManager
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+                    if (!isLoading && lastVisibleItemPosition >= totalItemCount - 5) {
+//                        loadNextPage()
+                    }
+                }
+            }
+        })
     }
 
     private val dateFormatter by lazy {
@@ -176,10 +176,7 @@ class OrderListFragment : Fragment() {
     }
 
     private fun showOrderDetails(order: OrderData) {
-        val orderDetailsFragment = OrderDetailsFragment.newInstance(order)
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainerOrderManagment, orderDetailsFragment)
-            .addToBackStack(null)
-            .commit()
+        val action = OrderManagementFragmentDirections.actionOrderManagementToOrderDetails(order)
+        findNavController().navigate(action)
     }
 }
