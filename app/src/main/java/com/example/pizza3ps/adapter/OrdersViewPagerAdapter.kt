@@ -5,16 +5,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.pizza3ps.fragment.OrderListFragment
 
-class OrdersViewPagerAdapter(fragmentActivity: FragmentActivity) :
-    FragmentStateAdapter(fragmentActivity) {
-    private val statuses = listOf(
-        "Awaiting confirmation",
-        "Confirmed",
-        "Preparing",
-        "Delivering",
-        "Completed",
-        "Cancelled"
-    )
+class OrdersViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+    private val statuses = listOf("Pending", "Confirmed", "Preparing", "Shipping", "Completed", "Cancelled")
 
     override fun getItemCount(): Int {
         return statuses.size

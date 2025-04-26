@@ -75,7 +75,7 @@ class OrderAdapter(
     }
 
     fun getNextStatus(currentStatus: String): String? {
-        val statusFlow = listOf("Awaiting confirmation", "Confirmed", "Preparing", "Delivering", "Completed")
+        val statusFlow = listOf("Pending", "Confirmed", "Preparing", "Shipping", "Completed")
         val index = statusFlow.indexOf(currentStatus)
         return if (index != -1 && index < statusFlow.size - 1) {
             statusFlow[index + 1]
