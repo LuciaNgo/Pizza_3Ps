@@ -14,11 +14,13 @@ import android.widget.CalendarView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pizza3ps.R
+import com.example.pizza3ps.adapter.BestSellerAdapter
 import com.example.pizza3ps.model.OrderData
 import com.example.pizza3ps.model.OrderItemData
 import com.example.pizza3ps.viewModel.OrdersViewModel
@@ -31,11 +33,14 @@ import java.util.Locale
 
 class AdminStatisticsFragment : Fragment() {
     private lateinit var overviewButton: Button
-    private lateinit var dailySelectDate: ImageView
-    private lateinit var monthlySelectDate: ImageView
-    private lateinit var yearlySelectDate: ImageView
+
+    private lateinit var dailyCardView: CardView
+    private lateinit var weeklyCardView: CardView
+    private lateinit var monthlyCardView: CardView
+    private lateinit var yearlyCardView: CardView
 
     private lateinit var dailyRevenueValue: TextView
+    private lateinit var weeklyRevenueValue: TextView
     private lateinit var monthlyRevenueValue: TextView
     private lateinit var yearlyRevenueValue: TextView
 
@@ -50,6 +55,10 @@ class AdminStatisticsFragment : Fragment() {
     private var selectedDayForDailyRevenue: Int? = null
     private var selectedMonthForDailyRevenue: Int? = null
     private var selectedYearForDailyRevenue: Int? = null
+
+    private var selectedDayForWeeklyRevenue: Int? = null
+    private var selectedMonthForWeeklyRevenue: Int? = null
+    private var selectedYearForWeeklyRevenue: Int? = null
 
     private var selectedMonthForMonthlyRevenue: Int? = null
     private var selectedYearForMonthlyRevenue: Int? = null
@@ -66,10 +75,12 @@ class AdminStatisticsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
 
         overviewButton = view.findViewById(R.id.overviewButton)
-        dailySelectDate = view.findViewById(R.id.dailySelectDate)
-        monthlySelectDate = view.findViewById(R.id.monthlySelectMonth)
-        yearlySelectDate = view.findViewById(R.id.yearlySelectYear)
+        dailyCardView = view.findViewById(R.id.dailyCardView)
+        weeklyCardView = view.findViewById(R.id.weeklyCardView)
+        monthlyCardView = view.findViewById(R.id.monthlyCardView)
+        yearlyCardView = view.findViewById(R.id.yearlyCardView)
         dailyRevenueValue = view.findViewById(R.id.dailyRevenueValue)
+        weeklyRevenueValue = view.findViewById(R.id.weeklyRevenueValue)
         monthlyRevenueValue = view.findViewById(R.id.monthlyRevenueValue)
         yearlyRevenueValue = view.findViewById(R.id.yearlyRevenueValue)
         revenueTabLayout = view.findViewById(R.id.tabLayoutRevenueLineChart)
@@ -88,7 +99,7 @@ class AdminStatisticsFragment : Fragment() {
             // Handle overview button click
         }
 
-        dailySelectDate.setOnClickListener {
+        dailyCardView.setOnClickListener {
             val dialog = Dialog(requireContext())
             dialog.setContentView(R.layout.date_picker)
             dialog.window?.setLayout(
@@ -96,7 +107,7 @@ class AdminStatisticsFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
 
-            val calendarView = dialog.findViewById<CalendarView>(R.id.calendar_view) // nhớ gán ID cho CalendarView trong XML nhé
+            val calendarView = dialog.findViewById<CalendarView>(R.id.calendar_view)
 
             calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
                 selectedDayForDailyRevenue = dayOfMonth
@@ -114,7 +125,33 @@ class AdminStatisticsFragment : Fragment() {
             }
         }
 
-        monthlySelectDate.setOnClickListener {
+        weeklyCardView.setOnClickListener {
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.date_picker)
+            dialog.window?.setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            val calendarView = dialog.findViewById<CalendarView>(R.id.calendar_view)
+
+            calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+                selectedDayForWeeklyRevenue = dayOfMonth
+                selectedMonthForWeeklyRevenue = month + 1
+                selectedYearForWeeklyRevenue = year
+
+                dialog.dismiss()
+            }
+
+            dialog.show()
+
+            // Neu co thay doi ngay thi cap nhat doanh thu
+            dialog.setOnDismissListener {
+                UpdateWeeklyRevenue()
+            }
+        }
+
+        monthlyCardView.setOnClickListener {
             val dialog = MonthYearPickerDialogFragment{ month, year ->
                 selectedMonthForMonthlyRevenue = month
                 selectedYearForMonthlyRevenue = year
@@ -132,7 +169,7 @@ class AdminStatisticsFragment : Fragment() {
 
         }
 
-        yearlySelectDate.setOnClickListener {
+        yearlyCardView.setOnClickListener {
             val dialog = YearPickerDialogFragment { year ->
                 selectedYearForYearlyRevenue = year
             }
@@ -148,6 +185,7 @@ class AdminStatisticsFragment : Fragment() {
             orderList.addAll(completedOrders)
 
             UpdateDailyRevenue()
+            UpdateWeeklyRevenue()
             UpdateMonthlyRevenue()
             UpdateYearlyRevenue()
         }
@@ -156,11 +194,11 @@ class AdminStatisticsFragment : Fragment() {
             orderItemList.clear()
             orderItemList.addAll(orderItems)
 
-            getBestSellerFoodId()
+            val bestSeller = getBestSellerFoodId()
 
             // Update best seller RecyclerView
-//            val bestSellerAdapter = BestSellerAdapter(bestSeller)
-//            bestSellerRecyclerView.adapter = bestSellerAdapter
+            val bestSellerAdapter = BestSellerAdapter(bestSeller)
+            bestSellerRecyclerView.adapter = bestSellerAdapter
         }
     }
 
@@ -195,6 +233,83 @@ class AdminStatisticsFragment : Fragment() {
         val currencyFormat = java.text.NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
         dailyRevenueValue.text = currencyFormat.format(dailyRevenue)
 
+    }
+
+    private fun UpdateWeeklyRevenue() {
+        if (selectedDayForWeeklyRevenue == null ||
+            selectedMonthForWeeklyRevenue == null ||
+            selectedYearForWeeklyRevenue == null
+        ) {
+            // Set ngay mac dinh
+            val calendar = Calendar.getInstance()
+            selectedDayForWeeklyRevenue = calendar.get(Calendar.DAY_OF_MONTH)
+            selectedMonthForWeeklyRevenue = calendar.get(Calendar.MONTH) + 1
+            selectedYearForWeeklyRevenue = calendar.get(Calendar.YEAR)
+        }
+
+        val selectedDate = "$selectedDayForWeeklyRevenue/$selectedMonthForWeeklyRevenue/$selectedYearForWeeklyRevenue"
+        Log.d("Week", selectedDate)
+
+        val (startOfWeek, endOfWeek) = getStartAndEndOfWeek(selectedDate) ?: return
+
+        var weeklyRevenue = 0
+
+        for (order in orderList) {
+            val dateTriple = parseDateToDayMonthYear(order.createdDate)
+
+            if (dateTriple != null) {
+                val (day, month, year) = dateTriple
+                val orderDate = "$day/$month/$year"
+
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val startDate = dateFormat.parse(startOfWeek)
+                val endDate = dateFormat.parse(endOfWeek)
+                val compareDate = dateFormat.parse(orderDate)
+
+                if (compareDate != null && startDate != null && endDate != null) {
+                    if (compareDate >= startDate && compareDate <= endDate) {
+                        weeklyRevenue += order.totalAfterDiscount
+                    }
+                }
+            }
+        }
+
+        Log.d("Week", "Weekly revenue: $weeklyRevenue")
+        val currencyFormat = java.text.NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+        weeklyRevenueValue.text = currencyFormat.format(weeklyRevenue)
+    }
+
+    fun getStartAndEndOfWeek(dateString: String): Pair<String, String>? {
+        // Định dạng ngày đầu vào (dd/MM/yyyy)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        return try {
+            // Chuyển đổi chuỗi ngày thành đối tượng Date
+            val date = dateFormat.parse(dateString)
+
+            // Sử dụng Calendar để tính toán
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+
+            // Đặt lịch để bắt đầu tuần (Sunday)
+            calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+            val startOfWeek = calendar.time
+
+            // Lấy ngày cuối tuần (Saturday)
+            calendar.add(Calendar.DATE, 6) // Thêm 6 ngày để đến cuối tuần
+            val endOfWeek = calendar.time
+
+            // Chuyển đổi ngày đầu và cuối tuần thành chuỗi định dạng dd/MM/yyyy
+            val startOfWeekString = dateFormat.format(startOfWeek)
+            val endOfWeekString = dateFormat.format(endOfWeek)
+
+            Log.d("Week", "Start of week: $startOfWeekString, End of week: $endOfWeekString")
+
+            // Trả về cặp ngày đầu và ngày cuối tuần
+            Pair(startOfWeekString, endOfWeekString)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun UpdateMonthlyRevenue() {
