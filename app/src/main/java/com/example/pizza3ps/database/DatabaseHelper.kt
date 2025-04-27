@@ -600,6 +600,15 @@ class DatabaseHelper(context: Context) :
     }
 
     // ===== ADDRESS TABLE =====
+    private fun resetDefaultIfNeeded(db: SQLiteDatabase, isDefault: Boolean) {
+        if (isDefault) {
+            val resetValues = ContentValues().apply {
+                put("isDefault", 0)
+            }
+            db.update("Address", resetValues, null, null)
+        }
+    }
+
     fun addAddress(address: AddressData) {
         val db = writableDatabase
 
@@ -609,20 +618,50 @@ class DatabaseHelper(context: Context) :
             arrayOf(address.name, address.phone, address.address)
         )
 
-        if (cursor.count > 0) {
-            // Dia chi da ton tai nhung isDefault co khac nhau khong
-            cursor.moveToFirst()
-            val isAddressDefault = if (address.isDefault) 1 else 0
-            if (cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) != isAddressDefault) {
-                // Dia chi da ton tai nhung isDefault khac nhau
-                val values = ContentValues().apply {
-                    put("isDefault", if (address.isDefault) 1 else 0)
-                }
-                db.update("Address", values, "name = ? AND phone = ? AND address = ?", arrayOf(address.name, address.phone, address.address))
+//        if (cursor.count > 0) {
+//            // Dia chi da ton tai nhung isDefault co khac nhau khong
+//            cursor.moveToFirst()
+//            val isAddressDefault = if (address.isDefault) 1 else 0
+//            if (cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) != isAddressDefault) {
+//                // Dia chi da ton tai nhung isDefault khac nhau
+//                val values = ContentValues().apply {
+//                    put("isDefault", if (address.isDefault) 1 else 0)
+//                }
+//                db.update("Address", values, "name = ? AND phone = ? AND address = ?", arrayOf(address.name, address.phone, address.address))
+//            }
+//        }
+//        else {
+//            // Dia chi chua ton tai, them moi
+//            val values = ContentValues().apply {
+//                put("name", address.name)
+//                put("phone", address.phone)
+//                put("address", address.address)
+//                put("isDefault", if (address.isDefault) 1 else 0)
+//            }
+//            db.insert("Address", null, values)
+//        }
+
+        if (cursor.moveToFirst()) {
+            // Dia chi da ton tai
+            resetDefaultIfNeeded(db, address.isDefault)
+
+            // reset gia tri isDefault cua cac address khac
+            val values = ContentValues().apply {
+                put("isDefault", if (address.isDefault) 1 else 0)
             }
-        }
-        else {
-            // Dia chi chua ton tai, them moi
+            db.update(
+                "Address",
+                values,
+                "name = ? AND phone = ? AND address = ?",
+                arrayOf(address.name, address.phone, address.address)
+            )
+
+        } else {
+            // Dia chi chua ton tai
+
+            resetDefaultIfNeeded(db, address.isDefault)
+
+            // Thêm mới
             val values = ContentValues().apply {
                 put("name", address.name)
                 put("phone", address.phone)
@@ -631,12 +670,16 @@ class DatabaseHelper(context: Context) :
             }
             db.insert("Address", null, values)
         }
+
         cursor.close()
         db.close()
     }
 
     fun addAddressWithId(addressId: String, address: AddressData) {
         val db = writableDatabase
+
+        resetDefaultIfNeeded(db, address.isDefault)
+
         val values = ContentValues().apply {
             put("id", addressId)
             put("name", address.name)
@@ -721,6 +764,9 @@ class DatabaseHelper(context: Context) :
 
     fun updateAddress(id: Int, address: AddressData) {
         val db = writableDatabase
+
+        resetDefaultIfNeeded(db, address.isDefault)
+
         val values = ContentValues().apply {
             put("name", address.name)
             put("phone", address.phone)

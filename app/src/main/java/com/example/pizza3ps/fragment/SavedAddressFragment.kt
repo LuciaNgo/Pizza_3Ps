@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginStart
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ class SavedAddressFragment : Fragment() {
     private lateinit var editButton: Button
     private lateinit var selectButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var emptyView: View
     private var currentSelectedAddressId : Int? = null
 
     private lateinit var dbHelper: DatabaseHelper
@@ -61,6 +63,14 @@ class SavedAddressFragment : Fragment() {
         editButton = view.findViewById(R.id.editAddressButton)
         selectButton = view.findViewById(R.id.selectAddressButton)
         backButton = view.findViewById(R.id.backButton)
+        emptyView = view.findViewById(R.id.view)
+
+        if (source == "main") {
+            emptyView.visibility = View.VISIBLE
+        }
+        else {
+            emptyView.visibility = View.GONE
+        }
 
         dbHelper = DatabaseHelper(requireContext())
         setUpView()
@@ -94,11 +104,9 @@ class SavedAddressFragment : Fragment() {
         }
 
         selectButton.setOnClickListener() {
-            val adapter = addressRecyclerView.adapter as AddressAdapter
-            val selectedAddressId = adapter.getSelectedItemPosition()
-            selectedAddressId?.let {
+            currentSelectedAddressId?.let {
                 val result = Bundle().apply {
-                    putInt("selectedAddressId", selectedAddressId)
+                    putInt("selectedAddressId", it)
                 }
                 parentFragmentManager.setFragmentResult("selected_address", result)
                 findNavController().popBackStack() // Quay lại PaymentFragment
@@ -109,8 +117,9 @@ class SavedAddressFragment : Fragment() {
             currentSelectedAddressId?.let {
                 val bundle = Bundle().apply {
                     putInt("selectedAddressId", it)
+                    Log.d("selectedAddressId", it.toString())
                 }
-//                findNavController().navigate(R.id.action_savedAddressFragment_to_editAddressFragment, bundle)
+                findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment, bundle)
             }
         }
 
@@ -126,8 +135,22 @@ class SavedAddressFragment : Fragment() {
     private fun setUpView() {
         addressList.addAll(dbHelper.getAllAddresses())
 
-        editButton.visibility = View.GONE
-        selectButton.visibility = View.GONE
+        if (currentSelectedAddressId != null && currentSelectedAddressId != -1) {
+            editButton.visibility = View.VISIBLE
+            selectButton.visibility = View.VISIBLE
+
+        } else {
+            editButton.visibility = View.GONE
+            selectButton.visibility = View.GONE
+        }
+
+//        if (source == "main") {
+//            selectButton.visibility = View.GONE
+//            val params = editButton.layoutParams as ConstraintLayout.LayoutParams
+//            params.marginStart = 0
+//            params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+//            editButton.layoutParams = params
+//        }
 
         if (addressList.isEmpty()) {
             infoLayout.visibility = View.VISIBLE
@@ -146,10 +169,12 @@ class SavedAddressFragment : Fragment() {
                 if (addressId != null) {
                     editButton.visibility = View.VISIBLE
                     selectButton.visibility = View.VISIBLE
+                    Log.d("currentSelectedAddressId", currentSelectedAddressId.toString())
                 } else {
                     editButton.visibility = View.GONE
                     selectButton.visibility = View.GONE
                 }
+                currentSelectedAddressId = addressId
             }
 
             addressRecyclerView.adapter = adapter

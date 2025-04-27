@@ -16,6 +16,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.example.pizza3ps.R
@@ -37,8 +38,8 @@ class AddAddressFragment : Fragment() {
     private lateinit var backButton: ImageView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-
     private lateinit var dbHelper: DatabaseHelper
+    private var addressId: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +58,16 @@ class AddAddressFragment : Fragment() {
         saveButton = view.findViewById(R.id.addAddressButton)
         backButton = view.findViewById(R.id.backButton)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        arguments?.let {
+            addressId = it.getInt("selectedAddressId", -1)
+        }
+
+        if (addressId != null && addressId != -1) {
+            saveButton.text = "Save"
+            view.findViewById<TextView>(R.id.toolbar_title).text = "Edit Address Info"
+            loadAddressDetails(addressId!!)
+        }
 
         mapIcon.setOnClickListener {
             getCurrentLocation()
@@ -87,9 +98,13 @@ class AddAddressFragment : Fragment() {
                     isDefault = isDefault
                 )
 
-                // Save the address to the database
-                val dbHelper = DatabaseHelper(requireContext())
-                dbHelper.addAddress(addressItem)
+                if (addressId != null && addressId != -1) {
+                    // Update the address in the database
+                    dbHelper.updateAddress(addressId!!, addressItem)
+                } else {
+                    // Add a new address to the database
+                    dbHelper.addAddress(addressItem)
+                }
 
                 // Sync to firestore
                 val userId = dbHelper.getUser()?.id
@@ -98,7 +113,7 @@ class AddAddressFragment : Fragment() {
                 }
 
                 // Navigate back to the saved addresses screen
-                findNavController().navigateUp()
+                findNavController().popBackStack()
             } else {
                 // Show an error message
             }
@@ -110,6 +125,16 @@ class AddAddressFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun loadAddressDetails(addressId: Int) {
+        val addressItem = dbHelper.getAddressById(addressId)
+        addressItem?.let {
+            nameEditText.setText(it.name)
+            phoneEditText.setText(it.phone)
+            addressEditText.setText(it.address)
+            defaultAddress.isChecked = it.isDefault
+        }
     }
 
     fun syncAddressItem(userId: String, addressItem: AddressData) {
@@ -179,7 +204,6 @@ class AddAddressFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                getCurrentLocation()
                 Log.d("permission", "Đã được cấp quyền truy cập vị trí.")
             } else {
                 Log.d("permission", "Quyền truy cập vị trí bị từ chối.")
