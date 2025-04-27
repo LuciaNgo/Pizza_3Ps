@@ -202,8 +202,10 @@ class PaymentFragment : Fragment() {
     fun getDefaultAddress(): AddressData {
         val defaultAddress = dbHelper.getDefaultAddress()
         return if (defaultAddress != null) {
+            Log.d("DefaultAddress", "Name: ${defaultAddress.name}, Phone: ${defaultAddress.phone}, Address: ${defaultAddress.address}")
             defaultAddress
         } else {
+            Log.d("DefaultAddress", "No default address found")
             AddressData("", "", "", false)
         }
     }
