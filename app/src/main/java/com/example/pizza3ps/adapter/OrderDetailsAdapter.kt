@@ -11,9 +11,10 @@ import com.bumptech.glide.Glide
 import com.example.pizza3ps.R
 import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.CartData
+import com.example.pizza3ps.model.OrderItemData
 import java.text.DecimalFormat
 
-class OrderDetailsAdapter(private val orderDetailsList: List<CartData>) :
+class OrderDetailsAdapter(private val orderDetailsList: List<OrderItemData>) :
     RecyclerView.Adapter<OrderDetailsAdapter.OrderDetailsViewHolder>() {
 
     inner class OrderDetailsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,9 +34,10 @@ class OrderDetailsAdapter(private val orderDetailsList: List<CartData>) :
     override fun onBindViewHolder(holder: OrderDetailsViewHolder, position: Int) {
         val item = orderDetailsList[position]
 
-        if (item.food_id != 0) {
+        Log.d("Ingredients", "Item: ${item.ingredients}")
+        if (item.foodId != 0) {
             val dbHelper = DatabaseHelper(holder.itemView.context)
-            val foodData = dbHelper.getFoodById(item.food_id)
+            val foodData = dbHelper.getFoodById(item.foodId)
 
             holder.foodName.text = foodData.name_en
             holder.foodQuantity.text = "x${item.quantity}"
