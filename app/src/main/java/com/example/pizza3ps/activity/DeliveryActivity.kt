@@ -181,12 +181,6 @@ class DeliveryActivity : AppCompatActivity() {
 
                     stepView.visibility = ConstraintLayout.VISIBLE
                 }
-
-                if (status == "Pending") {
-                    if (discount > 0) {
-                        updateRedeemPointsDb(discount.toInt(), "Minus")
-                    }
-                }
                 if (status == "Completed") lottieView.cancelAnimation()
             }
             else {
@@ -194,10 +188,6 @@ class DeliveryActivity : AppCompatActivity() {
                 lottieView.cancelAnimation()
                 stepView.visibility = ConstraintLayout.GONE
                 cancelLayout.visibility = ConstraintLayout.VISIBLE
-
-                if (discount > 0) {
-                    updateRedeemPointsDb(discount.toInt(), "Plus")
-                }
             }
 
             if (status != "Pending") {
@@ -247,23 +237,6 @@ class DeliveryActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun updateRedeemPointsDb(discountAmount: Int, mode: String) {
-        val dbHelper = DatabaseHelper(this)
-        val userData = dbHelper.getUser()
-
-        if (userData != null) {
-            var newPoints = 0
-            if (mode == "Plus") newPoints = userData.points + discountAmount
-            else if (mode == "Minus") newPoints = userData.points - discountAmount
-
-            if (newPoints < 0) {
-                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
-                return
-            }
-            dbHelper.updateUserPoints(newPoints)
-        }
     }
 
     override fun onDestroy() {

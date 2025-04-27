@@ -89,7 +89,6 @@ class OrderAdapter(
                 btnNextStatus.visibility = View.GONE
             }
 
-
             itemView.setOnClickListener { onItemClicked(order) }
         }
     }

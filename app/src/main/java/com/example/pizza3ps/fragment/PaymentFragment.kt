@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import vn.momo.momo_partner.AppMoMoLib
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -420,6 +421,9 @@ class PaymentFragment : Fragment() {
             .addOnSuccessListener {
                 uploadOrderDetails(orderId)
             }
+
+        updateRedeemPointsDb(discountValue)
+        updateRedeemPointsFirestore(discountValue)
     }
 
     fun uploadOrderDetails(orderId: String) {
@@ -490,6 +494,44 @@ class PaymentFragment : Fragment() {
         }
 
         dbHelper.deleteAllCart()
+    }
+
+    private fun updateRedeemPointsDb(discountAmount: Int) {
+        val dbHelper = DatabaseHelper(requireContext())
+        val userData = dbHelper.getUser()
+
+        if (userData != null) {
+            var newPoints = 0
+            newPoints = userData.points - discountAmount
+
+            if (newPoints < 0) {
+                Toast.makeText(requireContext(), "Not enough points", Toast.LENGTH_SHORT).show()
+                return
+            }
+            dbHelper.updateUserPoints(newPoints)
+        }
+    }
+
+    private fun updateRedeemPointsFirestore(discountAmount: Int) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection(("Users")).document(userId)
+
+        // Lay points cua user roi update
+        docRef.get().addOnSuccessListener { document ->
+            val currentPoints = document.getLong("points")?.toInt() ?: 0
+            var newPoints = 0
+            newPoints = currentPoints - discountAmount
+
+            if (newPoints < 0) {
+                Toast.makeText(requireContext(), "Not enough points", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
+
+            docRef.update("points", newPoints)
+        }.addOnFailureListener {
+            Log.e("DeliveryActivity", "Error getting user points")
+        }
     }
 
 }
