@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,10 +18,12 @@ class OrderAdapter(
     private val onNextStatusClicked: (OrderData, String) -> Unit,
     private val onItemClicked: (OrderData) -> Unit,
     private val showNextStatusButton: Boolean = true,
-    private val hideCancelAfterConfirmed: Boolean = false
+    private val hideCancelAfterConfirmed: Boolean = false,
+    private val source: String = "admin"
 ) : ListAdapter<OrderData, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val layout = itemView.findViewById<ConstraintLayout>(R.id.layout)
         private val tvOrderID = itemView.findViewById<TextView>(R.id.tvOrderID)
         private val tvOrderDate = itemView.findViewById<TextView>(R.id.tvOrderDate)
         private val tvOrderStatus = itemView.findViewById<TextView>(R.id.tvOrderStatus)
@@ -34,16 +38,23 @@ class OrderAdapter(
 
         fun bind(order: OrderData) {
             tvOrderID.text = "Order ID: ${order.orderId}"
-            tvOrderDate.text = "Date: ${order.createdDate}"
+            tvOrderDate.text = "Created on: ${order.createdDate}"
             tvOrderStatus.text = "Status: ${order.status}"
-            tvCustomerName.text = "Receiver: ${order.receiverName}"
+            tvCustomerName.text = "Name: ${order.receiverName}"
             tvCustomerContact.text = "Phone: ${order.phoneNumber}"
             tvCustomerAddress.text = "Address: ${order.address}"
             tvTotalQuantity.text = "Total quantity: ${order.totalQuantity}"
-            tvTotalAmount.text = "Total after discount: ${order.totalAfterDiscount}đ"
+            tvTotalAmount.text = "Total price: ${order.totalAfterDiscount}đ"
             tvPaymentMethod.text = "Payment method: ${order.payment}"
 
             val nextStatus = getNextStatus(order.status)
+
+            if (order.status == "Pending") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_pending))
+            if (order.status == "Confirmed") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_confirmed))
+            if (order.status == "Preparing") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_preparing))
+            if (order.status == "Shipping") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_shipping))
+            if (order.status == "Completed") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_completed))
+            if (order.status == "Cancelled") layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.status_cancelled))
 
             if (order.status == "Cancelled" || order.status == "Completed") {
                 btnCancel.visibility = View.GONE
@@ -70,6 +81,14 @@ class OrderAdapter(
                     }
                 }
             }
+
+            if (source == "customer") {
+                if (order.status == "Confirmed" || order.status == "Preparing" || order.status == "Shipping"
+                    || order.status == "Cancelled" || order.status == "Completed")
+                btnCancel.visibility = View.GONE
+                btnNextStatus.visibility = View.GONE
+            }
+
             itemView.setOnClickListener { onItemClicked(order) }
         }
     }

@@ -19,6 +19,7 @@ import java.text.DecimalFormat
 class ShowCartActivity : AppCompatActivity() {
     private lateinit var backButton: ImageView
     private lateinit var totalPrice : TextView
+    private lateinit var emptyCartText: TextView
     private lateinit var checkoutButton : Button
     private lateinit var cartRecyclerView: RecyclerView
     private var cartList = listOf<CartData>()
@@ -34,10 +35,15 @@ class ShowCartActivity : AppCompatActivity() {
 
         backButton = findViewById(R.id.back_button)
         totalPrice = findViewById(R.id.total_price)
+        emptyCartText = findViewById(R.id.empty_cart_text)
         checkoutButton = findViewById(R.id.checkout_button)
         cartRecyclerView = findViewById(R.id.cart_recyclerView)
         cartRecyclerView.layoutManager = LinearLayoutManager(this)
         cartRecyclerView.adapter = CartAdapter(this, cartList)
+
+        if (cartList.isEmpty()) {
+            emptyCartText.visibility = TextView.VISIBLE
+        } else emptyCartText.visibility = TextView.GONE
 
         val totalPrice = dbHelper.calculateTotalPrice()
         val formattedTotalPrice = DecimalFormat("#,###").format(totalPrice) + " VND"
@@ -48,6 +54,9 @@ class ShowCartActivity : AppCompatActivity() {
         }
 
         checkoutButton.setOnClickListener {
+            if (cartList.isEmpty()) {
+                return@setOnClickListener
+            }
             val intent = Intent(this, PaymentActivity::class.java)
             startActivity(intent)
         }
@@ -62,6 +71,10 @@ class ShowCartActivity : AppCompatActivity() {
         // Clear cartList va doc lai du lieu
         cartList = listOf<CartData>()
         cartList = dbHelper.getAllCartItems()
+
+        if (cartList.isEmpty()) {
+            emptyCartText.visibility = TextView.VISIBLE
+        } else emptyCartText.visibility = TextView.GONE
 
         // Cap nhat lai adapter
         cartRecyclerView.adapter = CartAdapter(this, cartList)

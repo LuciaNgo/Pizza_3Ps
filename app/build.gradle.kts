@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-parcelize")
 
 }
 
@@ -63,6 +64,8 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.play.services.location)
     annotationProcessor(libs.glide.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -73,6 +76,10 @@ dependencies {
     implementation(libs.konfetti)
     implementation(libs.lottie)
     implementation(libs.stepview)
+    implementation(libs.firebase.messaging)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.mpandroidchart)
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }
