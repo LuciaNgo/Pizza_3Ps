@@ -27,7 +27,10 @@ import android.util.Log
 import android.widget.CalendarView
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import com.example.pizza3ps.MomoPaymentActivity
 import com.example.pizza3ps.activity.DeliveryActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import vn.momo.momo_partner.AppMoMoLib
@@ -80,6 +83,7 @@ class PaymentFragment : Fragment() {
     private val momoSecret = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
     private var lastGeneratedOrderId: String? = null
     private var orderId: String? = null
+    private lateinit var momoLauncher: ActivityResultLauncher<Intent>
 
     private val REQUEST_CODE = 101
     private val sandboxToken = "sandbox_zq6cwtqf_23pxw29xrgphjwfp"
@@ -133,6 +137,22 @@ class PaymentFragment : Fragment() {
         AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN)
         AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT)
         AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT)
+
+        momoLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val data = result.data!!
+                val status = data.getIntExtra("status", -1)
+                if (status == 0) {
+                    Toast.makeText(requireContext(), "MoMo payment successful", Toast.LENGTH_SHORT).show()
+                    createOrderInFirestore(orderId!!, "Momo")
+                } else {
+                    val message = data.getStringExtra("message") ?: "Payment failed"
+                    Toast.makeText(requireContext(), "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
         dbHelper = DatabaseHelper(requireContext())
         cartList = dbHelper.getAllCartItems()
@@ -325,53 +345,17 @@ class PaymentFragment : Fragment() {
         dialog.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == -1 && data != null) {
-            val status = data.getIntExtra("status", -1)
-            if (status == 0) {
-                // Success
-                Toast.makeText(requireContext(), "MoMo payment successful", Toast.LENGTH_SHORT).show()
-                createOrderInFirestore(orderId!!, "Momo")
-            } else {
-                val message = data.getStringExtra("message") ?: "Payment failed"
-                Toast.makeText(requireContext(), "MoMo payment failed: $message", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     fun requestMoMoPayment(amount: Int) {
         if (orderId == null) {
             Toast.makeText(requireContext(), "Order ID is not ready", Toast.LENGTH_SHORT).show()
             return
         }
 
-        AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT)
-        AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN)
-
-        val momoParams = HashMap<String, Any>().apply {
-            put("merchantname", "Pizza3Ps") // Your MoMo merchant name
-            put("merchantcode", momoClientId) // Your MoMo merchant code
-            put("amount", amount) // Must be Int
-            put("orderId", orderId!!) // Unique per order
-            put("orderLabel", "Pizza Order") // Custom label
-
-            // Optional
-            put("merchantnamelabel", "Pizza3Ps Order")
-            put("fee", 0)
-            put("description", "Thanh toán đơn hàng Pizza")
-
-            // Required for verifying transaction
-            put("requestId", momoClientId + "_billId_" + System.currentTimeMillis())
-            put("partnerCode", momoClientId)
-
-            // Optional extra info
-            put("extraData", "")
-            put("extra", "")
+        val intent = Intent(requireContext(), MomoPaymentActivity::class.java).apply {
+            putExtra("orderId", orderId)
+            putExtra("amount", amount)
         }
-
-        AppMoMoLib.getInstance().requestMoMoCallBack(requireActivity(), momoParams)
+        momoLauncher.launch(intent)
     }
 
     fun generateOrderId(callback: (String) -> Unit) {
