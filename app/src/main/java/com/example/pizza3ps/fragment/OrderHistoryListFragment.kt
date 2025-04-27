@@ -14,6 +14,7 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.DeliveryActivity
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.model.OrderData
+import com.example.pizza3ps.viewModel.AdminOrdersViewModel
 import com.example.pizza3ps.viewModel.CustomerOrderViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -57,11 +58,12 @@ class OrderHistoryListFragment : Fragment() {
             onNextStatusClicked = { order, nextStatus -> updateOrderStatus(order, nextStatus) },
             onItemClicked = { order -> toDeliveryPage(order) },
             showNextStatusButton = false,
-            hideCancelAfterConfirmed = true
+            hideCancelAfterConfirmed = true,
+            source = "customer"
         )
         recyclerView.adapter = orderAdapter
 
-        viewModel = ViewModelProvider(requireActivity())[CustomerOrderViewModel::class.java]
+        viewModel = ViewModelProvider(this).get(CustomerOrderViewModel::class.java)
         if (orderStatus != null) {
             viewModel.listenToOrdersRealtime(orderStatus!!)
             viewModel.getOrdersByStatus(orderStatus!!).observe(viewLifecycleOwner) { orders ->

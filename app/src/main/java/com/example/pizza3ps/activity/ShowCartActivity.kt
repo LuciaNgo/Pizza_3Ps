@@ -54,6 +54,9 @@ class ShowCartActivity : AppCompatActivity() {
         }
 
         checkoutButton.setOnClickListener {
+            if (cartList.isEmpty()) {
+                return@setOnClickListener
+            }
             val intent = Intent(this, PaymentActivity::class.java)
             startActivity(intent)
         }

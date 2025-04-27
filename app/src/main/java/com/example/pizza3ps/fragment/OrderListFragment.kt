@@ -55,7 +55,8 @@ class OrderListFragment : Fragment() {
         orderAdapter = OrderAdapter(
             onCancelClicked = { order -> cancelOrder(order) },
             onNextStatusClicked = { order, nextStatus -> updateOrderStatus(order, nextStatus) },
-            onItemClicked = { order -> showOrderDetails(order) }
+            onItemClicked = { order -> showOrderDetails(order) },
+            source = "admin"
         )
         recyclerView.adapter = orderAdapter
 

@@ -184,7 +184,6 @@ class DeliveryActivity : AppCompatActivity() {
 
                 if (status == "Pending") {
                     if (discount > 0) {
-                        updateRedeemPointsFirestore(discount.toInt(), "Minus")
                         updateRedeemPointsDb(discount.toInt(), "Minus")
                     }
                 }
@@ -197,7 +196,6 @@ class DeliveryActivity : AppCompatActivity() {
                 cancelLayout.visibility = ConstraintLayout.VISIBLE
 
                 if (discount > 0) {
-                    updateRedeemPointsFirestore(discount.toInt(), "Plus")
                     updateRedeemPointsDb(discount.toInt(), "Plus")
                 }
             }
@@ -249,29 +247,6 @@ class DeliveryActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun updateRedeemPointsFirestore(discountAmount: Int, mode: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val db = FirebaseFirestore.getInstance()
-        val docRef = db.collection(("Users")).document(userId)
-
-        // Lay points cua user roi update
-        docRef.get().addOnSuccessListener { document ->
-            val currentPoints = document.getLong("points")?.toInt() ?: 0
-            var newPoints = 0
-            if (mode == "Plus") newPoints = currentPoints + discountAmount
-            else if (mode == "Minus") newPoints = currentPoints - discountAmount
-
-            if (newPoints < 0) {
-                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
-                return@addOnSuccessListener
-            }
-
-            docRef.update("points", newPoints)
-        }.addOnFailureListener {
-            Log.e("DeliveryActivity", "Error getting user points")
-        }
     }
 
     private fun updateRedeemPointsDb(discountAmount: Int, mode: String) {

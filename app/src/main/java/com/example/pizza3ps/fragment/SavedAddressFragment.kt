@@ -237,7 +237,7 @@ class SavedAddressFragment : Fragment() {
             val icon = ContextCompat.getDrawable(recyclerView.context, R.drawable.delete_white)!!
             val iconMargin = (itemView.height - icon.intrinsicHeight) / 2
 
-            val maxSwipeDistance = -itemView.width / 4f - 16
+            val maxSwipeDistance = -itemView.width / 4f - 50
             val clampedDX = if (dX < maxSwipeDistance) maxSwipeDistance else dX
 
             if (clampedDX < 0) {
