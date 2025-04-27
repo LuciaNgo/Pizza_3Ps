@@ -27,6 +27,8 @@ konfetti = "2.0.2"
 stepview = "1.5.1"
 firebase-messaging = "23.4.0"
 retrofit = "2.9.0"
+firebaseMessagingKtx = "24.1.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
@@ -58,6 +60,8 @@ stepview = { group = "com.github.shuhart", name = "stepview", version.ref = "ste
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

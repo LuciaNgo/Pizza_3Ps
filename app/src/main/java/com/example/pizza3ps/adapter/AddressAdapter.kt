@@ -17,8 +17,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class AddressAdapter(
     private val fragment: SavedAddressFragment,
-    private val addressList: List<AddressData>) :
+    private val addressList: List<AddressData>,
+    private var selectedAddressId: Int?) :
     RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
+
+    private var defaultHolder: AddressViewHolder? = null
+    private var selectedHolder: AddressViewHolder? = null
+    private var selectedPosition: Int = RecyclerView.NO_POSITION
+
+    var onItemSelectedListener: ((Int?) -> Unit)? = null
 
     class AddressViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val receiverName : TextView = view.findViewById(R.id.receiver_name)
@@ -46,12 +53,23 @@ class AddressAdapter(
             holder.defaultAddress.visibility = View.VISIBLE
         }
 
+        val dbHelper = DatabaseHelper(fragment.requireContext())
+        val addressId = dbHelper.getAddressId(addressList[position])
+
+        if (selectedAddressId != null && addressId == selectedAddressId) {
+            holder.selectedIcon.visibility = View.VISIBLE
+            selectedHolder = holder
+//            selectedPosition = holder.bindingAdapterPosition
+        }
+
         holder.itemView.setOnClickListener {
-            if (holder.selectedIcon.visibility == View.GONE) {
-                holder.selectedIcon.visibility = View.VISIBLE
-            } else {
-                holder.selectedIcon.visibility = View.GONE
-            }
+            selectedHolder?.selectedIcon?.visibility = View.GONE
+            holder.selectedIcon.visibility = View.VISIBLE
+            selectedHolder = holder
+//            selectedPosition = holder.bindingAdapterPosition
+            selectedAddressId = addressId
+
+            onItemSelectedListener?.invoke(selectedAddressId)
         }
     }
 
@@ -65,6 +83,11 @@ class AddressAdapter(
         Log.d("AddressAdapter", "Deleting address: $name, $phone, $address, $isDefault")
         Log.d("AddressAdapter", "Deleting address with ID: $addressId")
         dbHelper.deleteAddress(addressId)
+
+        if (selectedAddressId == addressId) {
+            selectedAddressId = null
+            onItemSelectedListener?.invoke(selectedAddressId)
+        }
 
         (addressList as MutableList).removeAt(position)
         notifyItemRemoved(position)
@@ -86,6 +109,15 @@ class AddressAdapter(
             .addOnFailureListener { e ->
                 Log.e("FirebaseSync", "Failed to sync item: $addressId", e)
             }
+    }
+
+    fun setDefaultAddress() {
+
+    }
+
+    fun getSelectedItemPosition() : Int? {
+//        return selectedHolder?.bindingAdapterPosition
+        return selectedAddressId
     }
 
     override fun getItemCount() = addressList.size
