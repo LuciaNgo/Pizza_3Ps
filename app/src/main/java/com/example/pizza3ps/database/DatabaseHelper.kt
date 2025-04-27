@@ -537,6 +537,15 @@ class DatabaseHelper(context: Context) :
         return user
     }
 
+    fun updateUserPoints(points: Int) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("points", points)
+        }
+        db.update("User", values, null, null)
+        db.close()
+    }
+
     fun deleteAllUser() {
         val db = writableDatabase
         // Kểm tra có bảng User không

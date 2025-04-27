@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.adapter.RedeemAdapter
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.viewModel.CustomerOrderViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -61,17 +62,12 @@ class RedeemPointsFragment : Fragment() {
     }
 
     private fun loadPointsValue() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val db = FirebaseFirestore.getInstance()
-        db.collection("Users")
-            .document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    points = (document.getLong("points") ?: 0).toInt()
-                    pointsValue.text = DecimalFormat("#,###").format(points)
-                }
-            }
+        val dbHelper = DatabaseHelper(requireContext())
+        val userData = dbHelper.getUser()
+        if (userData != null) {
+            points = userData.points
+            pointsValue.text = DecimalFormat("#,###").format(points)
+        }
     }
 
     private fun loadRedeemHistory() {

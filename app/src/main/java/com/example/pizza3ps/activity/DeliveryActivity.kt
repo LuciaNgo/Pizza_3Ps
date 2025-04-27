@@ -19,7 +19,9 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.DeliveryAdapter
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.DeliveryData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.shuhart.stepview.StepView
@@ -180,7 +182,13 @@ class DeliveryActivity : AppCompatActivity() {
                     stepView.visibility = ConstraintLayout.VISIBLE
                 }
 
-                if (status == "Completed") lottieView.cancelAnimation()
+                if (status == "Completed") {
+                    lottieView.cancelAnimation()
+                    if (discount > 0) {
+                        updateRedeemPointsFirestore(discount.toInt())
+                        updateRedeemPointsDb(discount.toInt())
+                    }
+                }
             }
             else {
                 lottieView.setAnimationFromUrl("https://lottie.host/6b72bb5b-fde6-47b6-93c8-784d2c01d8f2/AHLUaWU6iv.json")
@@ -236,9 +244,41 @@ class DeliveryActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-//                Toast.makeText(this, "Failed to cancel order: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateRedeemPointsFirestore(discountAmount: Int) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection(("Users")).document(userId)
+
+        // Lay points cua user roi update
+        docRef.get().addOnSuccessListener { document ->
+            val currentPoints = document.getLong("points")?.toInt() ?: 0
+            val newPoints = currentPoints - discountAmount
+
+            if (newPoints < 0) {
+                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
             }
+
+            docRef.update("points", newPoints)
+        }.addOnFailureListener {
+            Log.e("DeliveryActivity", "Error getting user points")
+        }
+    }
+
+    private fun updateRedeemPointsDb(discountAmount: Int) {
+        val dbHelper = DatabaseHelper(this)
+        val userData = dbHelper.getUser()
+
+        if (userData != null) {
+            val newPoints = userData.points - discountAmount
+            if (newPoints < 0) {
+                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
+                return
+            }
+            dbHelper.updateUserPoints(newPoints)
+        }
     }
 
     override fun onDestroy() {
