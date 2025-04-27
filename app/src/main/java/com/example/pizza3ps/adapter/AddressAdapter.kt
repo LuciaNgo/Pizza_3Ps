@@ -23,7 +23,6 @@ class AddressAdapter(
 
     private var defaultHolder: AddressViewHolder? = null
     private var selectedHolder: AddressViewHolder? = null
-    private var selectedPosition: Int = RecyclerView.NO_POSITION
 
     var onItemSelectedListener: ((Int?) -> Unit)? = null
 
@@ -59,14 +58,12 @@ class AddressAdapter(
         if (selectedAddressId != null && addressId == selectedAddressId) {
             holder.selectedIcon.visibility = View.VISIBLE
             selectedHolder = holder
-//            selectedPosition = holder.bindingAdapterPosition
         }
 
         holder.itemView.setOnClickListener {
             selectedHolder?.selectedIcon?.visibility = View.GONE
             holder.selectedIcon.visibility = View.VISIBLE
             selectedHolder = holder
-//            selectedPosition = holder.bindingAdapterPosition
             selectedAddressId = addressId
 
             onItemSelectedListener?.invoke(selectedAddressId)
@@ -115,8 +112,7 @@ class AddressAdapter(
 
     }
 
-    fun getSelectedItemPosition() : Int? {
-//        return selectedHolder?.bindingAdapterPosition
+    fun getSelectedAddressId() : Int? {
         return selectedAddressId
     }
 
