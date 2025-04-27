@@ -9,9 +9,4 @@
         android:id="@+id/navigation_admin_orders"
         android:icon="@drawable/commercial"
         android:title="Orders" />
-
-    <item
-        android:id="@+id/navigation_admin_account"
-        android:icon="@drawable/account"
-        android:title="Account" />
 </menu>
