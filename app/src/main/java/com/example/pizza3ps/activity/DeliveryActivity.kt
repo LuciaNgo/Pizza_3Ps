@@ -182,19 +182,24 @@ class DeliveryActivity : AppCompatActivity() {
                     stepView.visibility = ConstraintLayout.VISIBLE
                 }
 
-                if (status == "Completed") {
-                    lottieView.cancelAnimation()
+                if (status == "Pending") {
                     if (discount > 0) {
-                        updateRedeemPointsFirestore(discount.toInt())
-                        updateRedeemPointsDb(discount.toInt())
+                        updateRedeemPointsFirestore(discount.toInt(), "Minus")
+                        updateRedeemPointsDb(discount.toInt(), "Minus")
                     }
                 }
+                if (status == "Completed") lottieView.cancelAnimation()
             }
             else {
                 lottieView.setAnimationFromUrl("https://lottie.host/6b72bb5b-fde6-47b6-93c8-784d2c01d8f2/AHLUaWU6iv.json")
                 lottieView.cancelAnimation()
                 stepView.visibility = ConstraintLayout.GONE
                 cancelLayout.visibility = ConstraintLayout.VISIBLE
+
+                if (discount > 0) {
+                    updateRedeemPointsFirestore(discount.toInt(), "Plus")
+                    updateRedeemPointsDb(discount.toInt(), "Plus")
+                }
             }
 
             if (status != "Pending") {
@@ -246,7 +251,7 @@ class DeliveryActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateRedeemPointsFirestore(discountAmount: Int) {
+    private fun updateRedeemPointsFirestore(discountAmount: Int, mode: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection(("Users")).document(userId)
@@ -254,7 +259,9 @@ class DeliveryActivity : AppCompatActivity() {
         // Lay points cua user roi update
         docRef.get().addOnSuccessListener { document ->
             val currentPoints = document.getLong("points")?.toInt() ?: 0
-            val newPoints = currentPoints - discountAmount
+            var newPoints = 0
+            if (mode == "Plus") newPoints = currentPoints + discountAmount
+            else if (mode == "Minus") newPoints = currentPoints - discountAmount
 
             if (newPoints < 0) {
                 Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
@@ -267,12 +274,15 @@ class DeliveryActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateRedeemPointsDb(discountAmount: Int) {
+    private fun updateRedeemPointsDb(discountAmount: Int, mode: String) {
         val dbHelper = DatabaseHelper(this)
         val userData = dbHelper.getUser()
 
         if (userData != null) {
-            val newPoints = userData.points - discountAmount
+            var newPoints = 0
+            if (mode == "Plus") newPoints = userData.points + discountAmount
+            else if (mode == "Minus") newPoints = userData.points - discountAmount
+
             if (newPoints < 0) {
                 Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
                 return
