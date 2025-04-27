@@ -139,6 +139,11 @@ class PaymentFragment : Fragment() {
         updateTotalPrice()
 
         checkoutButton.setOnClickListener {
+            if (customerName.text.toString() == "No address added" && customerPhone.text.toString() == "" && customerAddress.text.toString() == "") {
+                Toast.makeText(requireContext(), "Please add an address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (selectedPaymentMethod.isEmpty()) {
                 Toast.makeText(requireContext(), "Please choose a payment method", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

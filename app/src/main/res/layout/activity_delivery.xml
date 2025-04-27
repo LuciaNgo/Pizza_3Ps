@@ -468,7 +468,7 @@
                 android:id="@+id/cancel_order_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:backgroundTint="@color/gray"
+                android:backgroundTint="@color/orange"
                 android:layout_margin="16dp"
                 android:text="Cancel Order"
                 android:textColor="@color/white"
