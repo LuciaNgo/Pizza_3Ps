@@ -66,6 +66,11 @@ class PersonalInfoFragment : Fragment() {
             val newName = nameEditText.text.toString()
             val newPhone = phoneEditText.text.toString()
 
+            if (newPhone.length != 10) {
+                Toast.makeText(context, "Phone number must be 10 digits", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             updateName(newName)
             updatePhone(newPhone)
         }

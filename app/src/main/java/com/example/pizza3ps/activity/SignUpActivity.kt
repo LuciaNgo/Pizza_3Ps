@@ -57,6 +57,11 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (phone.length != 10) {
+                Toast.makeText(this, "Phone number must be 10 digits", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (password != confirmPassword) {
                 Toast.makeText(this, "Confirmation password does not match", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
