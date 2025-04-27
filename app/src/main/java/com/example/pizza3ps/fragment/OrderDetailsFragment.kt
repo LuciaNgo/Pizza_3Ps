@@ -16,12 +16,13 @@ import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderDetailsAdapter
 import com.example.pizza3ps.model.CartData
 import com.example.pizza3ps.model.OrderData
+import com.example.pizza3ps.model.OrderItemData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
 class OrderDetailsFragment : Fragment() {
     private var orderData : OrderData? = null
-    private var orderDetailsItemList = mutableListOf<CartData>()
+    private var orderDetailsItemList = mutableListOf<OrderItemData>()
     private lateinit var adapter: OrderDetailsAdapter
     private lateinit var recyclerViewOrderDetails: RecyclerView
 
@@ -126,7 +127,7 @@ class OrderDetailsFragment : Fragment() {
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val items = mutableListOf<CartData>()
+                    val items = mutableListOf<OrderItemData>()
                     val querySnapshot: QuerySnapshot = task.result ?: return@addOnCompleteListener
 
                     for (document in querySnapshot) {
@@ -140,7 +141,7 @@ class OrderDetailsFragment : Fragment() {
 
                         Log.d("price", price.toString())
 
-                        val cartItem = CartData(food_id, price, emptyList(), size, crust, crustBase, quantity)
+                        val cartItem = OrderItemData(food_id, price, ingredients, size, crust, crustBase, quantity)
                         items.add(cartItem)
                     }
 

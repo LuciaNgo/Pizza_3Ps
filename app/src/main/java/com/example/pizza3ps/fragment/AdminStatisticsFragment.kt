@@ -1,6 +1,9 @@
 package com.example.pizza3ps.fragment
 
 import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -15,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
+import com.example.pizza3ps.activity.LogInActivity
 import com.example.pizza3ps.adapter.BestSellerAdapter
 import com.example.pizza3ps.model.OrderData
 import com.example.pizza3ps.model.OrderItemData
@@ -24,6 +29,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -31,6 +37,7 @@ import java.util.Locale
 class AdminStatisticsFragment : Fragment() {
     private lateinit var scrollView: ScrollView
     private lateinit var overviewButton: Button
+    private lateinit var logoutButton: ImageView
 
     private lateinit var dailyCardView: CardView
     private lateinit var weeklyCardView: CardView
@@ -75,6 +82,7 @@ class AdminStatisticsFragment : Fragment() {
 
         scrollView = view.findViewById(R.id.scrollView)
         overviewButton = view.findViewById(R.id.overviewButton)
+        logoutButton = view.findViewById(R.id.logoutButton)
         dailyCardView = view.findViewById(R.id.dailyCardView)
         weeklyCardView = view.findViewById(R.id.weeklyCardView)
         monthlyCardView = view.findViewById(R.id.monthlyCardView)
@@ -186,10 +194,6 @@ class AdminStatisticsFragment : Fragment() {
 //            dialog.setOnDismissListener {
 //                UpdateMonthlyRevenue()
 //            }
-            // setOnDismissListener ko co tac dung gi o day vi ko co dialog
-            // nen phai dung setOnDateChangeListener o CalendarView
-            // de cap nhat doanh thu
-
         }
 
         yearlyCardView.setOnClickListener {
@@ -197,6 +201,15 @@ class AdminStatisticsFragment : Fragment() {
                 selectedYearForYearlyRevenue = year
             }
             dialog.show(parentFragmentManager, "YearPickerDialog")
+        }
+
+        logoutButton.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+            sharedPref.edit().remove("username").apply()
+            val intent = Intent(context, LogInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 

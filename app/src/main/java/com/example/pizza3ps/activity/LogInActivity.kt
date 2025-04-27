@@ -249,13 +249,11 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun goToDashboard() {
-        Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun goToManagementHome() {
-        Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, AdminMainActivity::class.java))
         finish()
     }
