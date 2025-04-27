@@ -71,6 +71,8 @@ class PaymentFragment : Fragment() {
 
     private lateinit var dbHelper: DatabaseHelper
 
+    private var currentSelectedAddressId : Int = 0
+
     private val momoClientId = "MOMO"
     private val momoSecret = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
     private var lastGeneratedOrderId: String? = null
@@ -156,7 +158,7 @@ class PaymentFragment : Fragment() {
         addressDetail.setOnClickListener {
             findNavController().navigate(
                 R.id.action_paymentFragment_to_savedAddressFragment,
-                bundleOf("source" to "payment")
+                bundleOf("source" to "payment", "selectedAddressId" to currentSelectedAddressId)
             )
         }
 
@@ -179,6 +181,20 @@ class PaymentFragment : Fragment() {
         backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
+        parentFragmentManager.setFragmentResultListener("selected_address", viewLifecycleOwner) { _, bundle ->
+            currentSelectedAddressId = bundle.getInt("selectedAddressId")
+
+            val dbHelper = DatabaseHelper(requireContext())
+            val selecetedAddress = dbHelper.getAddressById(currentSelectedAddressId)
+
+            customerName.text = selecetedAddress?.name ?: ""
+            customerPhone.text = selecetedAddress?.phone ?: ""
+            customerAddress.text = selecetedAddress?.address ?: ""
+
+            customerPhone.visibility = ImageView.VISIBLE
+            customerAddress.visibility = ImageView.VISIBLE
+        }
     }
 
     private fun setupCartRecyclerView() {
@@ -196,6 +212,7 @@ class PaymentFragment : Fragment() {
             customerName.text = defaultAddress.name
             customerPhone.text = defaultAddress.phone
             customerAddress.text = defaultAddress.address
+            currentSelectedAddressId = dbHelper.getAddressId(defaultAddress)
         }
     }
 

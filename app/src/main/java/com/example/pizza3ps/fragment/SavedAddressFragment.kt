@@ -27,7 +27,11 @@ class SavedAddressFragment : Fragment() {
     private lateinit var addressRecyclerView: RecyclerView
     private lateinit var infoLayout: ConstraintLayout
     private lateinit var addButton: Button
+    private lateinit var newAddressButton: ImageView
+    private lateinit var editButton: Button
+    private lateinit var selectButton: Button
     private lateinit var backButton: ImageView
+    private var currentSelectedAddressId : Int? = null
 
     private lateinit var dbHelper: DatabaseHelper
     private var addressList = mutableListOf<AddressData>()
@@ -36,7 +40,12 @@ class SavedAddressFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        source = arguments?.getString("source")
+//        source = arguments?.getString("source")
+
+        arguments?.let {
+            source = it.getString("source")
+            currentSelectedAddressId = it.getInt("selectedAddressId", -1)
+        }
     }
 
     override fun onCreateView(
@@ -48,6 +57,9 @@ class SavedAddressFragment : Fragment() {
         addressRecyclerView = view.findViewById(R.id.addressRecyclerView)
         infoLayout = view.findViewById(R.id.infoLayout)
         addButton = view.findViewById(R.id.addAddressButton)
+        newAddressButton = view.findViewById(R.id.add_icon)
+        editButton = view.findViewById(R.id.editAddressButton)
+        selectButton = view.findViewById(R.id.selectAddressButton)
         backButton = view.findViewById(R.id.backButton)
 
         dbHelper = DatabaseHelper(requireContext())
@@ -68,8 +80,38 @@ class SavedAddressFragment : Fragment() {
 
         }
 
+        newAddressButton.setOnClickListener {
+            //findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
+            if (source == "main") {
+                findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
+            } else if (source == "payment") {
+                findNavController().navigate(R.id.action_savedAddressFragment_to_addAddressFragment)
+            }
+        }
+
         backButton.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        selectButton.setOnClickListener() {
+            val adapter = addressRecyclerView.adapter as AddressAdapter
+            val selectedAddressId = adapter.getSelectedItemPosition()
+            selectedAddressId?.let {
+                val result = Bundle().apply {
+                    putInt("selectedAddressId", selectedAddressId)
+                }
+                parentFragmentManager.setFragmentResult("selected_address", result)
+                findNavController().popBackStack() // Quay lại PaymentFragment
+            }
+        }
+
+        editButton.setOnClickListener {
+            currentSelectedAddressId?.let {
+                val bundle = Bundle().apply {
+                    putInt("selectedAddressId", it)
+                }
+//                findNavController().navigate(R.id.action_savedAddressFragment_to_editAddressFragment, bundle)
+            }
         }
 
         return view
@@ -84,14 +126,35 @@ class SavedAddressFragment : Fragment() {
     private fun setUpView() {
         addressList.addAll(dbHelper.getAllAddresses())
 
+        editButton.visibility = View.GONE
+        selectButton.visibility = View.GONE
+
         if (addressList.isEmpty()) {
             infoLayout.visibility = View.VISIBLE
+            addButton.visibility = View.VISIBLE
+            newAddressButton.visibility = View.GONE
             //addressRecyclerView.visibility = View.GONE
         } else {
             infoLayout.visibility = View.GONE
-            //addressRecyclerView.visibility = View.VISIBLE
-            addressRecyclerView.adapter = AddressAdapter(this, addressList)
+            addButton.visibility = View.GONE
+            newAddressButton.visibility = View.VISIBLE
+//            addressRecyclerView.visibility = View.VISIBLE
+//            addressRecyclerView.adapter = AddressAdapter(this, addressList)
+            val adapter = AddressAdapter(this, addressList, currentSelectedAddressId)
+
+            adapter.onItemSelectedListener = { addressId ->
+                if (addressId != null) {
+                    editButton.visibility = View.VISIBLE
+                    selectButton.visibility = View.VISIBLE
+                } else {
+                    editButton.visibility = View.GONE
+                    selectButton.visibility = View.GONE
+                }
+            }
+
+            addressRecyclerView.adapter = adapter
             addressRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
             val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
             itemTouchHelper.attachToRecyclerView(addressRecyclerView)
         }
@@ -117,6 +180,8 @@ class SavedAddressFragment : Fragment() {
                     val adapter = addressRecyclerView.adapter as AddressAdapter
                     adapter.deleteItem(position)
                     adapter.removeSyncToFirebase(addressId)
+                    if (adapter.itemCount  == 0)
+                        setUpView()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

@@ -639,6 +639,24 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+    fun getAddressById(addressId: Int): AddressData? {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM Address WHERE id = ?", arrayOf(addressId.toString()))
+        var address: AddressData? = null
+
+        if (cursor.moveToFirst()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow("phone"))
+            val addressStr = cursor.getString(cursor.getColumnIndexOrThrow("address"))
+            val isDefault = cursor.getInt(cursor.getColumnIndexOrThrow("isDefault")) == 1
+
+            address = AddressData(name, phone, addressStr, isDefault)
+        }
+        cursor.close()
+        db.close()
+        return address
+    }
+
     fun getAllAddresses(): List<AddressData> {
         val addressList = mutableListOf<AddressData>()
         val db = readableDatabase
