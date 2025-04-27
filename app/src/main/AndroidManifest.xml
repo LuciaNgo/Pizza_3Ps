@@ -22,6 +22,9 @@
         tools:replace="android:theme"
         tools:targetApi="31">
         <activity
+            android:name=".MomoPaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.DeliveryActivity"
             android:exported="false" />
         <activity android:name="com.braintreepayments.api.DropInActivity" />
@@ -75,7 +78,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".activity.WelcomeActivity"
             android:exported="true" />
