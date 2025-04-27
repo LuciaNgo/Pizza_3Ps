@@ -6,11 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieDrawable
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.adapter.RedeemAdapter
@@ -19,7 +22,10 @@ import com.example.pizza3ps.model.EventData
 import com.example.pizza3ps.viewModel.CustomerOrderViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class RedeemPointsFragment : Fragment() {
@@ -29,6 +35,7 @@ class RedeemPointsFragment : Fragment() {
     private lateinit var redeemHistoryRecyclerView: RecyclerView
     private lateinit var viewModel: CustomerOrderViewModel
     private var points: Int = 0
+    private var listenerRegistration: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,19 +62,10 @@ class RedeemPointsFragment : Fragment() {
             requireActivity().onBackPressed()
         }
 
-        loadPointsValue()
+        observeUserPoints()
         loadRedeemHistory()
 
 
-    }
-
-    private fun loadPointsValue() {
-        val dbHelper = DatabaseHelper(requireContext())
-        val userData = dbHelper.getUser()
-        if (userData != null) {
-            points = userData.points
-            pointsValue.text = DecimalFormat("#,###").format(points)
-        }
     }
 
     private fun loadRedeemHistory() {
@@ -79,6 +77,15 @@ class RedeemPointsFragment : Fragment() {
         }
     }
 
+    private fun observeUserPoints() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("Users").document(userId)
 
-
+        listenerRegistration = docRef.addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+            points = snapshot.getLong("points")?.toInt() ?: 0
+            pointsValue.text = DecimalFormat("#,###").format(points)
+        }
+    }
 }
