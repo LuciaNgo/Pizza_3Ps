@@ -20,6 +20,7 @@ import com.example.pizza3ps.database.DatabaseHelper
 import com.google.firebase.auth.FirebaseAuth
 
 class AccountFragment : Fragment() {
+    private lateinit var pointsContainer: ConstraintLayout
     private lateinit var savedAddressLayout: ConstraintLayout
     private lateinit var termsPoliciesLayout: ConstraintLayout
     private lateinit var customerServiceLayout: ConstraintLayout
@@ -35,6 +36,7 @@ class AccountFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
+        pointsContainer = view.findViewById(R.id.pointsContainer)
         savedAddressLayout = view.findViewById(R.id.addressContainer)
         termsPoliciesLayout = view.findViewById(R.id.termsAndPoliciesContainer)
         customerServiceLayout = view.findViewById(R.id.supportCenterContainer)
@@ -57,8 +59,11 @@ class AccountFragment : Fragment() {
             userNameView.text = cachedName
         }
 
+        pointsContainer.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_account_to_redeemPointsFragment)
+        }
+
         savedAddressLayout.setOnClickListener {
-            //findNavController().navigate(R.id.action_navigation_account_to_savedAddressFragment)
             findNavController().navigate(
                 R.id.action_navigation_account_to_savedAddressFragment,
                 bundleOf("source" to "main")

@@ -71,7 +71,17 @@
         <action
             android:id="@+id/action_navigation_account_to_savedAddressFragment"
             app:destination="@id/savedAddressFragment" />
+
+        <action
+            android:id="@+id/action_navigation_account_to_redeemPointsFragment"
+            app:destination="@id/redeemPointsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/redeemPointsFragment"
+        android:name="com.example.pizza3ps.fragment.RedeemPointsFragment"
+        android:label="Redeem Points"
+        tools:layout="@layout/fragment_redeem_points" />
 
     <fragment
         android:id="@+id/savedAddressFragment"

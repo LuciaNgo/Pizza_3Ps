@@ -1,39 +1,31 @@
 package com.example.pizza3ps.fragment
 
-import android.app.DatePickerDialog
 import android.app.Dialog
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.BestSellerAdapter
 import com.example.pizza3ps.model.OrderData
 import com.example.pizza3ps.model.OrderItemData
-import com.example.pizza3ps.viewModel.OrdersViewModel
+import com.example.pizza3ps.viewModel.AdminOrdersViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.tabs.TabLayout
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class AdminStatisticsFragment : Fragment() {
@@ -55,7 +47,7 @@ class AdminStatisticsFragment : Fragment() {
     private lateinit var revenueLineChart: LineChart
 
     private lateinit var bestSellerRecyclerView: RecyclerView
-    private lateinit var viewModel: OrdersViewModel
+    private lateinit var viewModel: AdminOrdersViewModel
     private val orderList = mutableListOf<OrderData>()
     private val orderItemList = mutableListOf<OrderItemData>()
 
@@ -79,7 +71,7 @@ class AdminStatisticsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_admin_statistics, container, false)
 
-        viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(AdminOrdersViewModel::class.java)
 
         scrollView = view.findViewById(R.id.scrollView)
         overviewButton = view.findViewById(R.id.overviewButton)

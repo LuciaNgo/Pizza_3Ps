@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.model.OrderData
-import com.example.pizza3ps.viewModel.OrdersViewModel
+import com.example.pizza3ps.viewModel.AdminOrdersViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
@@ -22,7 +22,7 @@ class OrderListFragment : Fragment() {
     private lateinit var orderAdapter: OrderAdapter
     private var db = FirebaseFirestore.getInstance()
     private var orderListenerRegistration: ListenerRegistration? = null
-    private lateinit var viewModel: OrdersViewModel
+    private lateinit var viewModel: AdminOrdersViewModel
     private var orderStatus: String? = null
     private var isLoading = false
 
@@ -70,7 +70,7 @@ class OrderListFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this).get(OrdersViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(AdminOrdersViewModel::class.java)
 
         viewModel.orderList.observe(viewLifecycleOwner) { newOrderList ->
             orderAdapter.submitList(newOrderList)

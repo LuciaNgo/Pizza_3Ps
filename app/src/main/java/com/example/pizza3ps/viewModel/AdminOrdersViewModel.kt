@@ -13,7 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-class OrdersViewModel : ViewModel() {
+class AdminOrdersViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
     private var orderListenerRegistration: ListenerRegistration? = null
 
@@ -40,9 +40,6 @@ class OrdersViewModel : ViewModel() {
                 if (e != null) {
                     return@addSnapshotListener
                 }
-
-//                val newOrderList = snapshots?.mapNotNull { toOrderData(it) } ?: emptyList()
-//                _orderList.value = newOrderList
 
                 val newOrderList = mutableListOf<OrderData>()
                 val newOrderItemList = mutableListOf<OrderItemData>()
