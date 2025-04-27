@@ -32,6 +32,7 @@ class SavedAddressFragment : Fragment() {
     private lateinit var editButton: Button
     private lateinit var selectButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var emptyView: View
     private var currentSelectedAddressId : Int? = null
 
     private lateinit var dbHelper: DatabaseHelper
@@ -62,6 +63,14 @@ class SavedAddressFragment : Fragment() {
         editButton = view.findViewById(R.id.editAddressButton)
         selectButton = view.findViewById(R.id.selectAddressButton)
         backButton = view.findViewById(R.id.backButton)
+        emptyView = view.findViewById(R.id.view)
+
+        if (source == "main") {
+            emptyView.visibility = View.VISIBLE
+        }
+        else {
+            emptyView.visibility = View.GONE
+        }
 
         dbHelper = DatabaseHelper(requireContext())
         setUpView()

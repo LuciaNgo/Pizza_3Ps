@@ -126,26 +126,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/infoLayout"/>
 
-    <Button
-        android:id="@+id/editAddressButton"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/gray"
-        android:text="Edit"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/view"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <Button
+            android:id="@+id/editAddressButton"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+
+            android:backgroundTint="@color/gray"
+            android:text="Edit" />
+
+        <Button
+            android:id="@+id/selectAddressButton"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/orange"
+            android:text="Select" />
+
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/selectAddressButton"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/orange"
-        android:text="Select"
-        app:layout_constraintBottom_toBottomOf="@+id/editAddressButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editAddressButton" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
