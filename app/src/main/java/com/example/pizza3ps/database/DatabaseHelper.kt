@@ -537,6 +537,24 @@ class DatabaseHelper(context: Context) :
         return user
     }
 
+    fun updateUserName(name: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("name", name)
+        }
+        db.update("User", values, null, null)
+        db.close()
+    }
+
+    fun updateUserPhone(phone: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("phone", phone)
+        }
+        db.update("User", values, null, null)
+        db.close()
+    }
+
     fun updateUserPoints(points: Int) {
         val db = writableDatabase
         val values = ContentValues().apply {

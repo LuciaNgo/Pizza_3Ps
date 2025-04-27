@@ -28,6 +28,7 @@ class AccountFragment : Fragment() {
     private lateinit var changeLanguageLayout: ConstraintLayout
     private lateinit var logOutLayout: LinearLayout
     private lateinit var userNameView: TextView
+    private lateinit var phoneView: TextView
     private lateinit var fab: CounterFab
 
     override fun onCreateView(
@@ -44,20 +45,18 @@ class AccountFragment : Fragment() {
         changeLanguageLayout = view.findViewById(R.id.languageContainer)
         logOutLayout = view.findViewById(R.id.logoutContainer)
         userNameView = view.findViewById(R.id.userName)
+        phoneView = view.findViewById(R.id.phone_number)
+
         fab = requireActivity().findViewById(R.id.cart_fab)
         fab.visibility = View.GONE
 
         val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
-        val cachedName = sharedPref.getString("username", "Guest")
-        userNameView.text = cachedName
+//        val cachedName = sharedPref.getString("username", "Guest")
+//        userNameView.text = cachedName
 
         Log.d("FETCH", "fetchUserData() called")
 
-        if (cachedName == "Guest") {
-            fetchUserData()
-        } else {
-            userNameView.text = cachedName
-        }
+        fetchUserData()
 
         pointsContainer.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_account_to_redeemPointsFragment)
@@ -95,6 +94,7 @@ class AccountFragment : Fragment() {
         val user = dbHelper.getUser()
         if (user != null) {
             userNameView.text = user.name
+            phoneView.text = user.phone
         }
     }
 

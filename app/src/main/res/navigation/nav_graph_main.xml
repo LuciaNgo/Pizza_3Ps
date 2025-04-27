@@ -118,48 +118,6 @@
         <action
             android:id="@+id/action_personalInfoFragment_to_navigation_account"
             app:destination="@id/navigation_account" />
-
-        <action
-            android:id="@+id/action_personalInfoFragment_to_editInfoFragment"
-            app:destination="@id/editInfoFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/editInfoFragment"
-        android:name="com.example.pizza3ps.fragment.EditInfoFragment"
-        android:label="EditInfoFragment" >
-        <argument
-            android:name="name"
-            app:argType="string"
-            android:defaultValue=" " />
-
-        <argument
-            android:name="email"
-            app:argType="string"
-            android:defaultValue=" " />
-
-        <argument
-            android:name="phone"
-            app:argType="string"
-            android:defaultValue=" " />
-
-        <argument
-            android:name="address"
-            app:argType="string"
-            android:defaultValue=" " />
-
-        <argument
-            android:name="points"
-            app:argType="integer"
-            android:defaultValue="0" />
-
-        <action
-            android:id="@+id/action_editInfoFragment_to_navigation_account"
-            app:destination="@id/navigation_account" />
-
-        <action
-            android:id="@+id/action_editInfoFragment_to_personalInfoFragment2"
-            app:destination="@id/personalInfoFragment" />
     </fragment>
 
     <fragment
