@@ -83,5 +83,11 @@ dependencies {
     implementation("com.github.momo-wallet:mobile-sdk:1.0.7") {
         exclude(group = "com.android.support")
     }
+    //implementation ("com.braintreepayments.api:drop-in:6.16.0")
+//    implementation ("com.paypal.android:card-payments:CURRENT-VERSION-SNAPSHOT")
+//    implementation ("com.paypal.sdk:paypal-android-sdk:2.16.0")
+    implementation ("com.braintreepayments.api:drop-in:6.16.0")
+    implementation ("com.braintreepayments.api:paypal:5.8.0")
+
 
 }
