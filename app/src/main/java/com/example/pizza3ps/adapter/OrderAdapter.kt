@@ -18,7 +18,8 @@ class OrderAdapter(
     private val onNextStatusClicked: (OrderData, String) -> Unit,
     private val onItemClicked: (OrderData) -> Unit,
     private val showNextStatusButton: Boolean = true,
-    private val hideCancelAfterConfirmed: Boolean = false
+    private val hideCancelAfterConfirmed: Boolean = false,
+    private val source: String = "admin"
 ) : ListAdapter<OrderData, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -80,6 +81,14 @@ class OrderAdapter(
                     }
                 }
             }
+
+            if (source == "customer") {
+                if (order.status == "Confirmed" || order.status == "Preparing" || order.status == "Shipping"
+                    || order.status == "Cancelled" || order.status == "Completed")
+                btnCancel.visibility = View.GONE
+                btnNextStatus.visibility = View.GONE
+            }
+
             itemView.setOnClickListener { onItemClicked(order) }
         }
     }

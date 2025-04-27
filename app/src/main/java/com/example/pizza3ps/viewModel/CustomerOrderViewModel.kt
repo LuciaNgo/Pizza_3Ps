@@ -59,42 +59,6 @@ class CustomerOrderViewModel : ViewModel() {
             }
     }
 
-//    fun listenToOrdersRealtime(orderStatus: String?) {
-//        val userId = FirebaseAuth.getInstance().currentUser?.uid
-//        if (userId == null || orderStatus == null) return
-//
-//        orderListenerRegistration?.remove()
-//
-//        orderListenerRegistration = db.collection("Orders")
-//            .whereEqualTo("userID", userId)
-//            .whereEqualTo("status", orderStatus)
-//            .addSnapshotListener { snapshots, error ->
-//                if (error != null) {
-//                    return@addSnapshotListener
-//                }
-//
-//                val newOrderList = snapshots?.mapNotNull { doc ->
-//                    try {
-//                        OrderData(
-//                            orderId = doc.id,
-//                            createdDate = doc.getTimestamp("createdDate")?.let { formatTimestamp(it) } ?: "",
-//                            status = doc.getString("status") ?: "",
-//                            receiverName = doc.getString("receiverName") ?: "",
-//                            phoneNumber = doc.getString("phoneNumber") ?: "",
-//                            address = doc.getString("address") ?: "",
-//                            totalQuantity = doc.getLong("totalQuantity")?.toInt() ?: 0,
-//                            totalAfterDiscount = doc.getLong("totalAfterDiscount")?.toInt() ?: 0,
-//                            payment = doc.getString("payment") ?: ""
-//                        )
-//                    } catch (e: Exception) {
-//                        null
-//                    }
-//                } ?: emptyList()
-//
-//                _orderList.postValue(newOrderList)
-//            }
-//    }
-
     private val dateFormatter by lazy {
         SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     }
