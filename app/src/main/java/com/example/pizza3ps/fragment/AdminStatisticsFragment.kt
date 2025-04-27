@@ -24,10 +24,10 @@ import com.example.pizza3ps.adapter.BestSellerAdapter
 import com.example.pizza3ps.model.OrderData
 import com.example.pizza3ps.model.OrderItemData
 import com.example.pizza3ps.viewModel.AdminOrdersViewModel
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
@@ -51,7 +51,7 @@ class AdminStatisticsFragment : Fragment() {
     private lateinit var revenueOverviewTitle: TextView
 
     private lateinit var revenueTabLayout: TabLayout
-    private lateinit var revenueLineChart: LineChart
+    private lateinit var revenueBarChart: BarChart
 
     private lateinit var bestSellerRecyclerView: RecyclerView
     private lateinit var viewModel: AdminOrdersViewModel
@@ -93,11 +93,11 @@ class AdminStatisticsFragment : Fragment() {
         yearlyRevenueValue = view.findViewById(R.id.yearlyRevenueValue)
         revenueOverviewTitle = view.findViewById(R.id.revenueOverviewTitle)
         revenueTabLayout = view.findViewById(R.id.tabLayoutRevenueLineChart)
-        revenueLineChart = view.findViewById(R.id.revenueLineChart)
+        revenueBarChart = view.findViewById(R.id.revenueBarChart)
         bestSellerRecyclerView = view.findViewById(R.id.recyclerView)
         bestSellerRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        revenueLineChart.description.isEnabled = false
+        revenueBarChart.description.isEnabled = false
 //        bestSellerAdapter
 
         return view
@@ -119,9 +119,21 @@ class AdminStatisticsFragment : Fragment() {
         revenueTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> drawRevenueLineChart(orderList, revenueLineChart, "daily")
-                    1 -> drawRevenueLineChart(orderList, revenueLineChart, "monthly")
-                    2 -> drawRevenueLineChart(orderList, revenueLineChart, "yearly")
+                    0 -> {
+                        revenueBarChart.visibility = View.VISIBLE
+                        revenueBarChart.clear()
+                        drawRevenueBarChart(orderList, revenueBarChart, "daily")
+                    }
+                    1 -> {
+                        revenueBarChart.visibility = View.VISIBLE
+                        revenueBarChart.clear()
+                        drawRevenueBarChart(orderList, revenueBarChart, "monthly")
+                    }
+                    2 -> {
+                        revenueBarChart.visibility = View.VISIBLE
+                        revenueBarChart.clear()
+                        drawRevenueBarChart(orderList, revenueBarChart, "yearly")
+                    }
                 }
             }
 
@@ -224,7 +236,7 @@ class AdminStatisticsFragment : Fragment() {
             UpdateWeeklyRevenue()
             UpdateMonthlyRevenue()
             UpdateYearlyRevenue()
-            drawRevenueLineChart(orderList, revenueLineChart, "daily")
+            drawRevenueBarChart(orderList, revenueBarChart, "daily")
         }
 
         viewModel.orderItemList.observe(viewLifecycleOwner) { orderItems ->
@@ -239,8 +251,7 @@ class AdminStatisticsFragment : Fragment() {
         }
     }
 
-    fun drawRevenueLineChart(orderList: List<OrderData>, lineChart: LineChart, mode: String) {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    fun drawRevenueBarChart(orderList: List<OrderData>, barChart: BarChart, mode: String) {
         val revenueMap = mutableMapOf<String, Float>()
 
         // Lặp qua orderList và cộng doanh thu theo ngày
@@ -260,28 +271,36 @@ class AdminStatisticsFragment : Fragment() {
             }
         }
 
-        // Chuyển map doanh thu thành list các Entry (x là ngày, y là doanh thu)
-        val entries = mutableListOf<Entry>()
+        // Chuyển map doanh thu thành list các BarEntry (x là ngày, y là doanh thu)
+        val entries = mutableListOf<BarEntry>()
         var xValue = 0f
 
         for ((date, revenue) in revenueMap) {
-            entries.add(Entry(xValue++, revenue))
+            entries.add(BarEntry(xValue++, revenue))
         }
 
-        // Tạo LineDataSet từ list entries
-        val lineDataSet = LineDataSet(entries, "Doanh thu theo ngày")
-        lineDataSet.color = resources.getColor(R.color.orange)  // Màu đường line
-        lineDataSet.valueTextColor = resources.getColor(R.color.black)  // Màu giá trị
-        lineDataSet.valueTextSize = 10f
+        // Tạo BarDataSet từ list entries
+        var barDataSet = BarDataSet(entries, "Doanh thu theo ngày")
+        if (mode == "daily") {
+            barDataSet = BarDataSet(entries, "Doanh thu theo ngày")
+        } else if (mode == "monthly") {
+            barDataSet = BarDataSet(entries, "Doanh thu theo tháng")
+        } else if (mode == "yearly") {
+            barDataSet = BarDataSet(entries, "Doanh thu theo năm")
+        }
 
-        // Tạo LineData từ LineDataSet
-        val lineData = LineData(lineDataSet)
+        barDataSet.color = resources.getColor(R.color.orange)
+        barDataSet.valueTextColor = resources.getColor(R.color.black)
+        barDataSet.valueTextSize = 10f
 
-        // Gán LineData vào LineChart
-        lineChart.data = lineData
+        // Tạo BarData từ BarDataSet
+        val barData = BarData(barDataSet)
+
+        // Gán BarData vào BarChart
+        barChart.data = barData
 
         // Cập nhật biểu đồ
-        lineChart.invalidate()  // Redraw chart
+        barChart.invalidate()
     }
 
     private fun UpdateDailyRevenue() {

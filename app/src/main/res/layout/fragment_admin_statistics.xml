@@ -364,8 +364,8 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/revenueLineChart"
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/revenueBarChart"
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:layout_marginTop="8dp"

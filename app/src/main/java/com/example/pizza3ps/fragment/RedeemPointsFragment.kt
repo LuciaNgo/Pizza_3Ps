@@ -88,4 +88,9 @@ class RedeemPointsFragment : Fragment() {
             pointsValue.text = DecimalFormat("#,###").format(points)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        listenerRegistration?.remove()
+    }
 }
