@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/navigation_admin_orders"
-        android:icon="@drawable/booking"
+        android:icon="@drawable/commercial"
         android:title="Orders" />
 
     <item

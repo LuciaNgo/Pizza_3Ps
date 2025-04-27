@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray"
+    android:scrollbars="none"
     tools:context=".fragment.AdminStatisticsFragment">
 
     <LinearLayout
@@ -357,8 +358,8 @@
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"/>
 
         <View
             android:id="@+id/line_2"
