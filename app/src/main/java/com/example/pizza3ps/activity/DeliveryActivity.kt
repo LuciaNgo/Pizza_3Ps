@@ -1,7 +1,9 @@
 package com.example.pizza3ps.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,9 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.DeliveryAdapter
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.DeliveryData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.shuhart.stepview.StepView
@@ -43,13 +49,18 @@ class DeliveryActivity : AppCompatActivity() {
     private lateinit var discountLayout: ConstraintLayout
     private lateinit var subtotalLayout: ConstraintLayout
     private lateinit var parentLayout: LinearLayout
+    private lateinit var cancelLayout: ConstraintLayout
 
+    private lateinit var cancelButton: Button
     private lateinit var backButton: ImageView
     private lateinit var downChevron: ImageView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var lottieView: LottieAnimationView
 
     private lateinit var deliveryAdapter: DeliveryAdapter
     private val deliveryList = mutableListOf<DeliveryData>()
+    private var currentState: String = "Pending"
+    private var fromNotification = false
 
     private val orderStates = listOf(
         "Pending",
@@ -65,7 +76,7 @@ class DeliveryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_delivery)
 
         orderId = intent.getStringExtra("order_id") ?: return
-        Log.d("DeliveryActivityOrderID", "Order ID: $orderId")
+        fromNotification = intent.getBooleanExtra("from_notification", false)
 
         orderID = findViewById(R.id.order_id)
         orderDate = findViewById(R.id.order_date)
@@ -79,8 +90,11 @@ class DeliveryActivity : AppCompatActivity() {
         discountLayout = findViewById(R.id.discount_amount_layout)
         subtotalLayout = findViewById(R.id.subtotal_amount_layout)
         parentLayout = findViewById(R.id.order_amount_container)
+        cancelLayout = findViewById(R.id.cancel_container)
+        cancelButton = findViewById(R.id.cancel_order_button)
         downChevron = findViewById(R.id.down_chevron)
         backButton = findViewById(R.id.back_button)
+        lottieView = findViewById(R.id.lottie_view)
 
         stepView = findViewById(R.id.step_view)
         stepView.setSteps(orderStates)
@@ -92,6 +106,7 @@ class DeliveryActivity : AppCompatActivity() {
 
         discountLayout.visibility = ConstraintLayout.GONE
         subtotalLayout.visibility = ConstraintLayout.GONE
+        cancelLayout.visibility = ConstraintLayout.GONE
 
         observeOrderStatus()
         loadOrderItems(orderId)
@@ -112,8 +127,18 @@ class DeliveryActivity : AppCompatActivity() {
             }
         }
 
+        cancelButton.setOnClickListener {
+            updateCancelOrderStatus()
+        }
+
         backButton.setOnClickListener {
-            onBackPressed()
+            if (fromNotification) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                onBackPressed()
+            }
         }
     }
 
@@ -143,11 +168,34 @@ class DeliveryActivity : AppCompatActivity() {
             customerAddress.text = snapshot.getString("address")
 
             val status = snapshot.getString("status") ?: return@addSnapshotListener
-            val stepIndex = orderStates.indexOf(status)
 
-            if (stepIndex != -1) {
-                stepView.go(stepIndex, true)
+            if (status != "Cancelled") {
+                val stepIndex = orderStates.indexOf(status)
+                if (stepIndex != -1) stepView.go(stepIndex, true)
+                cancelLayout.visibility = ConstraintLayout.GONE
+
+                if (currentState == "Cancelled" || currentState == "Completed") {
+                    lottieView.setAnimationFromUrl("https://lottie.host/b8f1bbed-355a-40d2-892e-c466d1b6d0bc/hVkYRMI6Eo.json")
+                    lottieView.repeatCount = LottieDrawable.INFINITE
+                    lottieView.playAnimation()
+
+                    stepView.visibility = ConstraintLayout.VISIBLE
+                }
+                if (status == "Completed") lottieView.cancelAnimation()
             }
+            else {
+                lottieView.setAnimationFromUrl("https://lottie.host/6b72bb5b-fde6-47b6-93c8-784d2c01d8f2/AHLUaWU6iv.json")
+                lottieView.cancelAnimation()
+                stepView.visibility = ConstraintLayout.GONE
+                cancelLayout.visibility = ConstraintLayout.VISIBLE
+            }
+
+            if (status != "Pending") {
+                cancelButton.visibility = Button.GONE
+            } else cancelButton.visibility = Button.VISIBLE
+
+            currentState = status
+
         }
     }
 
@@ -181,9 +229,18 @@ class DeliveryActivity : AppCompatActivity() {
             }
     }
 
+    private fun updateCancelOrderStatus() {
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("Orders").document(orderId)
+
+        docRef.update("status", "Cancelled")
+            .addOnSuccessListener {
+                Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        // Hủy lắng nghe Firestore khi Activity bị huỷ
         listenerRegistration?.remove()
     }
 }

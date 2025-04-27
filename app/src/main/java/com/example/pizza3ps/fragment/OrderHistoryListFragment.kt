@@ -7,23 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.activity.DeliveryActivity
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.model.OrderData
-import com.google.firebase.auth.FirebaseAuth
+import com.example.pizza3ps.viewModel.AdminOrdersViewModel
+import com.example.pizza3ps.viewModel.CustomerOrderViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class OrderHistoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
     private var db = FirebaseFirestore.getInstance()
     private var orderListenerRegistration: ListenerRegistration? = null
+    private lateinit var viewModel: CustomerOrderViewModel
     private var orderStatus: String? = null
 
     companion object {
@@ -57,11 +58,18 @@ class OrderHistoryListFragment : Fragment() {
             onNextStatusClicked = { order, nextStatus -> updateOrderStatus(order, nextStatus) },
             onItemClicked = { order -> toDeliveryPage(order) },
             showNextStatusButton = false,
-            hideCancelAfterConfirmed = true
+            hideCancelAfterConfirmed = true,
+            source = "customer"
         )
         recyclerView.adapter = orderAdapter
 
-        listenToOrdersRealtime()
+        viewModel = ViewModelProvider(this).get(CustomerOrderViewModel::class.java)
+        if (orderStatus != null) {
+            viewModel.listenToOrdersRealtime(orderStatus!!)
+            viewModel.getOrdersByStatus(orderStatus!!).observe(viewLifecycleOwner) { orders ->
+                orderAdapter.submitList(orders)
+            }
+        }
 
         return view
     }
@@ -69,49 +77,6 @@ class OrderHistoryListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         orderListenerRegistration?.remove()
-    }
-
-    private fun listenToOrdersRealtime() {
-        val user = FirebaseAuth.getInstance().currentUser?.uid
-        if (orderStatus == null || user == null) return
-
-        orderListenerRegistration = db.collection("Orders")
-            .whereEqualTo("userID", user)
-            .whereEqualTo("status", orderStatus)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                val newOrderList = snapshots?.mapNotNull { doc ->
-                    try {
-                        OrderData(
-                            orderId = doc.id,
-                            createdDate = doc.getTimestamp("createdDate")?.let { formatTimestamp(it) } ?: "",
-                            status = doc.getString("status") ?: "",
-                            receiverName = doc.getString("receiverName") ?: "",
-                            phoneNumber = doc.getString("phoneNumber") ?: "",
-                            address = doc.getString("address") ?: "",
-                            totalQuantity = doc.getLong("totalQuantity")?.toInt() ?: 0,
-                            totalAfterDiscount = doc.getLong("totalAfterDiscount")?.toInt() ?: 0,
-                            payment = doc.getString("payment") ?: ""
-                        )
-                    } catch (e: Exception) {
-                        null
-                    }
-                } ?: emptyList()
-
-                orderAdapter.submitList(newOrderList)
-            }
-    }
-
-    private val dateFormatter by lazy {
-        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    }
-
-    fun formatTimestamp(timestamp: com.google.firebase.Timestamp): String {
-        return dateFormatter.format(timestamp.toDate())
     }
 
     private fun cancelOrder(order: OrderData) {

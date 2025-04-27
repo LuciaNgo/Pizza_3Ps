@@ -23,7 +23,6 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var signUpButton: Button
     private lateinit var logInButton: TextView
-    private lateinit var backButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +37,7 @@ class SignUpActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.password_input)
         confirmPasswordEditText = findViewById(R.id.confirm_password_input)
         signUpButton = findViewById(R.id.sign_up_button)
-        backButton = findViewById(R.id.back_button)
         logInButton = findViewById(R.id.text_view_2)
-
-        backButton.setOnClickListener {
-            val intent = Intent(this, WelcomeActivity::class.java)
-
-            startActivity(intent)
-        }
 
         logInButton.setOnClickListener {
             val intent = Intent(this, LogInActivity::class.java)

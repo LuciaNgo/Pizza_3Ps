@@ -41,7 +41,6 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var passwordToggle: ImageView
     private lateinit var logInButton: Button
     private lateinit var signUpButton: TextView
-    private lateinit var backButton: ImageView
     private lateinit var facebookButton: ImageView
     private lateinit var googleButton: ImageView
     private var callbackManager: CallbackManager? = null
@@ -66,17 +65,10 @@ class LogInActivity : AppCompatActivity() {
         logInButton = findViewById(R.id.log_in_button)
         emailEditText = findViewById(R.id.email_input)
         passwordEditText = findViewById(R.id.password_input)
-        backButton = findViewById(R.id.back_button)
         signUpButton = findViewById(R.id.sign_up_text)
         facebookButton = findViewById(R.id.facebook_button)
         googleButton = findViewById(R.id.google_button)
         passwordToggle = findViewById(R.id.password_toggle_icon)
-
-
-        backButton.setOnClickListener {
-            val intent = Intent(this, WelcomeActivity::class.java)
-            startActivity(intent)
-        }
 
         signUpButton.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
@@ -249,14 +241,12 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun goToDashboard() {
-        Toast.makeText(this, "Log in successful!", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun goToManagementHome() {
-        Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, ManagementHomeActivity::class.java))
+        startActivity(Intent(this, AdminMainActivity::class.java))
         finish()
     }
 }

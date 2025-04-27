@@ -1,5 +1,8 @@
 pluginManagement {
     repositories {
+        maven {
+            url = uri("https://paypal.github.io/paypalcheckout-android/maven")
+        }
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -7,8 +10,8 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        //google()
         mavenCentral()
-        maven(url = "https://jitpack.io")
         gradlePluginPortal()
     }
 }
@@ -18,6 +21,15 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
+        //maven(url = "https://paypal.github.io/paypalcheckout-android/maven")
+        maven {
+            url = uri("https://cardinalcommerceprod.jfrog.io/artifactory/android")
+            credentials {
+                username = "braintree_team_sdk"
+                password = "AKCp8jQcoDy2hxSWhDAUQKXLDPDx6NYRkqrgFLRc3qDrayg6rrCbJpsKKyMwaykVL8FWusJpp"
+            }
+        }
+
     }
 }
 

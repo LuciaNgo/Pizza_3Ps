@@ -1,27 +1,30 @@
 package com.example.pizza3ps.fragment
 
 import android.os.Bundle
+import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.OrderAdapter
 import com.example.pizza3ps.model.OrderData
+import com.example.pizza3ps.viewModel.AdminOrdersViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class OrderListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
     private var db = FirebaseFirestore.getInstance()
     private var orderListenerRegistration: ListenerRegistration? = null
+    private lateinit var viewModel: AdminOrdersViewModel
     private var orderStatus: String? = null
+    private var isLoading = false
 
     companion object {
         private const val ARG_STATUS = "order_status"
@@ -52,11 +55,12 @@ class OrderListFragment : Fragment() {
         orderAdapter = OrderAdapter(
             onCancelClicked = { order -> cancelOrder(order) },
             onNextStatusClicked = { order, nextStatus -> updateOrderStatus(order, nextStatus) },
-            onItemClicked = { order -> showOrderDetails(order) }
+            onItemClicked = { order -> showOrderDetails(order) },
+            source = "admin"
         )
         recyclerView.adapter = orderAdapter
 
-        listenToOrdersRealtime()
+        setupViewModel()
 
         return view
     }
@@ -66,45 +70,38 @@ class OrderListFragment : Fragment() {
         orderListenerRegistration?.remove()
     }
 
-    private fun listenToOrdersRealtime() {
-        if (orderStatus == null) return
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this).get(AdminOrdersViewModel::class.java)
 
-        orderListenerRegistration = db.collection("Orders")
-            .whereEqualTo("status", orderStatus)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
+        viewModel.orderList.observe(viewLifecycleOwner) { newOrderList ->
+            orderAdapter.submitList(newOrderList)
+        }
 
-                val newOrderList = snapshots?.mapNotNull { doc ->
-                    try {
-                        OrderData(
-                            orderId = doc.id,
-                            createdDate = doc.getTimestamp("createdDate")?.let { formatTimestamp(it) } ?: "",
-                            status = doc.getString("status") ?: "",
-                            receiverName = doc.getString("receiverName") ?: "",
-                            phoneNumber = doc.getString("phoneNumber") ?: "",
-                            address = doc.getString("address") ?: "",
-                            totalQuantity = doc.getLong("totalQuantity")?.toInt() ?: 0,
-                            totalAfterDiscount = doc.getLong("totalAfterDiscount")?.toInt() ?: 0,
-                            payment = doc.getString("payment") ?: ""
-                        )
-                    } catch (e: Exception) {
-                        null
+        loadOrders()
+    }
+
+    private fun loadOrders() {
+        if (orderStatus == "Completed" || orderStatus == "Cancelled") {
+            viewModel.startListeningOrders(orderStatus = orderStatus, orderByDate = true)
+        } else {
+            viewModel.startListeningOrders(orderStatus = orderStatus, orderByDate = false)
+        }
+    }
+
+    private fun setupScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    val layoutManager = rv.layoutManager as LinearLayoutManager
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+                    if (!isLoading && lastVisibleItemPosition >= totalItemCount - 5) {
+//                        loadNextPage()
                     }
-                } ?: emptyList()
-
-                orderAdapter.submitList(newOrderList)
+                }
             }
-    }
-
-    private val dateFormatter by lazy {
-        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    }
-
-    fun formatTimestamp(timestamp: com.google.firebase.Timestamp): String {
-        return dateFormatter.format(timestamp.toDate())
+        })
     }
 
     private fun cancelOrder(order: OrderData) {
@@ -126,6 +123,7 @@ class OrderListFragment : Fragment() {
     }
 
     private fun showOrderDetails(order: OrderData) {
-        // TODO: View order's details
+        val action = OrderManagementFragmentDirections.actionOrderManagementToOrderDetails(order)
+        findNavController().navigate(action)
     }
 }

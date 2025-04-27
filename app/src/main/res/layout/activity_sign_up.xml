@@ -28,19 +28,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/arrow_back"
-        android:backgroundTintMode="src_in"
-        android:contentDescription="@string/go_back"
-        android:clickable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -213,13 +200,13 @@
         android:id="@+id/text_view_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="58dp"
         android:layout_marginBottom="200dp"
         android:textAlignment="center"
         android:text="@string/already_have_an_account"
         android:textColor="@color/white"
         android:background="@android:color/transparent"
-        android:textSize="14dp"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -236,7 +223,7 @@
         android:textStyle="bold"
         android:textColor="@color/orange"
         android:background="@android:color/transparent"
-        android:textSize="14dp"
+        android:textSize="16dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
