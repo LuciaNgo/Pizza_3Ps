@@ -15,4 +15,10 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="status_pending">#FFFBEC</color>
+    <color name="status_confirmed">#FBF6FF</color>
+    <color name="status_preparing">#FFF8E7</color>
+    <color name="status_shipping">#F0F7FF</color>
+    <color name="status_completed">#F0FFF4</color>
+    <color name="status_cancelled">#FFF2F2</color>
 </resources>

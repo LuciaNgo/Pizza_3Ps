@@ -1,5 +1,7 @@
 package com.example.pizza3ps.fragment
 
+import android.app.Activity
+import android.app.Dialog
 import android.graphics.Typeface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -22,8 +24,8 @@ import java.text.DecimalFormat
 import androidx.navigation.fragment.findNavController
 import android.content.Intent
 import android.util.Log
+import android.widget.CalendarView
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.pizza3ps.activity.DeliveryActivity
@@ -70,6 +72,8 @@ class PaymentFragment : Fragment() {
     private var selectedPaymentMethod = ""
 
     private lateinit var dbHelper: DatabaseHelper
+
+    private var currentSelectedAddressId : Int? = -1
 
     private val momoClientId = "MOMO"
     private val momoSecret = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
@@ -133,10 +137,14 @@ class PaymentFragment : Fragment() {
         cartList = dbHelper.getAllCartItems()
 
         setupCartRecyclerView()
-        setUpAddress()
         updateTotalPrice()
 
         checkoutButton.setOnClickListener {
+            if (customerName.text.toString() == "No address added" && customerPhone.text.toString() == "" && customerAddress.text.toString() == "") {
+                Toast.makeText(requireContext(), "Please add an address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (selectedPaymentMethod.isEmpty()) {
                 Toast.makeText(requireContext(), "Please choose a payment method", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -156,7 +164,7 @@ class PaymentFragment : Fragment() {
         addressDetail.setOnClickListener {
             findNavController().navigate(
                 R.id.action_paymentFragment_to_savedAddressFragment,
-                bundleOf("source" to "payment")
+                bundleOf("source" to "payment", "selectedAddressId" to currentSelectedAddressId)
             )
         }
 
@@ -179,6 +187,18 @@ class PaymentFragment : Fragment() {
         backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
+        parentFragmentManager.setFragmentResultListener("selected_address", viewLifecycleOwner) { _, bundle ->
+            currentSelectedAddressId = bundle.getInt("selectedAddressId")
+        }
+
+        setUpAddress()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setUpAddress()
+        updateSelectedPaymentMethod(selectedPaymentMethod)
     }
 
     private fun setupCartRecyclerView() {
@@ -187,23 +207,41 @@ class PaymentFragment : Fragment() {
     }
 
     private fun setUpAddress() {
+        if (currentSelectedAddressId != null && currentSelectedAddressId != -1) {
+            val selecetedAddress = dbHelper.getAddressById(currentSelectedAddressId!!)
+
+            selecetedAddress?.let {
+                customerName.text = selecetedAddress?.name ?: ""
+                customerPhone.text = selecetedAddress?.phone ?: ""
+                customerAddress.text = selecetedAddress?.address ?: ""
+
+                customerPhone.visibility = ImageView.VISIBLE
+                customerAddress.visibility = ImageView.VISIBLE
+                return
+            }
+        }
+
         val defaultAddress = getDefaultAddress()
         if (defaultAddress.name == "" && defaultAddress.phone == "" && defaultAddress.address == "") {
             customerName.text = "No address added"
             customerPhone.visibility = ImageView.GONE
             customerAddress.visibility = ImageView.GONE
-        } else {
+        }
+        else {
             customerName.text = defaultAddress.name
             customerPhone.text = defaultAddress.phone
             customerAddress.text = defaultAddress.address
+            currentSelectedAddressId = dbHelper.getAddressId(defaultAddress)
         }
     }
 
     fun getDefaultAddress(): AddressData {
         val defaultAddress = dbHelper.getDefaultAddress()
         return if (defaultAddress != null) {
+            Log.d("DefaultAddress", "Name: ${defaultAddress.name}, Phone: ${defaultAddress.phone}, Address: ${defaultAddress.address}")
             defaultAddress
         } else {
+            Log.d("DefaultAddress", "No default address found")
             AddressData("", "", "", false)
         }
     }
@@ -258,32 +296,29 @@ class PaymentFragment : Fragment() {
     }
 
     private fun showRedeemPointsDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.edti_info_temp, null)
-        val nameInput = dialogView.findViewById<EditText>(R.id.etTempName)
-        val phoneInput = dialogView.findViewById<EditText>(R.id.etTempPhone)
-        val addressInput = dialogView.findViewById<EditText>(R.id.etTempAddress)
-        val applyBtn = dialogView.findViewById<Button>(R.id.btnApply)
-        val cancelBtn = dialogView.findViewById<Button>(R.id.btnCancel)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.redeem_points_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
-        // Pre-fill with current values
-        nameInput.setText(customerName.text)
-        phoneInput.setText(customerPhone.text)
-        addressInput.setText(customerAddress.text)
+        val redeemButton = dialog.findViewById<Button>(R.id.redeem_button)
+        val redeemPoints = dbHelper.getUser()!!.points
+        val pointsText = dialog.findViewById<TextView>(R.id.points_text)
+        pointsText.text = DecimalFormat("#,###").format(redeemPoints) + " points"
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Delivery Information")
-            .setView(dialogView)
-            .create()
+        redeemButton.setOnClickListener {
+            val inputPoints = dialog.findViewById<EditText>(R.id.points_input)
+            val redeemPointsValue = inputPoints.text.toString().toIntOrNull() ?: 0
 
-        applyBtn.setOnClickListener {
-            customerName.text = nameInput.text.toString()
-            customerPhone.text = phoneInput.text.toString()
-            customerAddress.text = addressInput.text.toString()
-            dialog.dismiss()
-        }
-
-        cancelBtn.setOnClickListener {
-            dialog.dismiss()
+            if (redeemPointsValue > 0 && redeemPointsValue <= redeemPoints) {
+                discountValue = redeemPointsValue
+                updateTotalPrice()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), "Invalid points", Toast.LENGTH_SHORT).show()
+            }
         }
 
         dialog.show()
@@ -373,7 +408,7 @@ class PaymentFragment : Fragment() {
             "phoneNumber" to customerPhone.text.toString(),
             "address" to customerAddress.text.toString(),
             "payment" to paymentMethod,
-            "discount" to 0,
+            "discount" to discountValue,
             "totalAfterDiscount" to totalValue,
             "totalQuantity" to dbHelper.getAllCartItems().size,
             "status" to "Pending",

@@ -19,7 +19,9 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.pizza3ps.R
 import com.example.pizza3ps.adapter.DeliveryAdapter
+import com.example.pizza3ps.database.DatabaseHelper
 import com.example.pizza3ps.model.DeliveryData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.shuhart.stepview.StepView
@@ -180,6 +182,12 @@ class DeliveryActivity : AppCompatActivity() {
                     stepView.visibility = ConstraintLayout.VISIBLE
                 }
 
+                if (status == "Pending") {
+                    if (discount > 0) {
+                        updateRedeemPointsFirestore(discount.toInt(), "Minus")
+                        updateRedeemPointsDb(discount.toInt(), "Minus")
+                    }
+                }
                 if (status == "Completed") lottieView.cancelAnimation()
             }
             else {
@@ -187,6 +195,11 @@ class DeliveryActivity : AppCompatActivity() {
                 lottieView.cancelAnimation()
                 stepView.visibility = ConstraintLayout.GONE
                 cancelLayout.visibility = ConstraintLayout.VISIBLE
+
+                if (discount > 0) {
+                    updateRedeemPointsFirestore(discount.toInt(), "Plus")
+                    updateRedeemPointsDb(discount.toInt(), "Plus")
+                }
             }
 
             if (status != "Pending") {
@@ -236,9 +249,46 @@ class DeliveryActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Order cancelled successfully", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener { e ->
-//                Toast.makeText(this, "Failed to cancel order: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateRedeemPointsFirestore(discountAmount: Int, mode: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection(("Users")).document(userId)
+
+        // Lay points cua user roi update
+        docRef.get().addOnSuccessListener { document ->
+            val currentPoints = document.getLong("points")?.toInt() ?: 0
+            var newPoints = 0
+            if (mode == "Plus") newPoints = currentPoints + discountAmount
+            else if (mode == "Minus") newPoints = currentPoints - discountAmount
+
+            if (newPoints < 0) {
+                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
             }
+
+            docRef.update("points", newPoints)
+        }.addOnFailureListener {
+            Log.e("DeliveryActivity", "Error getting user points")
+        }
+    }
+
+    private fun updateRedeemPointsDb(discountAmount: Int, mode: String) {
+        val dbHelper = DatabaseHelper(this)
+        val userData = dbHelper.getUser()
+
+        if (userData != null) {
+            var newPoints = 0
+            if (mode == "Plus") newPoints = userData.points + discountAmount
+            else if (mode == "Minus") newPoints = userData.points - discountAmount
+
+            if (newPoints < 0) {
+                Toast.makeText(this, "Not enough points", Toast.LENGTH_SHORT).show()
+                return
+            }
+            dbHelper.updateUserPoints(newPoints)
+        }
     }
 
     override fun onDestroy() {

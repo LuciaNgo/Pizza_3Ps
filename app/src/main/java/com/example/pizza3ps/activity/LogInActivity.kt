@@ -256,7 +256,7 @@ class LogInActivity : AppCompatActivity() {
 
     private fun goToManagementHome() {
         Toast.makeText(this, "Welcome Admin!", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, ManagementHomeActivity::class.java))
+        startActivity(Intent(this, AdminMainActivity::class.java))
         finish()
     }
 }
