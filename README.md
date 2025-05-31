@@ -17,7 +17,7 @@ The app allows **customers** to browse the menu, search for dishes, place orders
 ### 🧑‍💼 For Managers
 - View sales analytics and revenue reports
 - Identify best-selling products
-- Update order statuses (e.g. preparing, delivering, completed)
+- Update order statuses
 
 ---
 
